@@ -1,0 +1,690 @@
+{
+  "mode": "apply",
+  "input": {
+    "company_name": "VistaJet",
+    "domain": "vistajet.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/vistajet-international",
+    "target_titles": [
+      "Sales Director",
+      "Vice President of Sales",
+      "Fleet Sales",
+      "Program Sales Director",
+      "Private Aviation Advisor",
+      "Chief Commercial Officer"
+    ]
+  },
+  "company": {
+    "name": "VistaJet",
+    "domain": "vistajet.com",
+    "website_url": "https://www.vistajet.com/en/",
+    "linkedin_company_url": "https://www.linkedin.com/company/vistajet-international",
+    "description": "VistaJet provides global private aviation access through branded aircraft, memberships, and corporate flight solutions.",
+    "industry": "Business aviation",
+    "location": "Luqa, Malta",
+    "notes": null,
+    "confidence": "high",
+    "evidence": [
+      {
+        "url": "https://www.vistajet.com/en/",
+        "label": "Company homepage",
+        "note": "Primary site describes VistaJet private aviation memberships and global fleet access."
+      },
+      {
+        "url": "https://www.vistajet.com/en/about-us/executive-committee/",
+        "label": "Executive committee",
+        "note": "Primary site lists VistaJet executive leadership including commercial leadership."
+      },
+      {
+        "url": "https://www.linkedin.com/company/vistajet-international",
+        "label": "Public LinkedIn company page",
+        "note": "Public company identity for VistaJet International."
+      }
+    ]
+  },
+  "people": [
+    {
+      "name": "Ian Moore",
+      "linkedin_profile_url": "https://www.linkedin.com/in/ianmoore-vistajet",
+      "profile_key": "in/ianmoore-vistajet",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "VistaJet executive page names Ian Moore Chief Commercial Officer responsible for sales, marketing, customer service, and product delivery; public LinkedIn exposes the canonical profile URL.",
+      "evidence": [
+        {
+          "url": "https://www.vistajet.com/en/about-us/executive-committee/",
+          "label": "VistaJet executive committee",
+          "note": "Lists Ian Moore as Chief Commercial Officer responsible for commercial negotiations, sales, marketing, customer service, and product delivery."
+        },
+        {
+          "url": "https://www.linkedin.com/in/ianmoore-vistajet",
+          "label": "Public LinkedIn profile",
+          "note": "Canonical public LinkedIn profile URL for Ian Moore."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Chief Commercial Officer",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.vistajet.com/en/about-us/executive-committee/",
+              "label": "VistaJet executive committee",
+              "note": "Primary source states Ian Moore is responsible for global market expansion, commercial negotiations, sales, marketing, customer service, and product delivery."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TK Lee",
+      "linkedin_profile_url": "https://www.linkedin.com/in/tinkeenlee",
+      "profile_key": "in/tinkeenlee",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists TK Lee as Vice President, Sales at VistaJet with prior Sales Director, Asia experience.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/tinkeenlee",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Vice President, Sales at VistaJet and Sales Director, Asia experience."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Vice President, Sales",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/tinkeenlee",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this VistaJet sales leadership role."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Joshua Labiner",
+      "linkedin_profile_url": "https://www.linkedin.com/in/joshua-labiner",
+      "profile_key": "in/joshua-labiner",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Joshua Labiner as Sales Director, Fleet Sales at VistaJet.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/joshua-labiner",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Sales Director, Fleet Sales at VistaJet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Sales Director, Fleet Sales",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/joshua-labiner",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists the VistaJet fleet-sales title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Clayton Smith",
+      "linkedin_profile_url": "https://www.linkedin.com/in/clayton-smith-75765717",
+      "profile_key": "in/clayton-smith-75765717",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Clayton Smith as Regional Vice President of Sales with VistaJet experience.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/clayton-smith-75765717",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Regional Vice President of Sales and VistaJet experience."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Regional Vice President of Sales",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/clayton-smith-75765717",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this sales leadership role."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Charles Kang",
+      "linkedin_profile_url": "https://www.linkedin.com/in/charlesjhkang",
+      "profile_key": "in/charlesjhkang",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Charles Kang as Fleet Sales Director at VistaJet.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/charlesjhkang",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Fleet Sales Director at VistaJet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Fleet Sales Director",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/charlesjhkang",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this VistaJet sales title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Jenn DuBois",
+      "linkedin_profile_url": "https://www.linkedin.com/in/jenndubois-aviation",
+      "profile_key": "in/jenndubois-aviation",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Jenn DuBois as Vice President of Sales at VistaJet.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/jenndubois-aviation",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Vice President of Sales at VistaJet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Vice President of Sales",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/jenndubois-aviation",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this VistaJet sales role."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Jeffrey Liva",
+      "linkedin_profile_url": "https://www.linkedin.com/in/jeffrey-liva",
+      "profile_key": "in/jeffrey-liva",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Jeffrey Liva as Sales Director at VistaJet.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/jeffrey-liva",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Sales Director at VistaJet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Sales Director",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/jeffrey-liva",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this VistaJet sales title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Jacob Karasiewicz",
+      "linkedin_profile_url": "https://www.linkedin.com/in/jacob-karasiewicz-b4663793",
+      "profile_key": "in/jacob-karasiewicz-b4663793",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Jacob Karasiewicz as Vice President, Sales at VistaJet.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/jacob-karasiewicz-b4663793",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Vice President, Sales at VistaJet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Vice President, Sales",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/jacob-karasiewicz-b4663793",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this VistaJet sales role."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Edouard Lepas",
+      "linkedin_profile_url": "https://www.linkedin.com/in/edouardlepas",
+      "profile_key": "in/edouardlepas",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Edouard Lepas as Senior Sales Consultant at VistaJet and Private Aviation Advisor experience.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/edouardlepas",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Senior Sales Consultant at VistaJet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Senior Sales Consultant",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/edouardlepas",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this VistaJet sales role."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Garrett Powers",
+      "linkedin_profile_url": "https://www.linkedin.com/in/garrett-powers-9a442284",
+      "profile_key": "in/garrett-powers-9a442284",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Garrett Powers as Program Sales Director at VistaJet.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/garrett-powers-9a442284",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Program Sales Director at VistaJet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Program Sales Director",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/garrett-powers-9a442284",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this VistaJet sales title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ajay Davis",
+      "linkedin_profile_url": "https://www.linkedin.com/in/ajayrdavis",
+      "profile_key": "in/ajayrdavis",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Ajay Davis as Fleet Sales Executive at VistaJet.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/ajayrdavis",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Fleet Sales Executive at VistaJet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Fleet Sales Executive",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/ajayrdavis",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this VistaJet sales role."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Brendan Lynch",
+      "linkedin_profile_url": "https://www.linkedin.com/in/brendan-lynch-452553122",
+      "profile_key": "in/brendan-lynch-452553122",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Brendan Lynch as Sales Director at VistaJet.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/brendan-lynch-452553122",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Sales Director at VistaJet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Sales Director",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/brendan-lynch-452553122",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this VistaJet sales title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Daniel Manzouri",
+      "linkedin_profile_url": "https://www.linkedin.com/in/danielmanzouri",
+      "profile_key": "in/danielmanzouri",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Daniel Manzouri as Senior Vice President Sales at XO/Vista Jet and shows VistaJet experience.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/danielmanzouri",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Senior Vice President Sales at XO/Vista Jet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Senior Vice President Sales",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": "Public profile wording ties the role to XO/Vista Jet; imported under VistaJet because the DB account tracks VistaJet rather than parent/sister-brand entities.",
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/danielmanzouri",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this sales leadership role."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Terriana Roberts",
+      "linkedin_profile_url": "https://www.linkedin.com/in/terriana-roberts-341980251",
+      "profile_key": "in/terriana-roberts-341980251",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Terriana Roberts as Fleet Sales Director at VistaJet.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/terriana-roberts-341980251",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Fleet Sales Director at VistaJet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Fleet Sales Director",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/terriana-roberts-341980251",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this VistaJet sales title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sophie Poppe",
+      "linkedin_profile_url": "https://www.linkedin.com/in/sophiepoppe",
+      "profile_key": "in/sophiepoppe",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Sophie Poppe as Vice President of Sales at VistaJet.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/sophiepoppe",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Vice President of Sales at VistaJet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Vice President of Sales",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/sophiepoppe",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this VistaJet sales role."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tiffany Chen",
+      "linkedin_profile_url": "https://www.linkedin.com/in/tiffanyechen",
+      "profile_key": "in/tiffanyechen",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn result lists Tiffany Chen as Director of Sales in private aviation at VistaJet.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/tiffanyechen",
+          "label": "Public LinkedIn profile",
+          "note": "Public result lists Director of Sales, Private Aviation, at VistaJet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "vistajet.com",
+          "title": "Director of Sales, Private Aviation",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/tiffanyechen",
+              "label": "Public LinkedIn profile",
+              "note": "Public result lists this private aviation sales role."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "name": "Alexander Bonner",
+      "reason": "Likely current VistaJet Sales Director from public LinkedIn result, but the result displays only 'Alexander B.' and the full name is inferred from the profile slug, so not imported."
+    },
+    {
+      "name": "Vincent R.",
+      "reason": "Likely current Vice President, Sales at VistaJet, but the public result exposes only a partially abbreviated name."
+    },
+    {
+      "name": "Tanya Weed",
+      "reason": "Public LinkedIn result shows a current Wheels Up role and a prior VistaJet sales role."
+    },
+    {
+      "name": "Miranda Hoyt",
+      "reason": "Public LinkedIn result shows former VistaJet experience and current Silver Air Private Jets role."
+    },
+    {
+      "name": "Alex Hardy",
+      "reason": "Public LinkedIn result ties the role to Vista Global / multiple Vista brands rather than a specific VistaJet position."
+    },
+    {
+      "name": "Jere Lipofsky",
+      "reason": "Public LinkedIn result shows Vice President at VistaJet, but the sales function is not clear enough for this pass."
+    }
+  ],
+  "assumptions": [
+    "VistaJet is a private-aviation access and membership business rather than an aircraft brokerage, so commercial sales/member-sales contacts are treated as relevant to Drawscape's gift-to-client pitch.",
+    "Imported medium-confidence contacts from public LinkedIn search snippets only when the title was explicitly sales-facing and current enough to be useful."
+  ],
+  "conflicts": []
+}

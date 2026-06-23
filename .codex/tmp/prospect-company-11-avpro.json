@@ -1,0 +1,681 @@
+{
+  "mode": "apply",
+  "input": {
+    "company_name": "Avpro",
+    "domain": "avprojets.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/avpro-inc-",
+    "target_titles": [
+      "Managing Partner",
+      "Executive Sales Director",
+      "Aircraft Sales",
+      "Aircraft Sales & Acquisitions",
+      "Certified Broker"
+    ]
+  },
+  "company": {
+    "name": "Avpro",
+    "domain": "avprojets.com",
+    "website_url": "https://www.avprojets.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/avpro-inc-",
+    "description": "Avpro is an international business aircraft brokerage, acquisition, and advisory firm representing clients buying, selling, and trading new and preowned business aircraft.",
+    "industry": "Aircraft brokerage",
+    "location": "Annapolis, MD",
+    "notes": null,
+    "confidence": "high",
+    "evidence": [
+      {
+        "url": "https://www.avprojets.com/",
+        "label": "Company homepage",
+        "note": "Primary site describes Avpro as a business jet aircraft sales, acquisitions, and consulting firm."
+      },
+      {
+        "url": "https://www.aboutavpro.com/team.htm",
+        "label": "Avpro team page",
+        "note": "Lists managing partners and fixed-wing sales team members."
+      },
+      {
+        "url": "https://iada.aero/iada-certified-brokers",
+        "label": "IADA certified brokers",
+        "note": "Lists Avpro certified brokers and contact emails."
+      }
+    ]
+  },
+  "people": [
+    {
+      "name": "Eddie Kilkeary III",
+      "linkedin_profile_url": "https://www.linkedin.com/in/edkilkearyiii",
+      "profile_key": "in/edkilkearyiii",
+      "email": "ekilkeary@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Public LinkedIn identifies Eddie Kilkeary III as Managing Partner at Avpro; IADA and Avpro team/listing sources identify him as a certified Avpro broker and aircraft sales contact.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/edkilkearyiii",
+          "label": "Public LinkedIn result",
+          "note": "Lists Eddie Kilkeary III as Managing Partner at Avpro, Inc."
+        },
+        {
+          "url": "https://iada.aero/iada-certified-brokers",
+          "label": "IADA certified brokers",
+          "note": "Lists Eddie Kilkeary III at Avpro with email and phone."
+        },
+        {
+          "url": "https://www.linkedin.com/company/avpro-inc-",
+          "label": "Avpro public LinkedIn company page",
+          "note": "Recent public posts list Eddie Kilkeary III as the contact for aircraft listings."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Managing Partner",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/edkilkearyiii",
+              "label": "Public LinkedIn result",
+              "note": "Lists Eddie Kilkeary III as Managing Partner at Avpro, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chris Ellis",
+      "linkedin_profile_url": "https://www.linkedin.com/in/chrisellisavpro",
+      "profile_key": "in/chrisellisavpro",
+      "email": "cellis@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Public LinkedIn identifies Chris Ellis as Co-Founder & Managing Partner at Avpro; Avpro and IADA list him as a current brokerage contact.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/chrisellisavpro",
+          "label": "Public LinkedIn result",
+          "note": "Lists Chris Ellis as Co-Founder & Managing Partner at Avpro, Inc."
+        },
+        {
+          "url": "https://www.aboutavpro.com/team.htm",
+          "label": "Avpro team page",
+          "note": "Lists Christopher J. Ellis among managing partners."
+        },
+        {
+          "url": "https://iada.aero/iada-certified-brokers",
+          "label": "IADA certified brokers",
+          "note": "Lists Chris Ellis at Avpro with contact email."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Co-Founder & Managing Partner",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/chrisellisavpro",
+              "label": "Public LinkedIn result",
+              "note": "Lists Chris Ellis as Co-Founder & Managing Partner at Avpro, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bob Rabbitt",
+      "linkedin_profile_url": "https://www.linkedin.com/in/bob-rabbitt",
+      "profile_key": "in/bob-rabbitt",
+      "email": "brabbitt@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Public LinkedIn identifies Bob Rabbitt as Co-Founder and Managing Partner at Avpro; Avpro and IADA list him as a current broker contact.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/bob-rabbitt",
+          "label": "Public LinkedIn result",
+          "note": "Lists Bob Rabbitt as Co-Founder and Managing Partner at Avpro, Inc."
+        },
+        {
+          "url": "https://www.aboutavpro.com/team.htm",
+          "label": "Avpro team page",
+          "note": "Lists Robert W. Rabbitt, Jr. among managing partners."
+        },
+        {
+          "url": "https://iada.aero/iada-certified-brokers",
+          "label": "IADA certified brokers",
+          "note": "Lists Bob Rabbitt at Avpro with email and phone."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Co-Founder & Managing Partner",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/bob-rabbitt",
+              "label": "Public LinkedIn result",
+              "note": "Lists Bob Rabbitt as Co-Founder and Managing Partner at Avpro, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Don Bass",
+      "linkedin_profile_url": "https://www.linkedin.com/in/donbassavpro",
+      "profile_key": "in/donbassavpro",
+      "email": "dbass@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Public LinkedIn identifies Don Bass as Co-Founder & Managing Partner at Avpro; Avpro sales collateral has listed him as a managing partner contact.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/donbassavpro",
+          "label": "Public LinkedIn result",
+          "note": "Lists Don Bass as Co-Founder & Managing Partner at Avpro, Inc."
+        },
+        {
+          "url": "https://online.flippingbook.com/view/371407093",
+          "label": "Avpro digital magazine",
+          "note": "Lists Don Bass as Managing Partner with Avpro email on an aircraft listing."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Co-Founder & Managing Partner",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/donbassavpro",
+              "label": "Public LinkedIn result",
+              "note": "Lists Don Bass as Co-Founder & Managing Partner at Avpro, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mike Caruso",
+      "linkedin_profile_url": "https://www.linkedin.com/in/mike-caruso-avpro",
+      "profile_key": "in/mike-caruso-avpro",
+      "email": "mcaruso@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Public LinkedIn identifies Mike Caruso as Executive Sales Director at Avpro; Avpro team and recent listing posts show him as an aircraft sales contact.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/mike-caruso-avpro",
+          "label": "Public LinkedIn result",
+          "note": "Lists Mike Caruso as Executive Sales Director at Avpro, Inc."
+        },
+        {
+          "url": "https://www.aboutavpro.com/team.htm",
+          "label": "Avpro team page",
+          "note": "Lists Mike Caruso on the fixed-wing team."
+        },
+        {
+          "url": "https://www.linkedin.com/company/avpro-inc-",
+          "label": "Avpro public LinkedIn company page",
+          "note": "Recent public posts list Mike Caruso as the contact for aircraft listings."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Executive Sales Director",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/mike-caruso-avpro",
+              "label": "Public LinkedIn result",
+              "note": "Lists Mike Caruso as Executive Sales Director at Avpro, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Eric Davis",
+      "linkedin_profile_url": "https://www.linkedin.com/in/eric-davis-285288b",
+      "profile_key": "in/eric-davis-285288b",
+      "email": "edavis@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Public LinkedIn identifies Eric Davis as Executive Sales Director at Avpro; Avpro team, IADA, and listings show him as a sales contact.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/eric-davis-285288b",
+          "label": "Public LinkedIn result",
+          "note": "Lists Eric Davis as Executive Sales Director at Avpro, Inc., Aircraft Sales and Acquisition Services."
+        },
+        {
+          "url": "https://www.aboutavpro.com/team.htm",
+          "label": "Avpro team page",
+          "note": "Lists Eric Davis on the fixed-wing team."
+        },
+        {
+          "url": "https://iada.aero/iada-certified-brokers",
+          "label": "IADA certified brokers",
+          "note": "Lists Eric Davis at Avpro with email and phone."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Executive Sales Director",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/eric-davis-285288b",
+              "label": "Public LinkedIn result",
+              "note": "Lists Eric Davis as Executive Sales Director at Avpro, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Herbie Kane",
+      "linkedin_profile_url": "https://www.linkedin.com/in/herbiekane",
+      "profile_key": "in/herbiekane",
+      "email": "hkane@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Public LinkedIn identifies Herbie Kane as Executive Sales Director at Avpro; Avpro team and IADA list him as a current sales/broker contact.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/herbiekane",
+          "label": "Public LinkedIn result",
+          "note": "Lists Herbie Kane as Executive Sales Director at Avpro, Inc."
+        },
+        {
+          "url": "https://www.aboutavpro.com/team.htm",
+          "label": "Avpro team page",
+          "note": "Lists Herbie Kane on the fixed-wing team."
+        },
+        {
+          "url": "https://iada.aero/iada-certified-brokers",
+          "label": "IADA certified brokers",
+          "note": "Lists Herbie Kane at Avpro with email and phone."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Executive Sales Director",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/herbiekane",
+              "label": "Public LinkedIn result",
+              "note": "Lists Herbie Kane as Executive Sales Director at Avpro, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Wesley Ray",
+      "linkedin_profile_url": "https://www.linkedin.com/in/wes-ray",
+      "profile_key": "in/wes-ray",
+      "email": "wray@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Public LinkedIn identifies Wesley Ray as Executive Sales Director at Avpro; Avpro team lists him on the fixed-wing team.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/wes-ray",
+          "label": "Public LinkedIn result",
+          "note": "Lists Wesley Ray as Executive Sales Director at Avpro, Inc."
+        },
+        {
+          "url": "https://www.aboutavpro.com/team.htm",
+          "label": "Avpro team page",
+          "note": "Lists Wesley Ray on the fixed-wing team with email."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Executive Sales Director",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/wes-ray",
+              "label": "Public LinkedIn result",
+              "note": "Lists Wesley Ray as Executive Sales Director at Avpro, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bob Butcher",
+      "linkedin_profile_url": "https://www.linkedin.com/in/bobbutcheravppo",
+      "profile_key": "in/bobbutcheravppo",
+      "email": "bbutcher@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Public LinkedIn identifies Bob Butcher as Sales Executive at Avpro; Avpro team and IADA list him as a broker/contact.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/bobbutcheravppo",
+          "label": "Public LinkedIn result",
+          "note": "Lists Bob Butcher as Sales Executive at Avpro, Inc."
+        },
+        {
+          "url": "https://www.aboutavpro.com/team.htm",
+          "label": "Avpro team page",
+          "note": "Lists Bob Butcher on the fixed-wing team."
+        },
+        {
+          "url": "https://iada.aero/iada-certified-brokers",
+          "label": "IADA certified brokers",
+          "note": "Lists Bob Butcher at Avpro with email."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Sales Executive",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/bobbutcheravppo",
+              "label": "Public LinkedIn result",
+              "note": "Lists Bob Butcher as Sales Executive at Avpro, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Sam Rabbitt",
+      "linkedin_profile_url": "https://www.linkedin.com/in/sam-rabbitt",
+      "profile_key": "in/sam-rabbitt",
+      "email": "srabbitt@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Public LinkedIn identifies Sam Rabbitt as Executive Sales Director at Avpro; IADA lists him as an Avpro certified broker.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/sam-rabbitt",
+          "label": "Public LinkedIn result",
+          "note": "Lists Sam Rabbitt as Executive Sales Director at Avpro, Inc."
+        },
+        {
+          "url": "https://iada.aero/iada-certified-brokers",
+          "label": "IADA certified brokers",
+          "note": "Lists Sam Rabbitt at Avpro with email."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Executive Sales Director",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/sam-rabbitt",
+              "label": "Public LinkedIn result",
+              "note": "Lists Sam Rabbitt as Executive Sales Director at Avpro, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Trey Darr",
+      "linkedin_profile_url": "https://www.linkedin.com/in/trey-darr",
+      "profile_key": "in/trey-darr",
+      "email": "tdarr@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Public LinkedIn identifies Trey Darr as Executive Sales Director at Avpro; recent Avpro public posts and IADA list him as a broker/contact.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/trey-darr",
+          "label": "Public LinkedIn result",
+          "note": "Lists Trey Darr as Executive Sales Director at Avpro, Inc."
+        },
+        {
+          "url": "https://www.linkedin.com/company/avpro-inc-",
+          "label": "Avpro public LinkedIn company page",
+          "note": "Recent public posts list Trey Darr as an aircraft listing contact."
+        },
+        {
+          "url": "https://iada.aero/iada-certified-brokers",
+          "label": "IADA certified brokers",
+          "note": "Lists Trey Darr at Avpro with email and phone."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Executive Sales Director",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/trey-darr",
+              "label": "Public LinkedIn result",
+              "note": "Lists Trey Darr as Executive Sales Director at Avpro, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Justin Berard",
+      "linkedin_profile_url": "https://www.linkedin.com/in/justinberard",
+      "profile_key": "in/justinberard",
+      "email": "jberard@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Public LinkedIn identifies Justin Berard in Aircraft Sales & Acquisitions at Avpro; IADA and current listing sources show him as a broker/contact.",
+      "evidence": [
+        {
+          "url": "https://www.linkedin.com/in/justinberard",
+          "label": "Public LinkedIn result",
+          "note": "Lists Justin Berard as Aircraft Sales & Acquisitions at Avpro, Inc."
+        },
+        {
+          "url": "https://iada.aero/iada-certified-brokers",
+          "label": "IADA certified brokers",
+          "note": "Lists Justin Berard at Avpro with email and phone."
+        },
+        {
+          "url": "https://aircraftexchange.com/aircraft-by-broker/105/avpro-inc",
+          "label": "AircraftExchange Avpro listings",
+          "note": "Current Avpro listings show Justin Berard as a contact."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Aircraft Sales & Acquisitions",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.linkedin.com/in/justinberard",
+              "label": "Public LinkedIn result",
+              "note": "Lists Justin Berard as Aircraft Sales & Acquisitions at Avpro, Inc."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Todd Bennett",
+      "linkedin_profile_url": "https://www.linkedin.com/in/todd-bennett-9689558",
+      "profile_key": "in/todd-bennett-9689558",
+      "email": "tbennett@avprojets.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Avpro team and public listing posts identify Todd Bennett as an Avpro aircraft sales contact; public LinkedIn provides a stable profile and shows Avpro sales history.",
+      "evidence": [
+        {
+          "url": "https://www.aboutavpro.com/team.htm",
+          "label": "Avpro team page",
+          "note": "Lists Todd Bennett on the fixed-wing team with Avpro email."
+        },
+        {
+          "url": "https://www.linkedin.com/in/todd-bennett-9689558",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result includes Executive Sales Director at Avpro, Inc. in Todd Bennett's experience."
+        },
+        {
+          "url": "https://www.linkedin.com/posts/avpro-inc-_video-tour-of-citation-longitude-sn-700-activity-7183570513732980736-TPLs",
+          "label": "Avpro public LinkedIn post",
+          "note": "Avpro post lists Todd Bennett as the aircraft listing contact."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "avprojets.com",
+          "title": "Executive Sales Director",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.aboutavpro.com/team.htm",
+              "label": "Avpro team page",
+              "note": "Lists Todd Bennett on the fixed-wing team with Avpro email."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "name": "Anderson Bell",
+      "reason": "Avpro/IADA list him as a current broker, but no stable individual LinkedIn profile URL was found."
+    },
+    {
+      "name": "Darin Howell",
+      "reason": "Avpro/listing sources show him as a sales contact, but no stable individual LinkedIn profile URL was found."
+    },
+    {
+      "name": "Joe Catoe",
+      "reason": "IADA lists him as an Avpro certified broker, but public LinkedIn identity was ambiguous."
+    },
+    {
+      "name": "Monica Hager",
+      "reason": "Sales support role is less directly sales-facing than brokers and aircraft sales directors."
+    },
+    {
+      "name": "Glenis Ringgold",
+      "reason": "Sales support role is less directly sales-facing than brokers and aircraft sales directors."
+    }
+  ],
+  "assumptions": [
+    "Focused Avpro imports on managing partners, executive sales directors, certified brokers, and aircraft sales/acquisition contacts.",
+    "Used IADA broker listings and Avpro public listing posts as current role corroboration where the Avpro website team page appears older or incomplete."
+  ],
+  "conflicts": []
+}

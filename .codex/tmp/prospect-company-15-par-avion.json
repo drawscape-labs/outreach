@@ -1,0 +1,141 @@
+{
+  "mode": "apply",
+  "input": {
+    "company_name": "Par Avion Ltd.",
+    "domain": "paravionltd.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/par-avion-ltd-",
+    "target_titles": [
+      "Founder",
+      "President",
+      "Executive Sales Director",
+      "Acquisition Specialist",
+      "Aircraft Broker"
+    ]
+  },
+  "company": {
+    "name": "Par Avion Ltd.",
+    "domain": "paravionltd.com",
+    "website_url": "https://www.paravionltd.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/par-avion-ltd-",
+    "description": "Par Avion Ltd. is an international business aircraft sales, marketing, brokerage, and acquisition firm specializing in pre-owned business jets.",
+    "industry": "Business aircraft sales and acquisitions",
+    "location": "Houston, TX",
+    "notes": null,
+    "confidence": "high",
+    "evidence": [
+      {
+        "url": "https://www.paravionltd.com/",
+        "label": "Company homepage",
+        "note": "Primary site describes Par Avion as an international aircraft marketing firm focused on exclusive representation and acquisition of pre-owned business jets."
+      },
+      {
+        "url": "https://www.paravionltd.com/about/our-team/",
+        "label": "Our Team page",
+        "note": "Official team page identifies Janine Iannarelli as founder and president."
+      },
+      {
+        "url": "https://www.linkedin.com/company/par-avion-ltd-",
+        "label": "Public LinkedIn company page",
+        "note": "Public company page identifies Par Avion as an international business aircraft sales and marketing firm."
+      }
+    ]
+  },
+  "people": [
+    {
+      "name": "Janine Iannarelli",
+      "linkedin_profile_url": "https://www.linkedin.com/in/janine-iannarelli",
+      "profile_key": "in/janine-iannarelli",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Par Avion team page lists Janine Iannarelli as founder and president with decades of business aviation sales and acquisition experience.",
+      "evidence": [
+        {
+          "url": "https://www.paravionltd.com/about/our-team/",
+          "label": "Par Avion team page",
+          "note": "Lists Janine Iannarelli as founder and president."
+        },
+        {
+          "url": "https://www.linkedin.com/in/janine-iannarelli",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result identifies Janine Iannarelli as founder and president of Par Avion Ltd."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "paravionltd.com",
+          "title": "Founder & President",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.paravionltd.com/about/our-team/",
+              "label": "Par Avion team page",
+              "note": "Lists Janine Iannarelli as founder and president."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "David Wyndham",
+      "linkedin_profile_url": "https://www.linkedin.com/in/davidwyndham",
+      "profile_key": "in/davidwyndham",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Par Avion press release lists David Wyndham as Executive Sales Director and Acquisition Specialist; public LinkedIn result references his Par Avion goal and profile identity.",
+      "evidence": [
+        {
+          "url": "https://www.paravionltd.com/press-release/aviation-veteran-david-wyndham-joins-international-business-aircraft-brokerage-firm-par-avion-ltd-as-executive-sales-director-and-acquisition-specialist/",
+          "label": "Par Avion press release",
+          "note": "Announces David Wyndham as Executive Sales Director and Acquisition Specialist."
+        },
+        {
+          "url": "https://www.linkedin.com/in/davidwyndham",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result includes David Wyndham's work with Par Avion Ltd."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "paravionltd.com",
+          "title": "Executive Sales Director and Acquisition Specialist",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.paravionltd.com/press-release/aviation-veteran-david-wyndham-joins-international-business-aircraft-brokerage-firm-par-avion-ltd-as-executive-sales-director-and-acquisition-specialist/",
+              "label": "Par Avion press release",
+              "note": "Lists David Wyndham as Executive Sales Director and Acquisition Specialist."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "name": "Matthew Gahrmann",
+      "reason": "Official press identifies him as Executive Sales Director, but no stable individual LinkedIn profile URL was found."
+    }
+  ],
+  "assumptions": [
+    "Par Avion appears to maintain a small public team surface, so imported only people with official role evidence and stable LinkedIn identities."
+  ],
+  "conflicts": []
+}

@@ -1,0 +1,17 @@
+{
+  "name": "drawscape-outreach",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm --prefix web run dev --",
+    "start": "node index.js",
+    "db:init": "mkdir -p data && sqlite3 data/outreach.sqlite < db/schema.sql",
+    "companies": "sqlite3 -header -column data/outreach.sqlite \"SELECT id, name, domain, description, linkedin_company_url FROM companies ORDER BY name;\"",
+    "people": "sqlite3 -header -column data/outreach.sqlite \"SELECT p.id, p.profile_key, p.name, p.status, p.qualified, p.linkedin_profile_url FROM people p ORDER BY p.name;\"",
+    "positions": "sqlite3 -header -column data/outreach.sqlite \"SELECT pos.id, p.name AS person, pos.title, c.name AS company, pos.is_current FROM positions pos JOIN people p ON p.id = pos.person_id JOIN companies c ON c.id = pos.company_id ORDER BY c.name, p.name;\"",
+    "web:dev": "npm --prefix web run dev"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "Prospecting workspace for finding companies and people to contact"
+}

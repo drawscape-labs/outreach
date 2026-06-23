@@ -1,0 +1,95 @@
+# Drawscape Outreach
+
+Prospecting workspace for finding companies and people to reach out to.
+
+## Core Identifiers
+
+- Company records use `domain` as the primary key.
+- Company LinkedIn pages live in `linkedin_company_url`.
+- Company `description` values should be a single sentence suitable for display.
+- Person records use generated `id` values as the primary key.
+- Person `profile_key` values are unique LinkedIn path keys, like `in/lewis-nisbet-097071137`.
+- Full person LinkedIn URLs live separately in `linkedin_profile_url`.
+- Person `status` values are `New`, `Contacted`, or `Replied`; SQLite enforces them with a `CHECK` constraint in `db/schema.sql`, and the web app imports the same enum from `web/lib/statuses.js`.
+- Person `qualified` is a boolean stored as `0` or `1`.
+- Position records map people to companies with `person_id` and `company_id`.
+- Position `is_current` is a boolean role-tenure flag, not a person status.
+
+## Database
+
+The local SQLite database lives at `data/outreach.sqlite`.
+
+```bash
+npm run db:init
+```
+
+## Run
+
+```bash
+npm start
+```
+
+## List Companies
+
+```bash
+npm run companies
+```
+
+## List People
+
+```bash
+npm run people
+```
+
+## List Positions
+
+```bash
+npm run positions
+```
+
+## Web App
+
+The Next.js app lives in `web/`.
+
+```bash
+npm run web:dev
+```
+
+Then open the URL printed in the terminal. The web dev server starts at
+`http://127.0.0.1:4200` and increments by 1 if that port is already in use.
+
+Routes:
+
+- `/companies`
+- `/companies/:id`
+- `/people`
+
+Styling uses Tailwind CSS through `web/postcss.config.mjs` and the global import in `web/app/styles.css`.
+
+## QuickMail API
+
+Set `QUICKMAIL_API_KEY` in `.env`. `QUICKMAIL_WORKSPACE_ID` is optional when
+the request body includes `workspaceId`.
+
+List campaigns:
+
+```bash
+curl http://127.0.0.1:4200/api/quickmail/campaigns
+```
+
+Add a lead to a campaign:
+
+```bash
+curl -X POST http://127.0.0.1:4200/api/quickmail/campaigns/cmp_123/leads \
+  -H "Content-Type: application/json" \
+  -d '{"workspaceId":"wrk_123","personId":1}'
+```
+
+The body must include exactly one of:
+
+- `leadId`: an existing QuickMail lead id.
+- `personId`: a local person id; the endpoint creates the QuickMail lead first.
+- `lead`: a QuickMail lead object with at least `email`.
+
+Use `"markContacted": true` with `personId` to update the local person status
+after QuickMail accepts the campaign add.

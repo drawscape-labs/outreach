@@ -1,0 +1,221 @@
+{
+  "mode": "apply",
+  "input": {
+    "company_name": "Jet Access",
+    "domain": "flyjetaccess.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/flyjetaccess",
+    "target_titles": [
+      "Aircraft Sales",
+      "Aircraft Broker",
+      "Aircraft Sales Director",
+      "Managed Aircraft Sales",
+      "Sales Director",
+      "Executive Vice President of Sales",
+      "Business Development"
+    ]
+  },
+  "company": {
+    "name": "Jet Access",
+    "domain": "flyjetaccess.com",
+    "website_url": "https://www.flyjetaccess.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/flyjetaccess",
+    "description": "Jet Access is a full-service private aviation company offering charter, aircraft management, maintenance, FBO operations, aircraft sales and acquisitions, joint ownership, and flight training.",
+    "industry": "Private aviation",
+    "location": "Indianapolis, IN",
+    "notes": null,
+    "confidence": "high",
+    "evidence": [
+      {
+        "url": "https://www.flyjetaccess.com/",
+        "label": "Company homepage",
+        "note": "Describes Jet Access as a full-service private aviation company with aircraft sales and acquisitions among its core services."
+      },
+      {
+        "url": "https://www.flyjetaccess.com/aircraft-sales/",
+        "label": "Aircraft Sales page",
+        "note": "Describes Jet Access as an international aircraft dealer and broker handling sales and acquisitions."
+      },
+      {
+        "url": "https://www.linkedin.com/company/flyjetaccess",
+        "label": "Public LinkedIn company page",
+        "note": "Public company page matches the Jet Access brand and flyjetaccess.com domain."
+      }
+    ]
+  },
+  "people": [
+    {
+      "name": "David Richter",
+      "linkedin_profile_url": "https://www.linkedin.com/in/david-richter-165795189",
+      "profile_key": "in/david-richter-165795189",
+      "email": "drichter@flyja.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Jet Access About page lists David Richter as Chief Revenue Officer and President of Managed Aircraft Sales; public LinkedIn exposes the canonical profile URL.",
+      "evidence": [
+        {
+          "url": "https://www.flyjetaccess.com/about/",
+          "label": "Jet Access About page",
+          "note": "Lists David Richter as Chief Revenue Officer and President of Managed Aircraft Sales."
+        },
+        {
+          "url": "https://www.linkedin.com/in/david-richter-165795189",
+          "label": "Public LinkedIn profile",
+          "note": "Canonical public LinkedIn profile URL for David Richter with Jet Access association."
+        },
+        {
+          "url": "https://www.nafa.aero/companies/eagle-creek-aviation",
+          "label": "NAFA company directory",
+          "note": "Lists David Richter as a Jet Access employee with drichter@flyja.com."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "flyjetaccess.com",
+          "title": "Chief Revenue Officer and President of Managed Aircraft Sales",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.flyjetaccess.com/about/",
+              "label": "Jet Access About page",
+              "note": "Current management team listing includes this title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "David Deitch",
+      "linkedin_profile_url": "https://www.linkedin.com/in/david-deitch-781a4439",
+      "profile_key": "in/david-deitch-781a4439",
+      "email": "david.deitch@flyja.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Jet Access announced David Deitch as Executive Vice President of Sales in January 2026, focused on aircraft management and ownership solutions; public LinkedIn exposes the canonical profile URL.",
+      "evidence": [
+        {
+          "url": "https://www.flyjetaccess.com/blog-2/jet-access-names-aviation-veteran-david-deitch-evp-of-sales/",
+          "label": "Jet Access announcement",
+          "note": "January 12, 2026 company post names David Deitch Executive Vice President of Sales."
+        },
+        {
+          "url": "https://www.linkedin.com/in/david-deitch-781a4439",
+          "label": "Public LinkedIn profile",
+          "note": "Canonical public LinkedIn profile URL for David Deitch with Jet Access association."
+        },
+        {
+          "url": "https://www.nafa.aero/companies/eagle-creek-aviation",
+          "label": "NAFA company directory",
+          "note": "Lists David Deitch as a Jet Access employee with david.deitch@flyja.com."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "flyjetaccess.com",
+          "title": "Executive Vice President of Sales",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.flyjetaccess.com/blog-2/jet-access-names-aviation-veteran-david-deitch-evp-of-sales/",
+              "label": "Jet Access announcement",
+              "note": "Company announcement names David Deitch Executive Vice President of Sales."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Julia Ricker",
+      "linkedin_profile_url": "https://www.linkedin.com/in/julia-ricker-7a856b1b7",
+      "profile_key": "in/julia-ricker-7a856b1b7",
+      "email": "jricker@flyja.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Jet Access aircraft sales page lists Julie Ricker as Aircraft Broker; public LinkedIn result exposes Julia Ricker's canonical profile URL and aircraft-sales title at Jet Access. Name varies between Julie and Julia in public sources.",
+      "evidence": [
+        {
+          "url": "https://www.flyjetaccess.com/aircraft-sales/",
+          "label": "Aircraft Sales page",
+          "note": "Lists Julie Ricker as Aircraft Broker on the Meet Our Team section."
+        },
+        {
+          "url": "https://www.linkedin.com/in/julia-ricker-7a856b1b7",
+          "label": "Public LinkedIn profile",
+          "note": "Canonical public LinkedIn profile URL; public result describes Julia Ricker as Aircraft Sales Director & Partner at Jet Access."
+        },
+        {
+          "url": "https://www.nafa.aero/companies/eagle-creek-aviation",
+          "label": "NAFA company directory",
+          "note": "Lists Julie Ricker as a Jet Access employee with jricker@flyja.com."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "flyjetaccess.com",
+          "title": "Aircraft Broker",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": "Company source lists first name as Julie; LinkedIn profile uses Julia.",
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.flyjetaccess.com/aircraft-sales/",
+              "label": "Aircraft Sales page",
+              "note": "Lists Julie Ricker as Aircraft Broker."
+            },
+            {
+              "url": "https://www.linkedin.com/in/julia-ricker-7a856b1b7",
+              "label": "Public LinkedIn profile",
+              "note": "Public LinkedIn result describes Aircraft Sales Director & Partner at Jet Access."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "name": "Jim Worrell",
+      "reason": "Strong current aircraft-sales contact: Jet Access aircraft-sales page lists Jim Worrell as Director of Sales and aircraft listings show his sales role/email, but no stable individual LinkedIn profile URL was found."
+    },
+    {
+      "name": "Ryan Hamilton",
+      "reason": "Public sources support a business-development/operations role at Jet Access, but the strongest official source ties him to hangar/FBO development rather than aircraft sales or brokerage."
+    },
+    {
+      "name": "Cole Alexander",
+      "reason": "Public sources suggest charter sales or a planned Jet Access role, but not enough current evidence for an aircraft-sales or broker position."
+    },
+    {
+      "name": "Phil Sparks",
+      "reason": "Current Jet Access leadership profile is aviation operations oversight rather than a sales or broker role."
+    }
+  ],
+  "assumptions": [
+    "Used the Jet Access website as the source of truth for current company role relevance.",
+    "Retained Julia Ricker despite Julie/Julia naming variation because company, directory, and public LinkedIn sources align on aircraft-sales role and Jet Access affiliation."
+  ],
+  "conflicts": [
+    "Julia Ricker's first name appears as Julie on Jet Access and NAFA sources and Julia on LinkedIn."
+  ]
+}

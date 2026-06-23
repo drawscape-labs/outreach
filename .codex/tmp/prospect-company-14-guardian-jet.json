@@ -1,0 +1,950 @@
+{
+  "mode": "apply",
+  "input": {
+    "company_name": "Guardian Jet",
+    "domain": "guardianjet.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/guardian-jet",
+    "target_titles": [
+      "Managing Partner",
+      "Global Head of Sales",
+      "Vice President",
+      "Sales Director",
+      "Aircraft Sales",
+      "Aircraft Acquisitions",
+      "Pre-Owned Acquisitions"
+    ]
+  },
+  "company": {
+    "name": "Guardian Jet",
+    "domain": "guardianjet.com",
+    "website_url": "https://www.guardianjet.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/guardian-jet",
+    "description": "Guardian Jet is an aircraft brokerage, consulting, sales, and acquisitions firm serving private and corporate aviation clients.",
+    "industry": "Aircraft brokerage and consulting",
+    "location": "Guilford, CT",
+    "notes": null,
+    "confidence": "high",
+    "evidence": [
+      {
+        "url": "https://www.guardianjet.com/",
+        "label": "Company homepage",
+        "note": "Primary site describes aircraft sales, acquisitions, consulting, and fleet planning services."
+      },
+      {
+        "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+        "label": "Guardian Jet team page",
+        "note": "Official team page lists managing partners, vice presidents, sales directors, and aircraft sales/acquisition staff."
+      },
+      {
+        "url": "https://www.linkedin.com/company/guardian-jet",
+        "label": "Public LinkedIn company page",
+        "note": "Public company page identifies Guardian Jet as an aviation sales company specializing in consulting, brokerage, and acquisitions."
+      }
+    ]
+  },
+  "people": [
+    {
+      "name": "Gabriel Bastos",
+      "linkedin_profile_url": "https://www.linkedin.com/in/gabriel-bastos-79800910",
+      "profile_key": "in/gabriel-bastos-79800910",
+      "email": "gabriel.bastos@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet profile lists Gabriel Bastos as Managing Partner and Global Head of Sales leading sales VPs and client relationships.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Gabriel-Bastos-50",
+          "label": "Guardian Jet profile",
+          "note": "Lists Gabriel Bastos as Managing Partner and describes Global Head of Sales responsibilities."
+        },
+        {
+          "url": "https://www.linkedin.com/in/gabriel-bastos-79800910",
+          "label": "Official profile LinkedIn link",
+          "note": "LinkedIn URL is linked from Guardian Jet's official profile."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Managing Partner / Global Head of Sales",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Gabriel-Bastos-50",
+              "label": "Guardian Jet profile",
+              "note": "Lists Gabriel Bastos as Managing Partner and Global Head of Sales."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Russ Piggott",
+      "linkedin_profile_url": "https://www.linkedin.com/in/russ-spicoli-piggott-281842b",
+      "profile_key": "in/russ-spicoli-piggott-281842b",
+      "email": "russ.piggott@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet team page lists Russ Piggott as Vice President, West Coast, with a LinkedIn URL on his profile.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Russ-Piggott-30",
+          "label": "Guardian Jet profile",
+          "note": "Lists Russ Piggott as Vice President, West Coast."
+        },
+        {
+          "url": "https://www.linkedin.com/in/russ-spicoli-piggott-281842b",
+          "label": "Official profile LinkedIn link",
+          "note": "LinkedIn URL is linked from Guardian Jet's official profile."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Vice President, West Coast",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+              "label": "Guardian Jet team page",
+              "note": "Lists Russ Piggott as Vice President, West Coast."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rick Smith",
+      "linkedin_profile_url": "https://www.linkedin.com/in/richard-rick-smith-60b71a115",
+      "profile_key": "in/richard-rick-smith-60b71a115",
+      "email": "rick.smith@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet team page lists Rick Smith as Vice President, Southeast; public LinkedIn result identifies him as Guardian Jet vice president with aircraft sales experience.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Rick-Smith-28",
+          "label": "Guardian Jet profile",
+          "note": "Lists Rick Smith as Vice President, Southeast."
+        },
+        {
+          "url": "https://www.linkedin.com/in/richard-rick-smith-60b71a115",
+          "label": "Public LinkedIn result",
+          "note": "Identifies Rick Smith as Vice President Southeast US at Guardian Jet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Vice President, Southeast",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+              "label": "Guardian Jet team page",
+              "note": "Lists Rick Smith as Vice President, Southeast."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Marc Strange",
+      "linkedin_profile_url": "https://www.linkedin.com/in/marc-strange-8715b443",
+      "profile_key": "in/marc-strange-8715b443",
+      "email": "marc.strange@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet profile lists Marc Strange as Vice President, Africa & Middle East, with prior aircraft sales leadership.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Marc-Strange-63",
+          "label": "Guardian Jet profile",
+          "note": "Lists Marc Strange as Vice President, Africa & Middle East."
+        },
+        {
+          "url": "https://www.linkedin.com/in/marc-strange-8715b443",
+          "label": "Official profile LinkedIn link",
+          "note": "LinkedIn URL is linked from Guardian Jet's official profile."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Vice President, Africa & Middle East",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Marc-Strange-63",
+              "label": "Guardian Jet profile",
+              "note": "Lists Marc Strange as Vice President, Africa & Middle East."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tom Cyr",
+      "linkedin_profile_url": "https://www.linkedin.com/in/tom-cyr-05545438",
+      "profile_key": "in/tom-cyr-05545438",
+      "email": "tom.cyr@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet profile lists Tom Cyr as Vice President, Midwest, responsible for developing and serving the client base.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Tom-Cyr-65",
+          "label": "Guardian Jet profile",
+          "note": "Lists Tom Cyr as Vice President, Midwest."
+        },
+        {
+          "url": "https://www.linkedin.com/in/tom-cyr-05545438",
+          "label": "Official profile LinkedIn link",
+          "note": "LinkedIn URL is linked from Guardian Jet's official profile."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Vice President, Midwest",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Tom-Cyr-65",
+              "label": "Guardian Jet profile",
+              "note": "Lists Tom Cyr as Vice President, Midwest."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Meghan Dwyer",
+      "linkedin_profile_url": "https://www.linkedin.com/in/meghan-dwyer7",
+      "profile_key": "in/meghan-dwyer7",
+      "email": "meghan.dwyer@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet profile lists Meghan Dwyer as Sales Director, Europe; public LinkedIn result confirms regional sales responsibility.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Meghan-Dwyer-69",
+          "label": "Guardian Jet profile",
+          "note": "Lists Meghan Dwyer as Sales Director, Europe."
+        },
+        {
+          "url": "https://www.linkedin.com/in/meghan-dwyer7",
+          "label": "Official profile LinkedIn link",
+          "note": "LinkedIn URL is linked from Guardian Jet's official profile."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Sales Director, Europe",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Meghan-Dwyer-69",
+              "label": "Guardian Jet profile",
+              "note": "Lists Meghan Dwyer as Sales Director, Europe."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Amber Gardner",
+      "linkedin_profile_url": "https://www.linkedin.com/in/amber-gardner-888a493a",
+      "profile_key": "in/amber-gardner-888a493a",
+      "email": "amber.gardner@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet profile lists Amber Gardner as Sales Director, West Hudson, responsible for developing and serving clients.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Amber-Gardner-64",
+          "label": "Guardian Jet profile",
+          "note": "Lists Amber Gardner as Sales Director, West Hudson."
+        },
+        {
+          "url": "https://www.linkedin.com/in/amber-gardner-888a493a",
+          "label": "Official profile LinkedIn link",
+          "note": "LinkedIn URL is linked from Guardian Jet's official profile."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Sales Director, West Hudson",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Amber-Gardner-64",
+              "label": "Guardian Jet profile",
+              "note": "Lists Amber Gardner as Sales Director, West Hudson."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Greg Sydor",
+      "linkedin_profile_url": "https://www.linkedin.com/in/greg-sydor",
+      "profile_key": "in/greg-sydor",
+      "email": "greg.sydor@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet profile lists Greg Sydor as Sales Director, Mid-Atlantic; public LinkedIn result identifies him as a Guardian Jet Sales Director.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Greg-Sydor-70",
+          "label": "Guardian Jet profile",
+          "note": "Lists Greg Sydor as Sales Director, Mid-Atlantic."
+        },
+        {
+          "url": "https://www.linkedin.com/in/greg-sydor",
+          "label": "Official profile LinkedIn link",
+          "note": "LinkedIn URL is linked from Guardian Jet's official profile."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Sales Director, Mid-Atlantic",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Greg-Sydor-70",
+              "label": "Guardian Jet profile",
+              "note": "Lists Greg Sydor as Sales Director, Mid-Atlantic."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "John Ballenger",
+      "linkedin_profile_url": "https://www.linkedin.com/in/john-ballenger53",
+      "profile_key": "in/john-ballenger53",
+      "email": "john.ballenger@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet profile lists John Ballenger as Sales Director, Mountain, responsible for building client relationships and market share.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=John-Ballenger-73",
+          "label": "Guardian Jet profile",
+          "note": "Lists John Ballenger as Sales Director, Mountain."
+        },
+        {
+          "url": "https://www.linkedin.com/in/john-ballenger53",
+          "label": "Official profile LinkedIn link",
+          "note": "LinkedIn URL is linked from Guardian Jet's official profile."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Sales Director, Mountain",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=John-Ballenger-73",
+              "label": "Guardian Jet profile",
+              "note": "Lists John Ballenger as Sales Director, Mountain."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Anantha Krishna",
+      "linkedin_profile_url": "https://www.linkedin.com/in/theananthakrishna",
+      "profile_key": "in/theananthakrishna",
+      "email": "anantha.krishna@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet team page lists Anantha Krishna as Sales Director, Asia; public LinkedIn result identifies him as Sales Director at Guardian Jet.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Anantha-Krishna-94",
+          "label": "Guardian Jet profile",
+          "note": "Lists Anantha Krishna as Sales Director, Asia."
+        },
+        {
+          "url": "https://www.linkedin.com/in/theananthakrishna",
+          "label": "Public LinkedIn result",
+          "note": "Lists Anantha Krishna as Sales Director at Guardian Jet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Sales Director, Asia",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+              "label": "Guardian Jet team page",
+              "note": "Lists Anantha Krishna as Sales Director, Asia."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "William Oliveira",
+      "linkedin_profile_url": "https://www.linkedin.com/in/williamf-oliveira",
+      "profile_key": "in/williamf-oliveira",
+      "email": "william.oliveira@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Official Guardian Jet team page lists William Oliveira as Sales Director, South America; public LinkedIn result provides a stable Guardian Jet profile identity.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=William-Oliveira-78",
+          "label": "Guardian Jet profile",
+          "note": "Lists William Oliveira as Sales Director, South America."
+        },
+        {
+          "url": "https://www.linkedin.com/in/williamf-oliveira",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result identifies William Oliveira with Guardian Jet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Sales Director, South America",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+              "label": "Guardian Jet team page",
+              "note": "Lists William Oliveira as Sales Director, South America."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dan Gardner",
+      "linkedin_profile_url": "https://www.linkedin.com/in/dan-gardner-546320125",
+      "profile_key": "in/dan-gardner-546320125",
+      "email": "dan.gardner@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet team page lists Dan Gardner as Sales Director, Northeast; public LinkedIn result identifies him as Sales Director at Guardian Jet.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Dan-Gardner-81",
+          "label": "Guardian Jet profile",
+          "note": "Lists Dan Gardner as Sales Director, Northeast."
+        },
+        {
+          "url": "https://www.linkedin.com/in/dan-gardner-546320125",
+          "label": "Public LinkedIn result",
+          "note": "Lists Dan Gardner as Sales Director at Guardian Jet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Sales Director, Northeast",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+              "label": "Guardian Jet team page",
+              "note": "Lists Dan Gardner as Sales Director, Northeast."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mike Moore",
+      "linkedin_profile_url": "https://www.linkedin.com/in/michael-moore-34a84511",
+      "profile_key": "in/michael-moore-34a84511",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet profile lists Mike Moore as Sales Director, Florida, helping clients with aircraft buying and selling decisions.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Mike-Moore-85",
+          "label": "Guardian Jet profile",
+          "note": "Lists Mike Moore as Sales Director, Florida."
+        },
+        {
+          "url": "https://www.linkedin.com/in/michael-moore-34a84511",
+          "label": "Official profile LinkedIn link",
+          "note": "LinkedIn URL is linked from Guardian Jet's official profile."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Sales Director, Florida",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Mike-Moore-85",
+              "label": "Guardian Jet profile",
+              "note": "Lists Mike Moore as Sales Director, Florida."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Keegan Dwyer",
+      "linkedin_profile_url": "https://www.linkedin.com/in/keegan-dwyer-11b5ab126",
+      "profile_key": "in/keegan-dwyer-11b5ab126",
+      "email": "keegan.dwyer@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet team page lists Keegan Dwyer as Sales Director, Light Jets & Turboprops; public LinkedIn result confirms Guardian Jet sales director role.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Keegan-Dwyer-53",
+          "label": "Guardian Jet profile",
+          "note": "Lists Keegan Dwyer as Sales Director, Light Jets & Turboprops."
+        },
+        {
+          "url": "https://www.linkedin.com/in/keegan-dwyer-11b5ab126",
+          "label": "Public LinkedIn result",
+          "note": "Lists Keegan Dwyer as Sales Director at Guardian Jet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Sales Director, Light Jets & Turboprops",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+              "label": "Guardian Jet team page",
+              "note": "Lists Keegan Dwyer as Sales Director, Light Jets & Turboprops."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "William Smith",
+      "linkedin_profile_url": "https://www.linkedin.com/in/william-smith-a57b52164",
+      "profile_key": "in/william-smith-a57b52164",
+      "email": "william.smith@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet team page lists William Smith as Sales Director, Light Jets & Turboprops; public LinkedIn result lists aircraft sales at Guardian Jet.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=William-Smith-55",
+          "label": "Guardian Jet profile",
+          "note": "Lists William Smith as Sales Director, Light Jets & Turboprops."
+        },
+        {
+          "url": "https://www.linkedin.com/in/william-smith-a57b52164",
+          "label": "Public LinkedIn result",
+          "note": "Lists William Smith in aircraft sales at Guardian Jet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Sales Director, Light Jets & Turboprops",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+              "label": "Guardian Jet team page",
+              "note": "Lists William Smith as Sales Director, Light Jets & Turboprops."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Zach Conover",
+      "linkedin_profile_url": "https://www.linkedin.com/in/zach-conover-056742187",
+      "profile_key": "in/zach-conover-056742187",
+      "email": "zach.conover@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet team page lists Zach Conover as Sales Director, Light Jets & Turboprops; public LinkedIn result identifies him as Guardian Jet Sales Director.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Zach-Conover-62",
+          "label": "Guardian Jet profile",
+          "note": "Lists Zach Conover as Sales Director, Light Jets & Turboprops."
+        },
+        {
+          "url": "https://www.linkedin.com/in/zach-conover-056742187",
+          "label": "Public LinkedIn result",
+          "note": "Identifies Zach Conover as Sales Director at Guardian Jet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Sales Director, Light Jets & Turboprops",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+              "label": "Guardian Jet team page",
+              "note": "Lists Zach Conover as Sales Director, Light Jets & Turboprops."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Brantley Gandy",
+      "linkedin_profile_url": "https://www.linkedin.com/in/brantleygandy",
+      "profile_key": "in/brantleygandy",
+      "email": "brantley.gandy@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet team page lists Brantley Gandy in Aircraft Acquisitions; public LinkedIn result identifies pre-owned sales and acquisitions at Guardian Jet.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Brantley-Gandy-71",
+          "label": "Guardian Jet profile",
+          "note": "Lists Brantley Gandy in Aircraft Acquisitions."
+        },
+        {
+          "url": "https://www.linkedin.com/in/brantleygandy",
+          "label": "Public LinkedIn result",
+          "note": "Lists Brantley Gandy in pre-owned sales and acquisitions at Guardian Jet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Aircraft Acquisitions",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+              "label": "Guardian Jet team page",
+              "note": "Lists Brantley Gandy in Aircraft Acquisitions."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Christopher Schiraldi",
+      "linkedin_profile_url": "https://www.linkedin.com/in/christopherschiraldi",
+      "profile_key": "in/christopherschiraldi",
+      "email": "chris.schiraldi@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet team page lists Christopher Schiraldi in Aircraft Sales; public LinkedIn result identifies him in aircraft sales at Guardian Jet.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Christopher-Schiraldi-90",
+          "label": "Guardian Jet profile",
+          "note": "Lists Christopher Schiraldi in Aircraft Sales."
+        },
+        {
+          "url": "https://www.linkedin.com/in/christopherschiraldi",
+          "label": "Public LinkedIn result",
+          "note": "Lists Christopher Schiraldi in aircraft sales at Guardian Jet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Aircraft Sales",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+              "label": "Guardian Jet team page",
+              "note": "Lists Christopher Schiraldi in Aircraft Sales."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cole Ritchey",
+      "linkedin_profile_url": "https://www.linkedin.com/in/coleritchey6",
+      "profile_key": "in/coleritchey6",
+      "email": "cole.ritchey@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Guardian Jet team page lists Cole Ritchey in Aircraft Sales; public LinkedIn result identifies him as Aircraft Sales at Guardian Jet.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Cole-Ritchey-79",
+          "label": "Guardian Jet profile",
+          "note": "Lists Cole Ritchey in Aircraft Sales."
+        },
+        {
+          "url": "https://www.linkedin.com/in/coleritchey6",
+          "label": "Public LinkedIn result",
+          "note": "Lists Cole Ritchey as Aircraft Sales at Guardian Jet."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Aircraft Sales",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+              "label": "Guardian Jet team page",
+              "note": "Lists Cole Ritchey in Aircraft Sales."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Kyle Canna",
+      "linkedin_profile_url": "https://www.linkedin.com/in/kyle-canna-b08a59157",
+      "profile_key": "in/kyle-canna-b08a59157",
+      "email": "kyle.canna@guardianjet.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "medium",
+      "match_reason": "Official Guardian Jet team page lists Kyle Canna as Manager, Pre-Owned Acquisitions and Inventory, a transaction-facing acquisition role.",
+      "evidence": [
+        {
+          "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm?profile=Kyle-Canna-36",
+          "label": "Guardian Jet profile",
+          "note": "Lists Kyle Canna as Manager, Pre-Owned Acquisitions and Inventory."
+        },
+        {
+          "url": "https://www.linkedin.com/in/kyle-canna-b08a59157",
+          "label": "Official profile LinkedIn link",
+          "note": "LinkedIn URL is linked from Guardian Jet's official profile."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "guardianjet.com",
+          "title": "Manager, Pre-Owned Acquisitions and Inventory",
+          "department": "Sales",
+          "seniority": "manager",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://www.guardianjet.com/about-guardian-jet/business-aviation-consulting-team.cfm",
+              "label": "Guardian Jet team page",
+              "note": "Lists Kyle Canna as Manager, Pre-Owned Acquisitions and Inventory."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "name": "Michael Dwyer",
+      "reason": "Managing partner role is relevant, but no stable individual LinkedIn URL was found from public sources."
+    },
+    {
+      "name": "Don Dwyer",
+      "reason": "Managing partner role is relevant, but no stable individual LinkedIn URL was found from public sources."
+    },
+    {
+      "name": "Doc Dwyer",
+      "reason": "Managing partner and certified broker role is relevant, but no stable individual LinkedIn URL was found from public sources."
+    },
+    {
+      "name": "Matt Walter",
+      "reason": "Managing partner and certified broker role is relevant, but no stable individual LinkedIn URL was found from public sources."
+    },
+    {
+      "name": "Pepe Morales",
+      "reason": "Official team page lists him as VP, Mexico & Central America, but no stable individual LinkedIn URL was confirmed."
+    },
+    {
+      "name": "Rafael Mugnaini",
+      "reason": "Official team page lists him as VP, South America, but public LinkedIn identity was not specific enough."
+    },
+    {
+      "name": "Greg Weldele",
+      "reason": "Official team page lists him as VP, South Central, but no stable individual LinkedIn URL was confirmed."
+    },
+    {
+      "name": "Curtis McCauley",
+      "reason": "Official team page lists Aircraft Sales & New Acquisitions, but no stable individual LinkedIn URL was found."
+    },
+    {
+      "name": "Grace Schuerlein",
+      "reason": "Official team page lists Aircraft Sales, but no stable individual LinkedIn URL was found."
+    }
+  ],
+  "assumptions": [
+    "Focused Guardian Jet imports on people with official sales/acquisition roles and stable LinkedIn identities.",
+    "Imported medium-confidence acquisition/inventory roles only where the work appears transaction-facing."
+  ],
+  "conflicts": []
+}

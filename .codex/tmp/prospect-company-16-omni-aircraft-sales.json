@@ -1,0 +1,178 @@
+{
+  "mode": "apply",
+  "input": {
+    "company_name": "Omni Aircraft Sales",
+    "domain": "omniaircraftsales.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/omni-aircraft-sales",
+    "target_titles": [
+      "Aircraft Sales",
+      "Aircraft Broker",
+      "Aircraft Sales Representative",
+      "Regional Sales Associate",
+      "Sales Director",
+      "Vice President of Sales"
+    ]
+  },
+  "company": {
+    "name": "Omni Aircraft Sales",
+    "domain": "omniaircraftsales.com",
+    "website_url": "https://omniaircraftsales.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/omni-aircraft-sales",
+    "description": "Omni Aircraft Sales is an aircraft acquisition and brokerage firm helping clients buy, sell, trade, and appraise aircraft.",
+    "industry": "Aircraft brokerage",
+    "location": "Tulsa, OK",
+    "confidence": "high",
+    "evidence": [
+      {
+        "url": "https://omniaircraftsales.com/",
+        "label": "Company homepage",
+        "note": "Primary site describes Omni Aircraft Sales as a family-owned aircraft sales company with 40+ years in aviation markets."
+      },
+      {
+        "url": "https://omniaircraftsales.com/about/",
+        "label": "Company About page",
+        "note": "Primary site describes aircraft sales expertise, IADA accreditation, and team members."
+      },
+      {
+        "url": "https://www.linkedin.com/company/omni-aircraft-sales",
+        "label": "Public LinkedIn company page",
+        "note": "Public company page lists the Tulsa headquarters, aviation industry, company size, and website."
+      }
+    ]
+  },
+  "people": [
+    {
+      "name": "Dan Burnstein",
+      "linkedin_profile_url": "https://www.linkedin.com/in/dan-burnstein-b460469",
+      "profile_key": "in/dan-burnstein-b460469",
+      "email": "dburnstein@flyomni.com",
+      "status": "New",
+      "qualified": true,
+      "confidence": "medium",
+      "match_reason": "Company sales-rep article names Dan as one of two sales representatives for western/central US; primary About page lists him as Chairman; public LinkedIn company page exposes this profile URL.",
+      "evidence": [
+        {
+          "url": "https://omniaircraftsales.com/insights/meet-our-sales-reps-for-the-west-coast-and-central-us/",
+          "label": "Company sales reps article",
+          "note": "Names Dan Burnstein as a sales representative and gives his email and phone."
+        },
+        {
+          "url": "https://omniaircraftsales.com/about/",
+          "label": "Company About page",
+          "note": "Lists Dan Burnstein as Chairman on the Omni Aircraft Sales team."
+        },
+        {
+          "url": "https://www.linkedin.com/company/omni-aircraft-sales",
+          "label": "Public LinkedIn company page",
+          "note": "Employee section includes Dan Burnstein and links to the canonical profile URL."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "omniaircraftsales.com",
+          "title": "Chairman",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "confidence": "medium",
+          "evidence": [
+            {
+              "url": "https://omniaircraftsales.com/insights/meet-our-sales-reps-for-the-west-coast-and-central-us/",
+              "label": "Company sales reps article",
+              "note": "Describes Dan as Chairman and one of the sales representatives."
+            },
+            {
+              "url": "https://omniaircraftsales.com/about/",
+              "label": "Company About page",
+              "note": "Lists Dan Burnstein as Chairman."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "James Norris",
+      "linkedin_profile_url": "https://www.linkedin.com/in/jamesnorrisosu",
+      "profile_key": "in/jamesnorrisosu",
+      "email": "jnorris@omniaircraftsales.com",
+      "status": "New",
+      "qualified": true,
+      "confidence": "high",
+      "match_reason": "Primary company sources list James as a sales representative / Regional Sales Associate, IADA lists him as a certified broker for Omni, and public LinkedIn search exposes the canonical profile URL.",
+      "evidence": [
+        {
+          "url": "https://omniaircraftsales.com/insights/meet-our-sales-reps-for-the-west-coast-and-central-us/",
+          "label": "Company sales reps article",
+          "note": "Names James Norris as a sales representative and provides email and phone."
+        },
+        {
+          "url": "https://omniaircraftsales.com/about/",
+          "label": "Company About page",
+          "note": "Lists James Norris as Regional Sales Associate with email and phone."
+        },
+        {
+          "url": "https://iada.aero/iada-certified-brokers",
+          "label": "IADA certified brokers",
+          "note": "Lists James Norris under Omni Aircraft Sales with his email and mobile number."
+        },
+        {
+          "url": "https://www.linkedin.com/in/jamesnorrisosu",
+          "label": "Public LinkedIn result",
+          "note": "Canonical LinkedIn profile URL found through public web search."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "omniaircraftsales.com",
+          "title": "Regional Sales Associate",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://omniaircraftsales.com/about/",
+              "label": "Company About page",
+              "note": "Lists James Norris as Regional Sales Associate."
+            },
+            {
+              "url": "https://iada.aero/iada-certified-brokers",
+              "label": "IADA certified brokers",
+              "note": "Lists James Norris as an Omni Aircraft Sales certified broker."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "name": "Ron Smith",
+      "reason": "Strong outreach lead: company About page and IADA list him as Vice President of Sales / certified broker with email and phone, but no stable public LinkedIn profile URL was found, and the current DB import requires linkedin_profile_url."
+    },
+    {
+      "name": "Jake Schaffitzel",
+      "reason": "Company About/PDF materials conflict between Research Analyst and Sales Associate, while public LinkedIn search suggests current Aircraft Maintenance Sales at the sister company; not ready as an aircraft sales contact."
+    },
+    {
+      "name": "Heath Owens",
+      "reason": "Public LinkedIn search suggests an Executive Sales Agent role at International Aircraft Marketing & Sales rather than a current Omni Aircraft Sales aircraft-sales role."
+    },
+    {
+      "name": "Adam Battiato",
+      "reason": "Company About page lists business intelligence / research analyst responsibilities rather than a sales or broker role."
+    }
+  ],
+  "assumptions": [
+    "Used official Omni Aircraft Sales pages as the source of truth for current sales titles when public search snippets varied.",
+    "Kept Ron Smith out of the importable people array only because the database requires a LinkedIn profile URL, not because he is a weak sales lead."
+  ],
+  "conflicts": [
+    "James Norris has title variation across public sources: official Omni pages list Regional Sales Associate, while public LinkedIn search shows Vice President of Sales. The dry-run uses the official company title.",
+    "Dan Burnstein is sales-relevant on Omni sources, but his public LinkedIn headline is not a direct Omni Aircraft Sales title; confidence is medium rather than high."
+  ]
+}

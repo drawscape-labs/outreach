@@ -1,0 +1,350 @@
+{
+  "mode": "apply",
+  "input": {
+    "company_name": "Clay Lacy Aviation",
+    "domain": "claylacy.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/clay-lacy-aviation",
+    "target_titles": [
+      "Aircraft Management",
+      "Aircraft Sales",
+      "Charter Business Development",
+      "Sales Director",
+      "Business Development"
+    ]
+  },
+  "company": {
+    "name": "Clay Lacy Aviation",
+    "domain": "claylacy.com",
+    "website_url": "https://www.claylacy.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/clay-lacy-aviation",
+    "description": "Clay Lacy Aviation provides private jet management, charter, maintenance, FBO, avionics, interiors, and aircraft ownership support services.",
+    "industry": "Private aviation",
+    "location": "Van Nuys, CA",
+    "confidence": "high",
+    "evidence": [
+      {
+        "url": "https://www.claylacy.com/",
+        "label": "Company homepage",
+        "note": "Primary site describes Clay Lacy as a private jet operator offering management, charter, maintenance, and FBO services."
+      },
+      {
+        "url": "https://www.claylacy.com/company/leadership/",
+        "label": "Leadership page",
+        "note": "Primary site lists current company, aircraft management, charter, and maintenance leadership."
+      },
+      {
+        "url": "https://www.linkedin.com/company/clay-lacy-aviation",
+        "label": "Public LinkedIn company page",
+        "note": "Public company page confirms the aviation industry, Van Nuys headquarters, website, and core services."
+      }
+    ]
+  },
+  "people": [
+    {
+      "name": "Joseph Barber",
+      "linkedin_profile_url": "https://www.linkedin.com/in/barberjoseph",
+      "profile_key": "in/barberjoseph",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "confidence": "high",
+      "match_reason": "Official profile lists Joseph Barber as Chief Commercial Officer directing strategic marketing and sales across aircraft management, charter, maintenance, and FBO business units.",
+      "evidence": [
+        {
+          "url": "https://www.claylacy.com/our-team/joe-barber/",
+          "label": "Clay Lacy profile",
+          "note": "Lists Joe Barber as Chief Commercial Officer and describes responsibility for sales initiatives."
+        },
+        {
+          "url": "https://www.linkedin.com/in/barberjoseph",
+          "label": "Public LinkedIn result",
+          "note": "Canonical public LinkedIn profile URL found through web search."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "claylacy.com",
+          "title": "Chief Commercial Officer",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.claylacy.com/our-team/joe-barber/",
+              "label": "Clay Lacy profile",
+              "note": "Lists Joe Barber as Chief Commercial Officer."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Henry Thomas",
+      "linkedin_profile_url": "https://www.linkedin.com/in/henry-thomas-11048276",
+      "profile_key": "in/henry-thomas-11048276",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "confidence": "high",
+      "match_reason": "Official profile lists Henry Thomas as Senior Vice President, Aircraft Management, working with aircraft owners, executives, family offices, and flight departments.",
+      "evidence": [
+        {
+          "url": "https://www.claylacy.com/our-team/henry-thomas/",
+          "label": "Clay Lacy profile",
+          "note": "Lists Henry Thomas as Senior Vice President, Aircraft Management and describes his owner-facing advisory role."
+        },
+        {
+          "url": "https://www.linkedin.com/in/henry-thomas-11048276",
+          "label": "Public LinkedIn result",
+          "note": "Public profile URL found through web search."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "claylacy.com",
+          "title": "Senior Vice President, Aircraft Management",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.claylacy.com/our-team/henry-thomas/",
+              "label": "Clay Lacy profile",
+              "note": "Lists Henry Thomas as Senior Vice President, Aircraft Management."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Jacob Vernezze",
+      "linkedin_profile_url": "https://www.linkedin.com/in/jacob-vernezze-a0a688126",
+      "profile_key": "in/jacob-vernezze-a0a688126",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "confidence": "high",
+      "match_reason": "Official profile lists Jacob Vernezze as Senior Director, Aircraft Management and a trusted advisor to business jet owners.",
+      "evidence": [
+        {
+          "url": "https://www.claylacy.com/our-team/jacob-vernezze/",
+          "label": "Clay Lacy profile",
+          "note": "Lists Jacob Vernezze as Senior Director, Aircraft Management and describes owner advisory responsibilities."
+        },
+        {
+          "url": "https://www.linkedin.com/in/jacob-vernezze-a0a688126",
+          "label": "Public LinkedIn result",
+          "note": "Public profile URL found through web search."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "claylacy.com",
+          "title": "Senior Director, Aircraft Management",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.claylacy.com/our-team/jacob-vernezze/",
+              "label": "Clay Lacy profile",
+              "note": "Lists Jacob Vernezze as Senior Director, Aircraft Management."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ryan Guerra",
+      "linkedin_profile_url": "https://www.linkedin.com/in/ryan-guerra-0943a764",
+      "profile_key": "in/ryan-guerra-0943a764",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "confidence": "high",
+      "match_reason": "Official profile lists Ryan Guerra as Senior Director, Aircraft Management, serving Clay Lacy clients and helping with aircraft management decisions.",
+      "evidence": [
+        {
+          "url": "https://www.claylacy.com/our-team/ryan-guerra/",
+          "label": "Clay Lacy profile",
+          "note": "Lists Ryan Guerra as Senior Director, Aircraft Management."
+        },
+        {
+          "url": "https://www.linkedin.com/in/ryan-guerra-0943a764",
+          "label": "Public LinkedIn result",
+          "note": "Public profile URL found through web search."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "claylacy.com",
+          "title": "Senior Director, Aircraft Management",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.claylacy.com/our-team/ryan-guerra/",
+              "label": "Clay Lacy profile",
+              "note": "Lists Ryan Guerra as Senior Director, Aircraft Management."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Jordan Scales",
+      "linkedin_profile_url": "https://www.linkedin.com/in/jordanscales",
+      "profile_key": "in/jordanscales",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "confidence": "high",
+      "match_reason": "Official profile lists Jordan Scales as Director, Aircraft Management and describes his role bringing new aircraft to the managed fleet.",
+      "evidence": [
+        {
+          "url": "https://www.claylacy.com/our-team/jordan-scales/",
+          "label": "Clay Lacy profile",
+          "note": "Lists Jordan Scales as Director, Aircraft Management and describes business development for managed fleet growth."
+        },
+        {
+          "url": "https://www.linkedin.com/in/jordanscales",
+          "label": "Public LinkedIn result",
+          "note": "Public profile URL found through web search."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "claylacy.com",
+          "title": "Director, Aircraft Management",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.claylacy.com/our-team/jordan-scales/",
+              "label": "Clay Lacy profile",
+              "note": "Lists Jordan Scales as Director, Aircraft Management."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tanner Richardson",
+      "linkedin_profile_url": "https://www.linkedin.com/in/tanner-richardson",
+      "profile_key": "in/tanner-richardson",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "confidence": "high",
+      "match_reason": "Official profile lists Tanner Richardson as Director, Aircraft Management; public LinkedIn result confirms a Clay Lacy aircraft management role.",
+      "evidence": [
+        {
+          "url": "https://www.claylacy.com/our-team/tanner-richardson/",
+          "label": "Clay Lacy profile",
+          "note": "Lists Tanner Richardson as Director, Aircraft Management."
+        },
+        {
+          "url": "https://www.linkedin.com/in/tanner-richardson",
+          "label": "Public LinkedIn result",
+          "note": "Public profile URL found through web search."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "claylacy.com",
+          "title": "Director, Aircraft Management",
+          "department": "Sales",
+          "seniority": "director",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.claylacy.com/our-team/tanner-richardson/",
+              "label": "Clay Lacy profile",
+              "note": "Lists Tanner Richardson as Director, Aircraft Management."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Jeff Trance",
+      "linkedin_profile_url": "https://www.linkedin.com/in/jeff-trance-89770319",
+      "profile_key": "in/jeff-trance-89770319",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "confidence": "high",
+      "match_reason": "Official profile lists Jeff Trance as Vice President, Charter Business Development and describes his work cultivating charter business with corporate and HNWI clients and aircraft owners.",
+      "evidence": [
+        {
+          "url": "https://www.claylacy.com/our-team/jeff-trance/",
+          "label": "Clay Lacy profile",
+          "note": "Lists Jeff Trance as Vice President, Charter Business Development."
+        },
+        {
+          "url": "https://www.linkedin.com/in/jeff-trance-89770319",
+          "label": "Public LinkedIn result",
+          "note": "Public profile URL found through web search."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "claylacy.com",
+          "title": "Vice President, Charter Business Development",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.claylacy.com/our-team/jeff-trance/",
+              "label": "Clay Lacy profile",
+              "note": "Lists Jeff Trance as Vice President, Charter Business Development."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "name": "Pat Conroy",
+      "reason": "Official title is Director of Service Sales under maintenance, which is less aligned to client gifting around aircraft ownership/sales."
+    },
+    {
+      "name": "Cory Hankins",
+      "reason": "Official title is Regional Sales Manager under maintenance, which is less aligned to aircraft owner/client gift opportunities."
+    },
+    {
+      "name": "Multiple aircraft management directors",
+      "reason": "The team page lists many aircraft management directors; imported the strongest owner-facing and publicly corroborated LinkedIn identities first."
+    }
+  ],
+  "assumptions": [
+    "Imported current high-confidence, client-facing aircraft management and charter business development contacts only.",
+    "Used official Clay Lacy profile pages for current titles and public LinkedIn search results for stable profile identity."
+  ],
+  "conflicts": []
+}

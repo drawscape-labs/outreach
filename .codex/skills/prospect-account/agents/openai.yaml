@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prospect Account"
+  short_description: "Research accounts and dedupe contacts"
+  default_prompt: "Use $prospect-account to research a target company, find matching sales contacts, and prepare a dry-run import."

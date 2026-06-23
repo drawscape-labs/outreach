@@ -1,0 +1,451 @@
+{
+  "mode": "apply",
+  "input": {
+    "company_name": "Duncan Aviation",
+    "domain": "duncanaviation.aero",
+    "linkedin_company_url": "https://www.linkedin.com/company/duncan-aviation",
+    "target_titles": [
+      "Aircraft Sales",
+      "Aircraft Sales & Acquisitions",
+      "Aircraft Broker",
+      "Sales Executive",
+      "Sales Leader"
+    ]
+  },
+  "company": {
+    "name": "Duncan Aviation",
+    "domain": "duncanaviation.aero",
+    "website_url": "https://www.duncanaviation.aero",
+    "linkedin_company_url": "https://www.linkedin.com/company/duncan-aviation",
+    "description": "Duncan Aviation is a business aviation MRO and aircraft sales company offering private jet sales, acquisitions, maintenance, avionics, paint, interiors, parts, and related services.",
+    "industry": "Business aviation services and aircraft sales",
+    "location": "Lincoln, NE",
+    "notes": null,
+    "confidence": "high",
+    "evidence": [
+      {
+        "url": "https://www.duncanaviation.aero/",
+        "label": "Company homepage",
+        "note": "Primary site lists complete business aviation services including aircraft sales."
+      },
+      {
+        "url": "https://www.duncanaviation.aero/services/aircraft-sales/",
+        "label": "Aircraft sales page",
+        "note": "Primary site describes private jet sales and acquisitions."
+      },
+      {
+        "url": "https://www.linkedin.com/company/duncan-aviation",
+        "label": "Public LinkedIn company page",
+        "note": "Public company page confirms Duncan Aviation identity, website, headquarters, and aviation services."
+      }
+    ]
+  },
+  "people": [
+    {
+      "name": "Ryan Huss",
+      "linkedin_profile_url": "https://www.linkedin.com/in/ryan-huss-b15a8544",
+      "profile_key": "in/ryan-huss-b15a8544",
+      "email": "ryan.huss@duncanaviation.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official senior leadership page lists Ryan Huss as Executive Vice President of Sales, and public LinkedIn corroborates sales leadership at Duncan Aviation.",
+      "evidence": [
+        {
+          "url": "https://www.duncanaviation.aero/company/senior-leadership-team",
+          "label": "Duncan Aviation leadership page",
+          "note": "Lists Ryan Huss as Executive Vice President of Sales."
+        },
+        {
+          "url": "https://www.linkedin.com/in/ryan-huss-b15a8544",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result lists Executive Vice President of Sales and Marketing at Duncan Aviation."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "duncanaviation.aero",
+          "title": "Executive Vice President of Sales",
+          "department": "Sales",
+          "seniority": "executive",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.duncanaviation.aero/company/senior-leadership-team",
+              "label": "Duncan Aviation leadership page",
+              "note": "Lists Ryan Huss as Executive Vice President of Sales."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tim Barber",
+      "linkedin_profile_url": "https://www.linkedin.com/in/timbarber2",
+      "profile_key": "in/timbarber2",
+      "email": "tim.barber@duncanaviation.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Duncan profile lists Tim Barber as EMEA Aircraft Sales and describes aircraft brokerage and acquisitions work for buyers and sellers.",
+      "evidence": [
+        {
+          "url": "https://www.duncanaviation.aero/services/aircraft-sales/tim-barber",
+          "label": "Duncan Aviation profile",
+          "note": "Lists Tim Barber as EMEA Aircraft Sales and describes broker work for aircraft buyers and sellers."
+        },
+        {
+          "url": "https://www.linkedin.com/in/timbarber2",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result lists Aircraft Sales and Acquisitions at Duncan Aviation."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "duncanaviation.aero",
+          "title": "EMEA Aircraft Sales",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.duncanaviation.aero/services/aircraft-sales/tim-barber",
+              "label": "Duncan Aviation profile",
+              "note": "Lists Tim Barber as EMEA Aircraft Sales."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rene Cardona",
+      "linkedin_profile_url": "https://www.linkedin.com/in/rene-cardona-7014b8168",
+      "profile_key": "in/rene-cardona-7014b8168",
+      "email": "rene.cardona@duncanaviation.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Duncan profile lists Rene Cardona on the Aircraft Sales & Acquisitions team and describes his aircraft brokerage experience.",
+      "evidence": [
+        {
+          "url": "https://www.duncanaviation.aero/services/aircraft-sales/rene-cardona",
+          "label": "Duncan Aviation profile",
+          "note": "Lists Rene Cardona as Aircraft Sales & Acquisitions with extensive brokerage experience."
+        },
+        {
+          "url": "https://www.linkedin.com/in/rene-cardona-7014b8168",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result lists Sr. Aircraft Sales & Acquisitions and Transaction Management at Duncan Aviation."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "duncanaviation.aero",
+          "title": "Aircraft Sales & Acquisitions",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.duncanaviation.aero/services/aircraft-sales/rene-cardona",
+              "label": "Duncan Aviation profile",
+              "note": "Lists Rene Cardona as Aircraft Sales & Acquisitions."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "James Carroll",
+      "linkedin_profile_url": "https://www.linkedin.com/in/james-carroll-3136852",
+      "profile_key": "in/james-carroll-3136852",
+      "email": "james.carroll@duncanaviation.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Duncan profile lists James Carroll as EMEA Aircraft Sales, enhancing Duncan's presence across EMEA for aircraft sales and acquisitions.",
+      "evidence": [
+        {
+          "url": "https://www.duncanaviation.aero/services/aircraft-sales/james-carroll",
+          "label": "Duncan Aviation profile",
+          "note": "Lists James Carroll as EMEA Aircraft Sales."
+        },
+        {
+          "url": "https://www.linkedin.com/in/james-carroll-3136852",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result lists current experience with Duncan Aviation."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "duncanaviation.aero",
+          "title": "EMEA Aircraft Sales",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.duncanaviation.aero/services/aircraft-sales/james-carroll",
+              "label": "Duncan Aviation profile",
+              "note": "Lists James Carroll as EMEA Aircraft Sales."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Michael Kussatz",
+      "linkedin_profile_url": "https://www.linkedin.com/in/michael-kussatz-758503206",
+      "profile_key": "in/michael-kussatz-758503206",
+      "email": "michael.kussatz@duncanaviation.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Duncan profile lists Michael Kussatz as Corporate Jet Captain/Aircraft Sales & Acquisitions and describes his buyer/seller advisory role.",
+      "evidence": [
+        {
+          "url": "https://www.duncanaviation.aero/services/aircraft-sales/michael-kussatz",
+          "label": "Duncan Aviation profile",
+          "note": "Lists Michael Kussatz as Corporate Jet Captain/Aircraft Sales & Acquisitions."
+        },
+        {
+          "url": "https://www.linkedin.com/in/michael-kussatz-758503206",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result lists pilot and aircraft sales at Duncan Aviation."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "duncanaviation.aero",
+          "title": "Corporate Jet Captain/Aircraft Sales & Acquisitions",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.duncanaviation.aero/services/aircraft-sales/michael-kussatz",
+              "label": "Duncan Aviation profile",
+              "note": "Lists Michael Kussatz as Corporate Jet Captain/Aircraft Sales & Acquisitions."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Maria Maruna",
+      "linkedin_profile_url": "https://www.linkedin.com/in/maria-maruna-903233220",
+      "profile_key": "in/maria-maruna-903233220",
+      "email": "maria.maruna@duncanaviation.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Duncan profile lists Maria Maruna as Aircraft Sales & Acquisitions and describes global aviation sales, completions, and international business development experience.",
+      "evidence": [
+        {
+          "url": "https://www.duncanaviation.aero/services/aircraft-sales/maria-maruna",
+          "label": "Duncan Aviation profile",
+          "note": "Lists Maria Maruna as Aircraft Sales & Acquisitions."
+        },
+        {
+          "url": "https://www.linkedin.com/in/maria-maruna-903233220",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result lists aircraft sales and acquisition at Duncan Aviation."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "duncanaviation.aero",
+          "title": "Aircraft Sales & Acquisitions",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.duncanaviation.aero/services/aircraft-sales/maria-maruna",
+              "label": "Duncan Aviation profile",
+              "note": "Lists Maria Maruna as Aircraft Sales & Acquisitions."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ann Pollard",
+      "linkedin_profile_url": "https://www.linkedin.com/in/ann-pollard",
+      "profile_key": "in/ann-pollard",
+      "email": "ann.pollard@duncanaviation.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Duncan profile lists Ann Pollard as Aircraft Sales & Acquisitions and notes IADA Certified Aircraft Sales Broker recognition.",
+      "evidence": [
+        {
+          "url": "https://www.duncanaviation.aero/services/aircraft-sales/ann-pollard",
+          "label": "Duncan Aviation profile",
+          "note": "Lists Ann Pollard as Aircraft Sales & Acquisitions with aircraft transaction experience."
+        },
+        {
+          "url": "https://www.linkedin.com/in/ann-pollard",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result lists IADA Certified Aircraft Broker with Duncan Aviation."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "duncanaviation.aero",
+          "title": "Aircraft Sales & Acquisitions",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.duncanaviation.aero/services/aircraft-sales/ann-pollard",
+              "label": "Duncan Aviation profile",
+              "note": "Lists Ann Pollard as Aircraft Sales & Acquisitions."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Doug Roth",
+      "linkedin_profile_url": "https://www.linkedin.com/in/doug-roth-9032194a",
+      "profile_key": "in/doug-roth-9032194a",
+      "email": "doug.roth@duncanaviation.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Duncan profile lists Doug Roth as Aircraft Sales & Acquisitions and notes IADA Certified Aircraft Sales Broker recognition.",
+      "evidence": [
+        {
+          "url": "https://www.duncanaviation.aero/services/aircraft-sales/doug-roth",
+          "label": "Duncan Aviation profile",
+          "note": "Lists Doug Roth as Aircraft Sales & Acquisitions."
+        },
+        {
+          "url": "https://www.linkedin.com/in/doug-roth-9032194a",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result lists Aircraft Sales at Duncan Aviation."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "duncanaviation.aero",
+          "title": "Aircraft Sales & Acquisitions",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.duncanaviation.aero/services/aircraft-sales/doug-roth",
+              "label": "Duncan Aviation profile",
+              "note": "Lists Doug Roth as Aircraft Sales & Acquisitions."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rebekah Williams",
+      "linkedin_profile_url": "https://www.linkedin.com/in/rebekahwilliams1",
+      "profile_key": "in/rebekahwilliams1",
+      "email": "rebekah.williams@duncanaviation.com",
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official Duncan profile lists Rebekah Williams as Market Research Analyst, Aircraft Sales, supporting aircraft valuations, prospecting, broker relationships, and client-facing transaction intelligence.",
+      "evidence": [
+        {
+          "url": "https://www.duncanaviation.aero/services/aircraft-sales/rebekah-williams",
+          "label": "Duncan Aviation profile",
+          "note": "Lists Rebekah Williams as Market Research Analyst, Aircraft Sales."
+        },
+        {
+          "url": "https://www.linkedin.com/in/rebekahwilliams1",
+          "label": "Public LinkedIn result",
+          "note": "Public profile result lists Market Research Analyst Team Leader for Aircraft Sales & Acquisitions at Duncan Aviation."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "duncanaviation.aero",
+          "title": "Market Research Analyst, Aircraft Sales",
+          "department": "Sales",
+          "seniority": "manager",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://www.duncanaviation.aero/services/aircraft-sales/rebekah-williams",
+              "label": "Duncan Aviation profile",
+              "note": "Lists Rebekah Williams as Market Research Analyst, Aircraft Sales."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "name": "Kirsten Ehrenfried",
+      "reason": "Official site lists Market Research Analyst, but no stable individual LinkedIn profile URL was found."
+    },
+    {
+      "name": "Robert Suarez",
+      "reason": "Found older aircraft sales references and LinkedIn identity, but he is not on the current Duncan aircraft sales contacts page."
+    },
+    {
+      "name": "Duncan service and parts sales teams",
+      "reason": "Airframe, avionics, paint, interior, and parts sales contacts are less directly aligned than aircraft sales and acquisition contacts."
+    }
+  ],
+  "assumptions": [
+    "Imported the current aircraft sales/acquisitions team members with stable LinkedIn identities from the official contacts page.",
+    "Included Ryan Huss because he is the executive sales leader over Duncan Aviation's sales organization."
+  ],
+  "conflicts": []
+}
