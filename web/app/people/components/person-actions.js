@@ -1,0 +1,257 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "../../../components/ui/button";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogTitle
+} from "../../../components/ui/dialog";
+import {
+  Dropdown,
+  DropdownButton,
+  DropdownItem,
+  DropdownMenu
+} from "../../../components/ui/dropdown";
+import { Field, Label } from "../../../components/ui/fieldset";
+import { Select } from "../../../components/ui/select";
+import { buildQuickmailPlaceholderEmail } from "../../../lib/placeholder-email";
+
+function IconDots(props) {
+  return (
+    <svg {...props} viewBox="0 0 20 20" aria-hidden="true">
+      <circle cx="10" cy="4" r="1.5" fill="currentColor" />
+      <circle cx="10" cy="10" r="1.5" fill="currentColor" />
+      <circle cx="10" cy="16" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+async function fetchJson(url, options) {
+  const response = await fetch(url, options);
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(payload.error || "Request failed.");
+  }
+
+  return payload;
+}
+
+function CampaignModal({
+  personId,
+  personName,
+  email,
+  profileKey,
+  linkedinProfileUrl,
+  onClose
+}) {
+  const router = useRouter();
+  const [campaigns, setCampaigns] = useState([]);
+  const [selectedCampaignId, setSelectedCampaignId] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadCampaigns() {
+      setIsLoading(true);
+      setError("");
+
+      try {
+        const payload = await fetchJson("/api/quickmail/campaigns");
+
+        if (!isMounted) {
+          return;
+        }
+
+        setCampaigns(payload.campaigns || []);
+        setSelectedCampaignId(payload.campaigns?.[0]?.id || "");
+      } catch (loadError) {
+        if (isMounted) {
+          setError(loadError.message);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadCampaigns();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const selectedCampaign = campaigns.find(
+    (campaign) => campaign.id === selectedCampaignId
+  );
+  const quickmailEmail =
+    email ||
+    buildQuickmailPlaceholderEmail({
+      personId,
+      name: personName,
+      profileKey,
+      linkedinProfileUrl
+    });
+  const canSubmit = Boolean(selectedCampaign && !isLoading && !isSaving);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    if (!selectedCampaign) {
+      setError("Select a campaign.");
+      return;
+    }
+
+    setIsSaving(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      await fetchJson(
+        `/api/quickmail/campaigns/${encodeURIComponent(selectedCampaign.id)}/leads`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            personId,
+            workspaceId: selectedCampaign.workspaceId,
+            markContacted: true
+          })
+        }
+      );
+
+      setSuccess("Added to campaign.");
+      router.refresh();
+      window.setTimeout(onClose, 700);
+    } catch (saveError) {
+      setError(saveError.message);
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  return (
+    <Dialog
+      open
+      onClose={() => {
+        if (!isSaving) {
+          onClose();
+        }
+      }}
+      size="md"
+    >
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>Add to campaign</DialogTitle>
+        <p className="mt-1 text-sm/6 text-zinc-500">{personName}</p>
+
+        <DialogBody>
+          <Field>
+            <Label htmlFor={`campaign-${personId}`}>Campaign</Label>
+            <Select
+              id={`campaign-${personId}`}
+              value={selectedCampaignId}
+              disabled={isLoading || isSaving || campaigns.length === 0}
+              onChange={(event) => setSelectedCampaignId(event.target.value)}
+            >
+              {campaigns.length ? (
+                campaigns.map((campaign) => (
+                  <option key={campaign.id} value={campaign.id}>
+                    {campaign.name}
+                  </option>
+                ))
+              ) : (
+                <option value="">
+                  {isLoading ? "Loading campaigns..." : "No campaigns found"}
+                </option>
+              )}
+            </Select>
+          </Field>
+
+          {selectedCampaign?.workspaceName ? (
+            <p className="mt-2 text-xs/5 text-zinc-500">
+              {selectedCampaign.workspaceName}
+            </p>
+          ) : null}
+
+          {!email ? (
+            <p className="mt-4 rounded-md bg-amber-50 px-3 py-2 text-sm/6 text-amber-800 ring-1 ring-amber-600/20">
+              No email. Sending as {quickmailEmail}.
+            </p>
+          ) : null}
+
+          {error ? (
+            <p className="mt-4 rounded-md bg-rose-50 px-3 py-2 text-sm/6 text-rose-700 ring-1 ring-rose-600/20">
+              {error}
+            </p>
+          ) : null}
+
+          {success ? (
+            <p className="mt-4 rounded-md bg-emerald-50 px-3 py-2 text-sm/6 text-emerald-700 ring-1 ring-emerald-600/20">
+              {success}
+            </p>
+          ) : null}
+        </DialogBody>
+
+        <DialogActions>
+          <Button type="button" outline disabled={isSaving} onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" color="teal" disabled={!canSubmit}>
+            {isSaving ? "Adding..." : "Add"}
+          </Button>
+        </DialogActions>
+      </form>
+    </Dialog>
+  );
+}
+
+export function PersonActions({
+  personId,
+  personName,
+  email,
+  profileKey,
+  linkedinProfileUrl
+}) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  function openModal() {
+    setIsModalOpen(true);
+  }
+
+  return (
+    <div className="flex justify-end">
+      <Dropdown>
+        <DropdownButton outline aria-label={`Actions for ${personName}`}>
+          <IconDots data-slot="icon" />
+        </DropdownButton>
+        <DropdownMenu anchor="bottom end" aria-label={`Actions for ${personName}`}>
+          <DropdownItem onClick={openModal}>
+            Add to campaign
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+
+      {isModalOpen ? (
+        <CampaignModal
+          personId={personId}
+          personName={personName}
+          email={email}
+          profileKey={profileKey}
+          linkedinProfileUrl={linkedinProfileUrl}
+          onClose={() => setIsModalOpen(false)}
+        />
+      ) : null}
+    </div>
+  );
+}

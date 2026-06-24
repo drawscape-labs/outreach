@@ -1,5 +1,5 @@
 import "./styles.css";
-import Link from "next/link";
+import { Link } from "../components";
 
 export const metadata = {
   title: "Drawscape Outreach",

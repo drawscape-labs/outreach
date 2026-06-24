@@ -36,6 +36,8 @@ Before a full prospecting run, read the relevant references:
    - Look for people by `profile_key`, `linkedin_profile_url`, then email when available.
 3. Research the account:
    - Start with the company website: homepage, About, Team, Staff, Broker, Sales, Locations, Contact, News, press, and structured metadata.
+   - For car dealerships, explicitly check About Us / Meet Our Team / Staff pages. Dealer sites often list department-grouped staff cards with names, titles, direct phone numbers, and `Email Me` links; inspect visible text and link targets/source for `mailto:`, `/cdn-cgi/l/email-protection`, or similar encoded email patterns.
+   - For car dealerships, prioritize Sales, Brand Ambassador, General Manager, Sales Manager, and Guest Experience people.
    - Use current web search for public corroboration and candidate profile discovery.
    - Use LinkedIn only as a public identity hint. Do not attempt authenticated scraping.
 4. Find candidate people:

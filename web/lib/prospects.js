@@ -81,6 +81,63 @@ export function getCompanyPositions(companyId) {
   `);
 }
 
+export function getPerson(personId) {
+  const id = sqlInteger(personId);
+
+  if (!id) {
+    return null;
+  }
+
+  const people = query(`
+    SELECT
+      id,
+      profile_key AS profileKey,
+      linkedin_profile_url AS linkedinProfileUrl,
+      quickmail_lead_id AS quickmailLeadId,
+      name,
+      email,
+      status,
+      qualified,
+      notes,
+      created_at AS createdAt,
+      updated_at AS updatedAt
+    FROM people
+    WHERE id = ${id}
+    LIMIT 1;
+  `);
+
+  return people[0] || null;
+}
+
+export function getPersonPositions(personId) {
+  const id = sqlInteger(personId);
+
+  if (!id) {
+    return [];
+  }
+
+  return query(`
+    SELECT
+      pos.id,
+      pos.title,
+      pos.department,
+      pos.seniority,
+      pos.start_date AS startDate,
+      pos.end_date AS endDate,
+      pos.is_current AS isCurrent,
+      pos.notes,
+      c.id AS companyId,
+      c.name AS companyName,
+      c.domain,
+      c.linkedin_company_url AS linkedinCompanyUrl,
+      c.website_url AS websiteUrl
+    FROM positions pos
+    JOIN companies c ON c.id = pos.company_id
+    WHERE pos.person_id = ${id}
+    ORDER BY pos.is_current DESC, pos.created_at DESC, pos.id DESC;
+  `);
+}
+
 export function getPeople() {
   return query(`
     SELECT
@@ -128,7 +185,9 @@ export function getPeopleByStatuses(statuses) {
       p.qualified AS qualified,
       MAX(pos.created_at) AS positionCreatedAt,
       COUNT(pos.id) AS positionCount,
-      GROUP_CONCAT(DISTINCT c.name) AS companies
+      GROUP_CONCAT(DISTINCT c.name) AS companies,
+      GROUP_CONCAT(c.id || '::' || c.name, '||') AS companyRefs,
+      GROUP_CONCAT(NULLIF(pos.title, ''), '||') AS currentPositionTitles
     FROM people p
     JOIN positions pos ON pos.person_id = p.id AND pos.is_current = 1
     LEFT JOIN companies c ON c.id = pos.company_id

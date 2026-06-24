@@ -99,6 +99,86 @@ function graphqlErrorMessage(payload) {
   return payload?.error || "";
 }
 
+function uniqueValues(values) {
+  return Array.from(new Set(values.filter(Boolean)));
+}
+
+function normalizeEmail(value) {
+  return typeof value === "string" ? value.trim().toLowerCase() : "";
+}
+
+export function normalizeQuickmailLinkedinId(value) {
+  const input = typeof value === "string" ? value.trim() : "";
+
+  if (!input) {
+    return "";
+  }
+
+  const profileKeyMatch = input.match(/^(?:in|pub)\/([^/?#]+)/i);
+
+  if (profileKeyMatch) {
+    return profileKeyMatch[1].toLowerCase();
+  }
+
+  try {
+    const url = new URL(input);
+    const host = url.hostname.toLowerCase().replace(/^www\./, "");
+
+    if (host === "linkedin.com") {
+      const segments = url.pathname.split("/").filter(Boolean);
+      const profileIndex = segments.findIndex((segment) =>
+        ["in", "pub"].includes(segment.toLowerCase())
+      );
+
+      if (profileIndex !== -1 && segments[profileIndex + 1]) {
+        return segments[profileIndex + 1].toLowerCase();
+      }
+    }
+  } catch {
+    // Non-URL LinkedIn ids are accepted by QuickMail.
+  }
+
+  return input.replace(/^\/+|\/+$/g, "").toLowerCase();
+}
+
+function leadSearchTerms(lead) {
+  return uniqueValues([
+    normalizeQuickmailLinkedinId(lead?.linkedinId),
+    normalizeEmail(lead?.email)
+  ]);
+}
+
+function leadMatchesLinkedinId(candidate, lead) {
+  const candidateLinkedinId = normalizeQuickmailLinkedinId(candidate?.linkedinId);
+  const leadLinkedinId = normalizeQuickmailLinkedinId(lead?.linkedinId);
+
+  return Boolean(
+    candidateLinkedinId &&
+      leadLinkedinId &&
+      candidateLinkedinId === leadLinkedinId
+  );
+}
+
+function leadMatchesEmail(candidate, lead) {
+  const candidateEmail = normalizeEmail(candidate?.email);
+  const leadEmail = normalizeEmail(lead?.email);
+
+  return Boolean(candidateEmail && leadEmail && candidateEmail === leadEmail);
+}
+
+function duplicateLeadError(error) {
+  if (!(error instanceof QuickmailError)) {
+    return false;
+  }
+
+  const details = Array.isArray(error.details)
+    ? error.details.map((detail) => detail?.message).filter(Boolean)
+    : [];
+  const message = [error.message, ...details].join(" ");
+
+  return /already exists|duplicate/i.test(message);
+}
+
 export async function quickmailGraphql({ query, variables, operationName }) {
   const response = await fetch(QUICKMAIL_GRAPHQL_ENDPOINT, {
     method: "POST",
@@ -138,6 +218,128 @@ export async function quickmailGraphql({ query, variables, operationName }) {
   return payload.data;
 }
 
+export async function searchQuickmailLeads({ text, first = 25 }) {
+  const queryText = typeof text === "string" ? text.trim() : "";
+
+  if (!queryText) {
+    return [];
+  }
+
+  const data = await quickmailGraphql({
+    operationName: "SearchQuickmailLeads",
+    query: `
+      query SearchQuickmailLeads($text: String!, $first: Int!) {
+        leads(text: $text, first: $first) {
+          nodes {
+            id
+            email
+            firstName
+            lastName
+            fullName
+            title
+            role
+            phone
+            linkedinId
+            language
+            appUrl
+          }
+        }
+      }
+    `,
+    variables: {
+      text: queryText,
+      first
+    }
+  });
+
+  return data.leads.nodes;
+}
+
+export async function getQuickmailLead({ leadId }) {
+  const id = typeof leadId === "string" ? leadId.trim() : "";
+
+  if (!id) {
+    return null;
+  }
+
+  const data = await quickmailGraphql({
+    operationName: "GetQuickmailLead",
+    query: `
+      query GetQuickmailLead($id: ID!) {
+        lead(id: $id) {
+          id
+          email
+          firstName
+          lastName
+          fullName
+          title
+          role
+          phone
+          linkedinId
+          score
+          language
+          appUrl
+          tags(first: 20) {
+            nodes {
+              id
+              name
+            }
+          }
+          customProperties(first: 50) {
+            nodes {
+              id
+              name
+              value
+            }
+          }
+        }
+      }
+    `,
+    variables: {
+      id
+    }
+  });
+
+  return data.lead;
+}
+
+export async function findQuickmailLead({ lead }) {
+  const candidatesById = new Map();
+
+  for (const text of leadSearchTerms(lead)) {
+    const candidates = await searchQuickmailLeads({ text });
+
+    for (const candidate of candidates) {
+      if (candidate?.id) {
+        candidatesById.set(candidate.id, candidate);
+      }
+    }
+  }
+
+  const exactMatches = uniqueValues(
+    Array.from(candidatesById.values())
+      .filter(
+        (candidate) =>
+          leadMatchesLinkedinId(candidate, lead) || leadMatchesEmail(candidate, lead)
+      )
+      .map((candidate) => candidate.id)
+  ).map((id) => candidatesById.get(id));
+
+  if (exactMatches.length > 1) {
+    throw new QuickmailError("Multiple QuickMail leads match this contact.", {
+      status: 409,
+      details: exactMatches.map((candidate) => ({
+        id: candidate.id,
+        email: candidate.email,
+        linkedinId: candidate.linkedinId,
+        appUrl: candidate.appUrl
+      }))
+    });
+  }
+
+  return exactMatches[0] || null;
+}
+
 export async function createQuickmailLead({ workspaceId, lead }) {
   const data = await quickmailGraphql({
     operationName: "CreateQuickmailLead",
@@ -160,6 +362,37 @@ export async function createQuickmailLead({ workspaceId, lead }) {
   });
 
   return data.createLeads.leads[0];
+}
+
+export async function createOrReuseQuickmailLead({ workspaceId, lead }) {
+  const existingLead = await findQuickmailLead({ lead });
+
+  if (existingLead) {
+    return {
+      action: "reused",
+      lead: existingLead
+    };
+  }
+
+  try {
+    return {
+      action: "created",
+      lead: await createQuickmailLead({ workspaceId, lead })
+    };
+  } catch (error) {
+    if (duplicateLeadError(error)) {
+      const duplicateLead = await findQuickmailLead({ lead });
+
+      if (duplicateLead) {
+        return {
+          action: "reused",
+          lead: duplicateLead
+        };
+      }
+    }
+
+    throw error;
+  }
 }
 
 export async function listQuickmailCampaigns({ text = "", first = 50, skip = 0 } = {}) {

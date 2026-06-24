@@ -2,10 +2,11 @@ import { revalidatePath } from "next/cache";
 import { query, sqlInteger } from "../../../../../../lib/db";
 import {
   addQuickmailLeadsToCampaign,
-  createQuickmailLead,
+  createOrReuseQuickmailLead,
   getQuickmailEnv,
   QuickmailError
 } from "../../../../../../lib/quickmail";
+import { buildQuickmailPlaceholderEmail } from "../../../../../../lib/placeholder-email";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -35,6 +36,14 @@ function jsonError(error, status = 400, details) {
 
 function readStringId(value) {
   return typeof value === "string" && value.trim() ? value.trim() : "";
+}
+
+function sqlString(value) {
+  if (value === null || value === undefined || value === "") {
+    return "NULL";
+  }
+
+  return `'${String(value).replace(/'/g, "''")}'`;
 }
 
 function splitName(name) {
@@ -93,6 +102,8 @@ function getPersonLead(personId) {
   const people = query(`
     SELECT
       p.id,
+      p.profile_key AS profileKey,
+      p.quickmail_lead_id AS quickmailLeadId,
       p.name,
       p.email,
       p.linkedin_profile_url AS linkedinProfileUrl,
@@ -116,8 +127,16 @@ function getPersonLead(personId) {
 
   return {
     localPersonId: person.id,
+    quickmailLeadId: person.quickmailLeadId,
     lead: {
-      email: person.email,
+      email:
+        person.email ||
+        buildQuickmailPlaceholderEmail({
+          personId: person.id,
+          name: person.name,
+          profileKey: person.profileKey,
+          linkedinProfileUrl: person.linkedinProfileUrl
+        }),
       firstName,
       lastName,
       companyName: person.companyName,
@@ -127,18 +146,33 @@ function getPersonLead(personId) {
   };
 }
 
-function markPersonContacted(personId) {
+function updatePersonAfterQuickmailSync({ personId, quickmailLeadId, markContacted }) {
   const id = sqlInteger(personId);
+  const leadId = readStringId(quickmailLeadId);
 
   if (!id) {
     return;
   }
 
-  query(`
-    UPDATE people
-    SET status = 'Contacted'
-    WHERE id = ${id};
-  `);
+  if (!leadId && !markContacted) {
+    return;
+  }
+
+  if (leadId) {
+    query(`
+      UPDATE OR IGNORE people
+      SET quickmail_lead_id = ${sqlString(leadId)}
+      WHERE id = ${id};
+    `);
+  }
+
+  if (markContacted) {
+    query(`
+      UPDATE people
+      SET status = 'Contacted'
+      WHERE id = ${id};
+    `);
+  }
 
   revalidatePath("/people");
   revalidatePath("/contacted");
@@ -179,16 +213,13 @@ export async function POST(request, context) {
   }
 
   let quickmailLead;
+  let quickmailLeadAction = existingLeadId ? "provided" : "";
   let localPersonId = null;
 
   try {
     if (existingLeadId) {
       quickmailLead = { id: existingLeadId };
     } else {
-      if (!workspaceId) {
-        return jsonError("workspaceId is required to create a QuickMail lead.");
-      }
-
       let leadInput = payload.lead;
 
       if (hasPersonId) {
@@ -199,19 +230,32 @@ export async function POST(request, context) {
         }
 
         localPersonId = personLead.localPersonId;
-        leadInput = personLead.lead;
+        if (personLead.quickmailLeadId) {
+          quickmailLead = { id: personLead.quickmailLeadId };
+          quickmailLeadAction = "stored";
+        } else {
+          leadInput = personLead.lead;
+        }
       }
 
-      const cleaned = cleanLeadInput(leadInput);
+      if (!quickmailLead) {
+        if (!workspaceId) {
+          return jsonError("workspaceId is required to create a QuickMail lead.");
+        }
 
-      if (cleaned.error) {
-        return jsonError(cleaned.error);
+        const cleaned = cleanLeadInput(leadInput);
+
+        if (cleaned.error) {
+          return jsonError(cleaned.error);
+        }
+
+        const quickmailLeadResult = await createOrReuseQuickmailLead({
+          workspaceId,
+          lead: cleaned.lead
+        });
+        quickmailLead = quickmailLeadResult.lead;
+        quickmailLeadAction = quickmailLeadResult.action;
       }
-
-      quickmailLead = await createQuickmailLead({
-        workspaceId,
-        lead: cleaned.lead
-      });
     }
 
     const result = await addQuickmailLeadsToCampaign({
@@ -219,13 +263,18 @@ export async function POST(request, context) {
       leadIds: [quickmailLead.id]
     });
 
-    if (payload.markContacted === true && localPersonId) {
-      markPersonContacted(localPersonId);
+    if (localPersonId) {
+      updatePersonAfterQuickmailSync({
+        personId: localPersonId,
+        quickmailLeadId: quickmailLead.id,
+        markContacted: payload.markContacted === true
+      });
     }
 
     return Response.json({
       lead: result.leads.find((lead) => lead.id === quickmailLead.id) || quickmailLead,
-      campaign: result.campaign
+      campaign: result.campaign,
+      quickmailLeadAction
     });
   } catch (error) {
     if (error instanceof QuickmailError) {

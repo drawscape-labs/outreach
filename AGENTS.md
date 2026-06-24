@@ -7,8 +7,25 @@ The pitch is that Drawscape will make custom art that they can then gift to thei
 # Web Application
 We are creating a basic SQLite database to track companies/people/positions with some basic status columsn to track progress.
 
+## Project Strucutre
+/web
+  /app
+    layout.js - main layout
+    page.js - main page
+    /feature - name of the core feature (companies, people, etc)
+      /[id] - detail page for and individual record
+      /components - reusable compoentns that are related to this feature, like tables, labels, etc.
+      /lib - no react disaply compoent code, helper function and pure js/typscript functions
+      page.js - overview page, usually a list type display
+  /components - truely global componets used everywhere. status, labels, modals, dialogs, buttons, etc.
+    /ui - these are the ui componets we should be reusing everywhere (select, form elemesnt, etc.) based on Headless UI v2.1
+  /types - store global type information here, indtead of stuffing into each component.
+  /lib - for pure library files quickmail api, datbase wrapper, api wrappers, etc.
+
+
 ## UI Examples
 Use the examples in `/tailwind-pro-examples` to build ui elements. Check here first before creating your own styles or ui elements.
+Use the `/web/components/ui` Headless UI v2.1 compoents when building.
 
 ## Design Philsophy
 When designing elements/screens/pages for the web app, i value minimalistic design. We do not want endless headers, descirptions, and helper text explaining everyting. We was simple lables/headers and necesssary information.

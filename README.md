@@ -10,6 +10,7 @@ Prospecting workspace for finding companies and people to reach out to.
 - Person records use generated `id` values as the primary key.
 - Person `profile_key` values are unique LinkedIn path keys, like `in/lewis-nisbet-097071137`.
 - Full person LinkedIn URLs live separately in `linkedin_profile_url`.
+- Person `quickmail_lead_id` stores the QuickMail lead id after a successful sync.
 - Person `status` values are `New`, `Contacted`, or `Replied`; SQLite enforces them with a `CHECK` constraint in `db/schema.sql`, and the web app imports the same enum from `web/lib/statuses.js`.
 - Person `qualified` is a boolean stored as `0` or `1`.
 - Position records map people to companies with `person_id` and `company_id`.
@@ -88,8 +89,8 @@ curl -X POST http://127.0.0.1:4200/api/quickmail/campaigns/cmp_123/leads \
 The body must include exactly one of:
 
 - `leadId`: an existing QuickMail lead id.
-- `personId`: a local person id; the endpoint creates the QuickMail lead first.
-- `lead`: a QuickMail lead object with at least `email`.
+- `personId`: a local person id; the endpoint reuses an exact QuickMail lead match or creates one first.
+- `lead`: a QuickMail lead object with at least `email`; exact email or LinkedIn matches are reused.
 
 Use `"markContacted": true` with `personId` to update the local person status
 after QuickMail accepts the campaign add.

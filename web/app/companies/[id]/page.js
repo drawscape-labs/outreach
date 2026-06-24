@@ -5,19 +5,9 @@ import {
   ExternalAnchor,
   PageHeader,
   PageShell,
-  PersonIdentity,
-  SectionHeader,
-  TableEmpty,
-  TableFrame,
-  tableCellClass,
-  tableCellFirstClass,
-  tableCellLastClass,
-  tableHeaderClass,
-  tableHeaderFirstClass,
-  tableHeaderLastClass
-} from "../../components";
-import { EditableLeadStatus, EditableQualifiedStatus } from "../../lead-field-controls";
-import { PersonActions } from "../../person-actions";
+  SectionHeader
+} from "../../../components";
+import { PeopleTable } from "../../people/components/people-table";
 import { getCompany, getCompanyPositions } from "../../../lib/prospects";
 
 export const dynamic = "force-dynamic";
@@ -66,6 +56,11 @@ export default async function CompanyDetailPage({ params }) {
   }
 
   const positions = getCompanyPositions(id);
+  const people = positions.map((position) => ({
+    ...position,
+    companyId: company.id,
+    companyName: company.name
+  }));
   const currentPeople = new Set(positions.map((position) => position.personId));
   const peopleWithEmail = positions.filter((position) => position.email).length;
   const seniorities = new Set(positions.map((position) => position.seniority).filter(Boolean));
@@ -119,10 +114,14 @@ export default async function CompanyDetailPage({ params }) {
             {company.industry || <EmptyValue />}
           </CompanyDetailItem>
           <CompanyDetailItem label="LinkedIn">
-            <ExternalAnchor href={company.linkedinCompanyUrl}>Company page</ExternalAnchor>
+            <ExternalAnchor href={company.linkedinCompanyUrl}>
+              {company.linkedinCompanyUrl}
+            </ExternalAnchor>
           </CompanyDetailItem>
           <CompanyDetailItem label="Website" className="lg:col-span-2">
-            <ExternalAnchor href={company.websiteUrl}>Website</ExternalAnchor>
+            <ExternalAnchor href={company.websiteUrl}>
+              {company.websiteUrl}
+            </ExternalAnchor>
           </CompanyDetailItem>
           <CompanyDetailItem label="Location">
             {company.location || <EmptyValue />}
@@ -132,83 +131,11 @@ export default async function CompanyDetailPage({ params }) {
 
       <section className="mt-10">
         <SectionHeader title="People" />
-        <TableFrame label="Company people table">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className={tableHeaderFirstClass}>
-                  Name
-                </th>
-                <th scope="col" className={`${tableHeaderClass} hidden md:table-cell`}>
-                  Position
-                </th>
-                <th scope="col" className={tableHeaderClass}>
-                  Status
-                </th>
-                <th scope="col" className={tableHeaderClass}>
-                  Qualified
-                </th>
-                <th scope="col" className={`${tableHeaderClass} hidden lg:table-cell`}>
-                  Email
-                </th>
-                <th scope="col" className={`${tableHeaderClass} text-right`}>
-                  LinkedIn
-                </th>
-                <th scope="col" className={tableHeaderLastClass}>
-                  <span className="sr-only">Actions</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 bg-white">
-              {positions.length === 0 ? (
-                <TableEmpty colSpan={7}>No current people mapped to this company yet.</TableEmpty>
-              ) : (
-                positions.map((position) => (
-                  <tr key={position.id}>
-                    <td className={tableCellFirstClass}>
-                      <PersonIdentity
-                        name={position.personName}
-                        profileKey={position.profileKey}
-                        details={[
-                          {
-                            label: "Position",
-                            value: position.title,
-                            missingValue: "No position"
-                          }
-                        ]}
-                      />
-                    </td>
-                    <td className={`${tableCellClass} hidden md:table-cell`}>
-                      {position.title || <EmptyValue />}
-                    </td>
-                    <td className={tableCellClass}>
-                      <EditableLeadStatus personId={position.personId} status={position.status} />
-                    </td>
-                    <td className={tableCellClass}>
-                      <EditableQualifiedStatus
-                        personId={position.personId}
-                        qualified={position.qualified}
-                      />
-                    </td>
-                    <td className={`${tableCellClass} hidden lg:table-cell`}>
-                      {position.email || <EmptyValue />}
-                    </td>
-                    <td className={`${tableCellClass} text-right font-medium`}>
-                      <ExternalAnchor href={position.linkedinProfileUrl}>Profile</ExternalAnchor>
-                    </td>
-                    <td className={tableCellLastClass}>
-                      <PersonActions
-                        personId={position.personId}
-                        personName={position.personName}
-                        email={position.email}
-                      />
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </TableFrame>
+        <PeopleTable
+          people={people}
+          emptyMessage="No current people mapped to this company yet."
+          label="Company people table"
+        />
       </section>
     </PageShell>
   );

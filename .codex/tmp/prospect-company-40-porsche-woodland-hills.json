@@ -1,0 +1,528 @@
+{
+  "mode": "dry-run",
+  "input": {
+    "company_name": "Porsche Woodland Hills",
+    "domain": "porschewoodlandhills.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/porsche-woodland-hills",
+    "target_titles": [
+      "General Manager",
+      "General Sales Manager",
+      "Sales Manager",
+      "Pre-Owned Sales Manager",
+      "Porsche Certified Brand Ambassador",
+      "Sales Representative",
+      "Customer Experience Manager"
+    ]
+  },
+  "company": {
+    "name": "Porsche Woodland Hills",
+    "domain": "porschewoodlandhills.com",
+    "website_url": "https://www.porschewoodlandhills.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/porsche-woodland-hills",
+    "description": "Porsche Woodland Hills is a full-service Porsche dealership serving Woodland Hills, Los Angeles, and the greater LA area.",
+    "industry": "Luxury automotive dealership",
+    "location": "Woodland Hills, CA",
+    "notes": null,
+    "confidence": "high",
+    "evidence": [
+      {
+        "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+        "label": "Porsche Woodland Hills staff page",
+        "note": "Official staff page lists management, sales managers, Porsche Certified Brand Ambassadors, and sales representatives."
+      },
+      {
+        "url": "https://www.linkedin.com/company/porsche-woodland-hills",
+        "label": "LinkedIn company page",
+        "note": "Public company page describes Porsche Woodland Hills as a full-service dealership selling new and pre-owned Porsche vehicles in Woodland Hills."
+      },
+      {
+        "url": "https://www.dealerrater.com/sales/Porsche-Woodland-Hills-Employees-15670/",
+        "label": "DealerRater employees page",
+        "note": "Secondary source confirms current customer-facing sales staff and review activity."
+      }
+    ]
+  },
+  "people": [
+    {
+      "name": "Nicolas Bourbon",
+      "linkedin_profile_url": "https://www.linkedin.com/in/nicolas-bourbon-8ba48b7",
+      "profile_key": "in/nicolas-bourbon-8ba48b7",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official staff page lists Nicolas Bourbon as Sales Manager; public LinkedIn result exposes his canonical profile URL and says he is Sales Manager at Porsche Woodland Hills.",
+      "evidence": [
+        {
+          "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+          "label": "Porsche Woodland Hills staff page",
+          "note": "Lists Nicolas Bourbon as Sales Manager."
+        },
+        {
+          "url": "https://www.linkedin.com/in/nicolas-bourbon-8ba48b7",
+          "label": "Public LinkedIn profile",
+          "note": "Canonical public profile URL; public search result describes him as Sales Manager at Porsche Woodland Hills."
+        },
+        {
+          "url": "https://www.dealerrater.com/sales/Nicolas-Bourbon-review-61687/",
+          "label": "DealerRater profile",
+          "note": "Secondary profile says Nick has been with the Porsche Woodland Hills franchise since 2009."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "porschewoodlandhills.com",
+          "title": "Sales Manager",
+          "department": "Sales",
+          "seniority": "manager",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+              "label": "Porsche Woodland Hills staff page",
+              "note": "Current staff listing gives the Sales Manager title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Afshin Kimiagar",
+      "linkedin_profile_url": "https://www.linkedin.com/in/afshinkimiagar",
+      "profile_key": "in/afshinkimiagar",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official staff page lists Afshin Kimiagar as Pre-Owned Sales Manager; public LinkedIn result exposes a matching Porsche Woodland Hills profile URL.",
+      "evidence": [
+        {
+          "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+          "label": "Porsche Woodland Hills staff page",
+          "note": "Lists Afshin Kimiagar as Pre-Owned Sales Manager."
+        },
+        {
+          "url": "https://www.linkedin.com/in/afshinkimiagar",
+          "label": "Public LinkedIn profile",
+          "note": "Canonical public profile URL; public search result associates him with Porsche Woodland Hills."
+        },
+        {
+          "url": "https://www.linkedin.com/company/porsche-woodland-hills",
+          "label": "LinkedIn company page",
+          "note": "Public company page employee preview includes Afshin Kimiagar."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "porschewoodlandhills.com",
+          "title": "Pre-Owned Sales Manager",
+          "department": "Sales",
+          "seniority": "manager",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+              "label": "Porsche Woodland Hills staff page",
+              "note": "Current staff listing gives the Pre-Owned Sales Manager title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Kris Assad",
+      "linkedin_profile_url": "https://www.linkedin.com/in/kris-assad-58b75390",
+      "profile_key": "in/kris-assad-58b75390",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official staff page and DealerRater list Kris Assad as Porsche Certified Brand Ambassador; public LinkedIn result exposes his canonical profile URL with Porsche Woodland Hills association.",
+      "evidence": [
+        {
+          "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+          "label": "Porsche Woodland Hills staff page",
+          "note": "Lists Kris Assad as Porsche Certified Brand Ambassador."
+        },
+        {
+          "url": "https://www.linkedin.com/in/kris-assad-58b75390",
+          "label": "Public LinkedIn profile",
+          "note": "Canonical public profile URL; public search result associates him with Porsche Woodland Hills."
+        },
+        {
+          "url": "https://www.dealerrater.com/sales/Porsche-Woodland-Hills-Employees-15670/",
+          "label": "DealerRater employees page",
+          "note": "Lists Kris Assad as Porsche Certified Brand Ambassador."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "porschewoodlandhills.com",
+          "title": "Porsche Certified Brand Ambassador",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+              "label": "Porsche Woodland Hills staff page",
+              "note": "Current staff listing gives the Porsche Certified Brand Ambassador title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Marilyn Baroud",
+      "linkedin_profile_url": "https://www.linkedin.com/in/marilyn-g-baroud-25417373",
+      "profile_key": "in/marilyn-g-baroud-25417373",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": "LinkedIn profile uses display name Marilyn G. Baroud.",
+      "confidence": "high",
+      "match_reason": "Official staff page and DealerRater list Marilyn Baroud as Porsche Certified Brand Ambassador; public LinkedIn result exposes a matching brand ambassador profile URL.",
+      "evidence": [
+        {
+          "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+          "label": "Porsche Woodland Hills staff page",
+          "note": "Lists Marilyn Baroud as Porsche Certified Brand Ambassador."
+        },
+        {
+          "url": "https://www.linkedin.com/in/marilyn-g-baroud-25417373",
+          "label": "Public LinkedIn profile",
+          "note": "Canonical public profile URL; public search result describes her as a Porsche Brand Ambassador."
+        },
+        {
+          "url": "https://www.dealerrater.com/sales/Porsche-Woodland-Hills-Employees-15670/",
+          "label": "DealerRater employees page",
+          "note": "Lists Marilyn Baroud as Porsche Certified Brand Ambassador."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "porschewoodlandhills.com",
+          "title": "Porsche Certified Brand Ambassador",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+              "label": "Porsche Woodland Hills staff page",
+              "note": "Current staff listing gives the Porsche Certified Brand Ambassador title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Brandon Breceda",
+      "linkedin_profile_url": "https://www.linkedin.com/in/brandon-breceda-mba-3804a3117",
+      "profile_key": "in/brandon-breceda-mba-3804a3117",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official staff page lists Brandon Breceda as Porsche Certified Brand Ambassador; public LinkedIn result exposes his canonical profile URL and describes him as a Porsche sales specialist.",
+      "evidence": [
+        {
+          "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+          "label": "Porsche Woodland Hills staff page",
+          "note": "Lists Brandon Breceda as Porsche Certified Brand Ambassador."
+        },
+        {
+          "url": "https://www.linkedin.com/in/brandon-breceda-mba-3804a3117",
+          "label": "Public LinkedIn profile",
+          "note": "Canonical public profile URL; public search result describes him as Sales Specialist at Porsche Woodland Hills."
+        },
+        {
+          "url": "https://www.dealerrater.com/sales/Brandon-Breceda-review-935870/",
+          "label": "DealerRater profile",
+          "note": "Secondary review profile confirms Porsche Woodland Hills association."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "porschewoodlandhills.com",
+          "title": "Porsche Certified Brand Ambassador",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+              "label": "Porsche Woodland Hills staff page",
+              "note": "Current staff listing gives the Porsche Certified Brand Ambassador title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mo Choura",
+      "linkedin_profile_url": "https://www.linkedin.com/in/mochoura",
+      "profile_key": "in/mochoura",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Official staff page lists Mo Choura as Sales Representative; public LinkedIn result exposes his canonical profile URL with Porsche Woodland Hills association.",
+      "evidence": [
+        {
+          "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+          "label": "Porsche Woodland Hills staff page",
+          "note": "Lists Mo Choura as Sales Representative."
+        },
+        {
+          "url": "https://www.linkedin.com/in/mochoura",
+          "label": "Public LinkedIn profile",
+          "note": "Canonical public profile URL; public search result associates him with Porsche Woodland Hills."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "porschewoodlandhills.com",
+          "title": "Sales Representative",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+              "label": "Porsche Woodland Hills staff page",
+              "note": "Current staff listing gives the Sales Representative title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Michael Wanner",
+      "linkedin_profile_url": "https://www.linkedin.com/in/michaelwanner1",
+      "profile_key": "in/michaelwanner1",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": "Official staff page lists him as a Porsche Certified Brand Ambassador; public LinkedIn headline emphasizes automotive general management.",
+      "confidence": "medium",
+      "match_reason": "Official staff page lists Michael Wanner as Porsche Certified Brand Ambassador; public LinkedIn company page and search result expose a matching Porsche Woodland Hills profile URL.",
+      "evidence": [
+        {
+          "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+          "label": "Porsche Woodland Hills staff page",
+          "note": "Lists Michael Wanner as Porsche Certified Brand Ambassador."
+        },
+        {
+          "url": "https://www.linkedin.com/in/michaelwanner1",
+          "label": "Public LinkedIn profile",
+          "note": "Canonical public profile URL; public search result associates him with Porsche Woodland Hills."
+        },
+        {
+          "url": "https://www.linkedin.com/company/porsche-woodland-hills",
+          "label": "LinkedIn company page",
+          "note": "Public company page employee preview includes Michael Wanner."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "porschewoodlandhills.com",
+          "title": "Porsche Certified Brand Ambassador",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+              "label": "Porsche Woodland Hills staff page",
+              "note": "Current staff listing gives the Porsche Certified Brand Ambassador title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "David Lang",
+      "linkedin_profile_url": "https://www.linkedin.com/in/david-lang-bb378a184",
+      "profile_key": "in/david-lang-bb378a184",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": null,
+      "confidence": "high",
+      "match_reason": "Already exists in SQLite; official staff page and public LinkedIn result confirm current Porsche Certified Brand Ambassador role.",
+      "evidence": [
+        {
+          "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+          "label": "Porsche Woodland Hills staff page",
+          "note": "Lists David Lang as Porsche Certified Brand Ambassador."
+        },
+        {
+          "url": "https://www.linkedin.com/in/david-lang-bb378a184",
+          "label": "Public LinkedIn profile",
+          "note": "Canonical public profile URL; public search result describes him as Brand Ambassador at Porsche Woodland Hills."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "porschewoodlandhills.com",
+          "title": "Porsche Certified Brand Ambassador",
+          "department": "Sales",
+          "seniority": "individual_contributor",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+              "label": "Porsche Woodland Hills staff page",
+              "note": "Current staff listing gives the Porsche Certified Brand Ambassador title."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Scott Stanley",
+      "linkedin_profile_url": "https://www.linkedin.com/in/scott-stanley-07139723",
+      "profile_key": "in/scott-stanley-07139723",
+      "email": null,
+      "status": "New",
+      "qualified": true,
+      "notes": "Public search also surfaced https://www.linkedin.com/in/gm-scott-stanley-59116b214 as another likely profile for the same person; using the stronger canonical profile with 500+ connections.",
+      "confidence": "medium",
+      "match_reason": "Official staff page and DealerRater list Scott Stanley as General Manager; the selected public LinkedIn profile is the stronger matching profile for the same current role.",
+      "evidence": [
+        {
+          "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+          "label": "Porsche Woodland Hills staff page",
+          "note": "Lists Scott Stanley as General Manager."
+        },
+        {
+          "url": "https://www.linkedin.com/in/scott-stanley-07139723",
+          "label": "Public LinkedIn profile candidate",
+          "note": "Public search result describes this profile as General Manager at Porsche Woodland Hills."
+        },
+        {
+          "url": "https://www.linkedin.com/in/gm-scott-stanley-59116b214",
+          "label": "Alternate public LinkedIn profile candidate",
+          "note": "Public search result also describes this profile as General Manager at Porsche Woodland Hills."
+        },
+        {
+          "url": "https://www.dealerrater.com/sales/Porsche-Woodland-Hills-Employees-15670/",
+          "label": "DealerRater employees page",
+          "note": "Lists Scott Stanley as General Manager."
+        }
+      ],
+      "positions": [
+        {
+          "company_domain": "porschewoodlandhills.com",
+          "title": "General Manager",
+          "department": "Sales",
+          "seniority": "manager",
+          "start_date": null,
+          "end_date": null,
+          "is_current": true,
+          "notes": null,
+          "confidence": "high",
+          "evidence": [
+            {
+              "url": "https://woodlandhills.porsche.com/en/about-us/staff",
+              "label": "Porsche Woodland Hills staff page",
+              "note": "Current staff listing gives the General Manager title."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "name": "Brian Sheldon",
+      "reason": "Excellent target and confirmed General Sales Manager on official staff page plus NodCards, but no stable LinkedIn profile URL was found in public search."
+    },
+    {
+      "name": "Kevin Bork",
+      "reason": "Official staff page lists Sales Manager, but no stable LinkedIn profile URL was found in public search."
+    },
+    {
+      "name": "Jeremy Whittle",
+      "reason": "Official staff page and DealerRater list Porsche Certified Brand Ambassador, but no stable LinkedIn profile URL was found in public search."
+    },
+    {
+      "name": "Sofia Lunsford",
+      "reason": "Official staff page lists Porsche Certified Brand Ambassador and DealerRater lists Sales Representative, but no stable LinkedIn profile URL was found in public search."
+    },
+    {
+      "name": "Russell Brannan",
+      "reason": "Official staff page and DealerRater list Porsche Certified Brand Ambassador, but no stable LinkedIn profile URL was found in public search."
+    },
+    {
+      "name": "Carl Belichesky",
+      "reason": "Official staff page lists Porsche Certified Brand Ambassador, but no stable LinkedIn profile URL was found in public search; DealerRater appears to shorten his name to Carl Bell."
+    },
+    {
+      "name": "Myron Grombacher",
+      "reason": "Official staff page and DealerRater list Porsche Certified Brand Ambassador, but no stable LinkedIn profile URL was found in public search."
+    },
+    {
+      "name": "Charlotte Burley",
+      "reason": "Customer Experience Manager and Marketing role is relevant for gifts/events, but no stable LinkedIn profile URL was found in public search."
+    },
+    {
+      "name": "Aaron Corcoran",
+      "reason": "Public LinkedIn search result suggests a current Porsche Woodland Hills brand ambassador role, but he was not found on the current official staff page."
+    },
+    {
+      "name": "Ryan Turnbull",
+      "reason": "Public LinkedIn company page employee preview lists him, but public result indicates Technician rather than a sales/client-facing role."
+    }
+  ],
+  "assumptions": [
+    "Brand Ambassador is treated as a sales/client-facing role for Porsche dealerships.",
+    "Porsche Woodland Hills' canonical database domain remains porschewoodlandhills.com even though the public staff page is hosted at woodlandhills.porsche.com.",
+    "Email addresses were left null because accessible public sources did not reveal reliable plain email addresses."
+  ],
+  "conflicts": [
+    {
+      "type": "person_identity",
+      "name": "Scott Stanley",
+      "message": "Two plausible public LinkedIn profile URLs were found for the same General Manager; selected https://www.linkedin.com/in/scott-stanley-07139723 as the stronger canonical profile and kept the alternate in notes."
+    }
+  ]
+}

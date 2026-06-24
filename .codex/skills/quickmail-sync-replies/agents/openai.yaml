@@ -1,0 +1,4 @@
+interface:
+  display_name: "QuickMail Reply Sync"
+  short_description: "Sync QuickMail replies to outreach status"
+  default_prompt: "Use $quickmail-sync-replies to sync recent QuickMail reply events into the Drawscape outreach database."

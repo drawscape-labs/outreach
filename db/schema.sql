@@ -43,6 +43,7 @@ END;
     - id
     - profile_key
     - linkedin_profile_url
+    - quickmail_lead_id
     - name
     - email
     - status
@@ -55,6 +56,7 @@ CREATE TABLE IF NOT EXISTS people (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   profile_key TEXT NOT NULL UNIQUE,
   linkedin_profile_url TEXT NOT NULL UNIQUE,
+  quickmail_lead_id TEXT,
   name TEXT NOT NULL,
   email TEXT,
   status TEXT NOT NULL DEFAULT 'New'
@@ -64,6 +66,10 @@ CREATE TABLE IF NOT EXISTS people (
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS people_quickmail_lead_id_idx
+ON people(quickmail_lead_id)
+WHERE quickmail_lead_id IS NOT NULL;
 
 CREATE TRIGGER IF NOT EXISTS people_set_updated_at
 AFTER UPDATE ON people

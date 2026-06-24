@@ -33,20 +33,25 @@ Usually skip:
 
 High relevance:
 
+- Sales
 - Sales Consultant
 - Client Advisor
+- Brand Ambassador
+- Global Brand Ambassador
 - Brand Specialist
 - Sales Manager
 - General Sales Manager
+- General Manager
 - Dealer Principal
 - Internet Sales Manager
 - Fleet Sales
+- Guest Experience
+- Guest Experience Manager
 
 Review:
 
 - Business Development Center
 - Finance Manager
-- General Manager
 
 Usually skip:
 
