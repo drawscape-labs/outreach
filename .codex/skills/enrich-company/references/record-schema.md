@@ -3,6 +3,7 @@
 Use the active project schema when available. When no schema is available, use this canonical shape.
 
 For Drawscape Outreach, the active schema intentionally omits source/evidence columns. Do not persist source URLs, evidence arrays, or source-only prose into the database or `notes` unless the user explicitly asks for that data.
+Drawscape Outreach uses `companies.date_enriched` for the company enrichment date when writing enriched company records.
 
 ## Canonical JSON
 
@@ -92,6 +93,11 @@ Use one evidence entry per source or per field when the target schema supports i
 
 ## Normalization
 
+- `identity.name`: use the casual public brand/display name. Prefer the shortest name a human would naturally use in the CRM when the official site, logo, domain, or LinkedIn profile supports it.
+- Strip legal suffixes and generic service descriptors from `identity.name` when they are filler rather than the brand: `Inc.`, `LLC`, `Ltd.`, `Company`, `Group`, `Aircraft Sales`, `Sales & Acquisitions`, `Aircraft Sales & Acquisitions`, `Aircraft Sales and Brokerage`, `Brokerage`, `Aviation Services`, `Yacht Sales`, `Auto Group`, `Dealership`.
+- Preserve descriptors that are part of the actual brand or needed for disambiguation. Do not reduce a name to a generic word when the shorter brand is not clearly supported by evidence.
+- Put the full legal, SEO, or directory name in `identity.legal_name`, `identity.aliases`, or evidence when supported.
+- Example: `Altivation Aircraft Sales & Acquisitions` maps to `identity.name: "Altivation"` and an alias or evidence value containing the full source name.
 - `domain`: registrable domain only, lowercased, without protocol, path, or `www`. Treat this as the logical primary key for company records; it must be unique and non-null.
 - `website_url`: canonical HTTPS URL when available.
 - `linkedin_url`: normalized LinkedIn company page URL, not a personal profile. In the Drawscape Outreach `companies` table this maps to `linkedin_company_url`, which must be unique.
@@ -104,7 +110,7 @@ Use one evidence entry per source or per field when the target schema supports i
 - Do not convert employee ranges into midpoint guesses. For branches, dealerships, subsidiaries, franchises, and local offices, avoid using parent-company headcount unless the parent is the target entity.
 - `revenue_range`: preserve the project's enum when available; otherwise use a conservative range string and low confidence.
 - `stock_ticker`: include exchange when known, such as `NASDAQ:ABCD`.
-- `last_enriched_at` and `observed_at`: use `YYYY-MM-DD`.
+- `date_enriched`, `last_enriched_at`, and `observed_at`: use `YYYY-MM-DD`.
 
 ## Completeness Checklist
 

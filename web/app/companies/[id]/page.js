@@ -47,6 +47,48 @@ function CompanyDetailItem({ label, children, className }) {
   );
 }
 
+function formatHeadcount(company) {
+  if (company.employeeCount !== null && company.employeeCount !== undefined && company.employeeCount !== "") {
+    return Number(company.employeeCount).toLocaleString();
+  }
+
+  return company.employeeCountRange || "";
+}
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  day: "numeric",
+  month: "short",
+  timeZone: "UTC",
+  year: "numeric"
+});
+
+function formatDate(value) {
+  if (!value) {
+    return "";
+  }
+
+  const trimmedValue = String(value).trim();
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  const dateOnlyMatch = trimmedValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const date = dateOnlyMatch
+    ? new Date(Date.UTC(
+      Number(dateOnlyMatch[1]),
+      Number(dateOnlyMatch[2]) - 1,
+      Number(dateOnlyMatch[3])
+    ))
+    : new Date(trimmedValue);
+
+  if (Number.isNaN(date.getTime())) {
+    return trimmedValue;
+  }
+
+  return dateFormatter.format(date);
+}
+
 export default async function CompanyDetailPage({ params }) {
   const { id } = await params;
   const company = getCompany(id);
@@ -112,6 +154,12 @@ export default async function CompanyDetailPage({ params }) {
           </CompanyDetailItem>
           <CompanyDetailItem label="Industry">
             {company.industry || <EmptyValue />}
+          </CompanyDetailItem>
+          <CompanyDetailItem label="Headcount">
+            {formatHeadcount(company)}
+          </CompanyDetailItem>
+          <CompanyDetailItem label="Date Enriched">
+            {formatDate(company.dateEnriched)}
           </CompanyDetailItem>
           <CompanyDetailItem label="LinkedIn">
             <ExternalAnchor href={company.linkedinCompanyUrl}>

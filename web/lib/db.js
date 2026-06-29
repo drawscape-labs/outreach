@@ -4,7 +4,7 @@ import path from "node:path";
 const dbPath = path.join(process.cwd(), "..", "data", "outreach.sqlite");
 
 export function query(sql) {
-  const result = spawnSync("sqlite3", ["-json", dbPath, sql], {
+  const result = spawnSync("sqlite3", ["-json", dbPath, `PRAGMA foreign_keys = ON;\n${sql}`], {
     encoding: "utf8"
   });
 
@@ -27,4 +27,28 @@ export function sqlInteger(value) {
   }
 
   return parsed;
+}
+
+export function sqlString(value) {
+  return `'${String(value).replace(/'/g, "''")}'`;
+}
+
+export function sqlValue(value) {
+  if (value === null || value === undefined) {
+    return "NULL";
+  }
+
+  if (typeof value === "boolean") {
+    return value ? "1" : "0";
+  }
+
+  if (typeof value === "number") {
+    if (!Number.isFinite(value)) {
+      throw new Error("Cannot serialize non-finite number for SQL.");
+    }
+
+    return String(value);
+  }
+
+  return sqlString(value);
 }

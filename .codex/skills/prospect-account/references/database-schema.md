@@ -16,6 +16,9 @@ Useful optional fields:
 - `description`
 - `industry`
 - `location`
+- `employee_count`
+- `employee_count_range`
+- `date_enriched`
 - `notes`
 
 Uniqueness:
@@ -28,6 +31,8 @@ Rules:
 - Normalize `domain` to lowercase host without `www.`.
 - Normalize `linkedin_company_url` to `https://www.linkedin.com/company/<slug>`.
 - Use a single-sentence display description.
+- Use `employee_count` only for exact total employee counts and `employee_count_range` when only a range is available.
+- Use `date_enriched` as a nullable text date/timestamp for when company enrichment data was last gathered.
 - Do not store evidence URLs, source snippets, or research-only text in `notes`.
 
 ## people

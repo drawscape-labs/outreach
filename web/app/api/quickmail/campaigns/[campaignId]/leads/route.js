@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { query, sqlInteger } from "../../../../../../lib/db";
+import { query, sqlInteger, sqlString } from "../../../../../../lib/db";
 import {
   addQuickmailLeadsToCampaign,
   createOrReuseQuickmailLead,
@@ -36,14 +36,6 @@ function jsonError(error, status = 400, details) {
 
 function readStringId(value) {
   return typeof value === "string" && value.trim() ? value.trim() : "";
-}
-
-function sqlString(value) {
-  if (value === null || value === undefined || value === "") {
-    return "NULL";
-  }
-
-  return `'${String(value).replace(/'/g, "''")}'`;
 }
 
 function splitName(name) {

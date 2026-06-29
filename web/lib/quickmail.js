@@ -1,13 +1,137 @@
+import "server-only";
+
 import fs from "node:fs";
 import path from "node:path";
-import {
-  QUICKMAIL_OPERATION_NAMES,
-  quickmailOperationPayload
-} from "./quickmail-graphql-operations";
 
 const QUICKMAIL_GRAPHQL_ENDPOINT = "https://api.quickmail.com/v2/graphql";
 
 let localEnvCache;
+
+const QUICKMAIL_OPERATION_NAMES = {
+  getLead: "GetQuickmailLead",
+  listCampaigns: "ListQuickmailCampaigns",
+  searchLeads: "SearchQuickmailLeads"
+};
+
+const QUICKMAIL_OPERATIONS = {
+  [QUICKMAIL_OPERATION_NAMES.searchLeads]: {
+    query: `
+      query SearchQuickmailLeads($text: String!, $first: Int!) {
+        leads(text: $text, first: $first) {
+          nodes {
+            id
+            email
+            firstName
+            lastName
+            fullName
+            title
+            role
+            phone
+            linkedinId
+            language
+            appUrl
+          }
+        }
+      }
+    `,
+    variables(rawVariables) {
+      const text =
+        typeof rawVariables?.text === "string" ? rawVariables.text.trim() : "";
+      const first = readPositiveInteger(rawVariables?.first, 25);
+
+      if (!text) {
+        return { error: "text is required." };
+      }
+
+      if (!first || first > 100) {
+        return { error: "first must be between 1 and 100." };
+      }
+
+      return {
+        variables: {
+          text,
+          first
+        }
+      };
+    }
+  },
+  [QUICKMAIL_OPERATION_NAMES.getLead]: {
+    query: `
+      query GetQuickmailLead($id: ID!) {
+        lead(id: $id) {
+          id
+          email
+          firstName
+          lastName
+          fullName
+          title
+          role
+          phone
+          linkedinId
+          score
+          language
+          appUrl
+          tags(first: 20) {
+            nodes {
+              id
+              name
+            }
+          }
+          customProperties(first: 50) {
+            nodes {
+              id
+              name
+              value
+            }
+          }
+        }
+      }
+    `,
+    variables(rawVariables) {
+      const id = typeof rawVariables?.id === "string" ? rawVariables.id.trim() : "";
+
+      if (!id) {
+        return { error: "id is required." };
+      }
+
+      return {
+        variables: {
+          id
+        }
+      };
+    }
+  },
+  [QUICKMAIL_OPERATION_NAMES.listCampaigns]: {
+    query: `
+      query ListQuickmailCampaigns {
+        workspaces(first: 100) {
+          nodes {
+            id
+            name
+            campaigns(first: 100) {
+              nodes {
+                id
+                name
+                paused
+                appUrl
+                leadStatus {
+                  active
+                  available
+                  completed
+                  failed
+                  total
+                }
+              }
+            }
+          }
+        }
+      }
+    `,
+    variables() {
+      return { variables: {} };
+    }
+  }
+};
 
 export class QuickmailError extends Error {
   constructor(message, { status = 502, details } = {}) {
@@ -181,6 +305,49 @@ function duplicateLeadError(error) {
   const message = [error.message, ...details].join(" ");
 
   return /already exists|duplicate/i.test(message);
+}
+
+function readPositiveInteger(value, fallback) {
+  if (value === null || value === undefined || value === "") {
+    return fallback;
+  }
+
+  const parsed = Number(value);
+
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
+function flattenCampaigns(data) {
+  return (data?.workspaces?.nodes || []).flatMap((workspace) =>
+    (workspace.campaigns?.nodes || []).map((campaign) => ({
+      ...campaign,
+      workspaceId: workspace.id,
+      workspaceName: workspace.name
+    }))
+  );
+}
+
+function quickmailOperationPayload(operationName, rawVariables = {}) {
+  const operation =
+    typeof operationName === "string"
+      ? QUICKMAIL_OPERATIONS[operationName.trim()]
+      : null;
+
+  if (!operation) {
+    return { error: "Unsupported QuickMail operation." };
+  }
+
+  const variableResult = operation.variables(rawVariables);
+
+  if (variableResult.error) {
+    return { error: variableResult.error };
+  }
+
+  return {
+    operationName: operationName.trim(),
+    query: operation.query,
+    variables: variableResult.variables
+  };
 }
 
 function readQuickmailOperation(operationName, variables) {

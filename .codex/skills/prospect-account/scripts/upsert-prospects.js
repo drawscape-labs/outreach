@@ -5,6 +5,7 @@ const {
   runSqliteExec,
   runSqliteJson,
   sqlBoolean,
+  sqlIntegerValue,
   sqlString,
   validateProspect
 } = require("./prospect-utils");
@@ -85,12 +86,14 @@ function main() {
           description = COALESCE(${sqlString(prospect.company.description)}, description),
           industry = COALESCE(${sqlString(prospect.company.industry)}, industry),
           location = COALESCE(${sqlString(prospect.company.location)}, location),
+          employee_count = COALESCE(${sqlIntegerValue(prospect.company.employee_count)}, employee_count),
+          employee_count_range = COALESCE(${sqlString(prospect.company.employee_count_range)}, employee_count_range),
           notes = COALESCE(${sqlString(prospect.company.notes)}, notes)
       WHERE id = ${companyMatch.id};\n`;
     summary.company = "updated";
   } else {
     sql += `INSERT INTO companies
-      (name, domain, linkedin_company_url, website_url, description, industry, location, notes)
+      (name, domain, linkedin_company_url, website_url, description, industry, location, employee_count, employee_count_range, notes)
       VALUES (
         ${sqlString(prospect.company.name)},
         ${sqlString(prospect.company.domain)},
@@ -99,6 +102,8 @@ function main() {
         ${sqlString(prospect.company.description)},
         ${sqlString(prospect.company.industry)},
         ${sqlString(prospect.company.location)},
+        ${sqlIntegerValue(prospect.company.employee_count)},
+        ${sqlString(prospect.company.employee_count_range)},
         ${sqlString(prospect.company.notes)}
       );\n`;
     summary.company = "inserted";

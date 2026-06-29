@@ -24,6 +24,24 @@ The local SQLite database lives at `data/outreach.sqlite`.
 npm run db:init
 ```
 
+Run pending SQL migrations:
+
+```bash
+npm run db:migrate
+```
+
+Check migration status:
+
+```bash
+npm run db:migrate:status
+```
+
+Add migrations as sorted `.sql` files in `db/migrations/`. The runner records
+applied files in `schema_migrations` and fails if an applied migration file is
+edited later. For migrations already represented in `db/schema.sql`, add
+`-- migrate:verify-column <table> <column>` comments so fresh databases can
+baseline the migration instead of running duplicate `ALTER TABLE` statements.
+
 ## Run
 
 ```bash
@@ -76,9 +94,9 @@ Styling uses Tailwind CSS through `web/postcss.config.mjs` and the global import
 Set `QUICKMAIL_API_KEY` in `.env`. `QUICKMAIL_WORKSPACE_ID` is optional when
 the request body includes `workspaceId`.
 
-Browser-side QuickMail reads go through the local GraphQL proxy at
-`/api/quickmail/graphql`. The browser sends an allowed `operationName` and
-`variables`; the server supplies the QuickMail query and API key.
+Browser-side QuickMail requests go through local endpoints under
+`/api/quickmail/*`; the server-only QuickMail library supplies the QuickMail API
+key and external API calls.
 
 List campaigns:
 

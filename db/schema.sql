@@ -9,6 +9,9 @@
     - description
     - industry
     - location
+    - employee_count
+    - employee_count_range
+    - date_enriched
     - notes
     - created_at
     - updated_at
@@ -22,9 +25,24 @@ CREATE TABLE IF NOT EXISTS companies (
   description TEXT,
   industry TEXT,
   location TEXT,
+  employee_count INTEGER CHECK (employee_count IS NULL OR employee_count >= 0),
+  employee_count_range TEXT,
+  date_enriched TEXT,
   notes TEXT,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+/*
+  Table: schema_migrations
+  Tracks SQL migration files that have been applied to this SQLite database.
+*/
+CREATE TABLE IF NOT EXISTS schema_migrations (
+  filename TEXT PRIMARY KEY,
+  checksum TEXT NOT NULL,
+  applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  execution_type TEXT NOT NULL DEFAULT 'applied'
+    CHECK (execution_type IN ('applied', 'baseline'))
 );
 
 CREATE TRIGGER IF NOT EXISTS companies_set_updated_at

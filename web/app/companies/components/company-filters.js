@@ -48,6 +48,7 @@ export function CompanyFilters({ filters, options }) {
     const params = new URLSearchParams(searchParams.toString());
     params.delete("category");
     params.delete("location");
+    params.delete("page");
 
     if (value) {
       params.set(name, value);

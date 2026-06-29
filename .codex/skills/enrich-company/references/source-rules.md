@@ -19,6 +19,7 @@ Do not use random lead-list clones, scraped contact pages, or SEO spam pages as 
 - Store field-level source URLs when the output schema supports evidence metadata.
 - Use direct URLs for evidence, not only search result pages.
 - Respect robots, authentication, paywalls, and platform access boundaries. Do not bypass LinkedIn login walls or scraping protections.
+- Do not use the Hunter API or Hunter-derived company metrics for company enrichment.
 
 ## Entity Resolution
 
@@ -69,7 +70,7 @@ Stable fields still need evidence, but may be accepted from older sources:
 ## Headcount Research
 
 - Treat `headcount`, `total employees`, `employee count`, `team size`, and `company size` as the same enrichment target.
-- Prefer source-reported total employee counts in this order: official company pages or press kits, public filings/registries, official investor relations, LinkedIn company size, connected enrichment APIs such as Hunter company metrics, reputable company profiles such as Crunchbase, then news/directories.
+- Prefer source-reported total employee counts in this order: official company pages or press kits, public filings/registries, official investor relations, LinkedIn company size, reputable company profiles such as Crunchbase, then news/directories.
 - Set `company_details.employee_count` only for a concrete integer reported by a source. Set `company_details.employee_count_range` when the best source is a range such as LinkedIn company size.
 - Do not convert a range into a midpoint or rounded estimate. If a source says "more than 500 employees," use an open-ended range or note the phrasing in evidence rather than inventing `501`.
 - For dealerships, branches, subsidiaries, franchises, and local offices, verify whether the count belongs to the target entity or a parent group. Prefer the local/entity-specific count for the target company and record the parent separately when supported.

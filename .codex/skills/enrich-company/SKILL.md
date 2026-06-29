@@ -31,9 +31,14 @@ If the active repo already has a company/account schema, inspect it first and ma
 4. Gather evidence from primary sources first, then reputable secondary sources.
 5. Always attempt headcount research:
    - Treat headcount, total employees, employee count, and team size as the same field.
-   - Look for current official counts first, then filings/registries, LinkedIn company size, connected enrichment APIs, reputable company profiles, and news/directories.
+   - Look for current official counts first, then filings/registries, LinkedIn company size, reputable company profiles, and news/directories.
+   - Do not use the Hunter API or Hunter-derived company metrics for company enrichment.
    - Distinguish local branch/dealership/location headcount from parent-company headcount; do not substitute the parent count unless the parent is the target company.
-6. Normalize values into the target database schema.
+6. Normalize values into the target database schema:
+   - Store `name` as the casual display brand, not the longest legal/SEO name.
+   - Drop filler legal suffixes and generic service descriptors when the remaining brand is clear.
+   - Example: `Altivation Aircraft Sales & Acquisitions` -> `Altivation`.
+   - Preserve the fuller name as `legal_name`, an alias, or evidence when the output schema supports it.
 7. Attach field-level sources and confidence.
 8. Return the record plus a short enrichment note listing major assumptions, conflicts, and unknown high-value fields.
 
@@ -61,7 +66,7 @@ When the user wants the record written into a codebase or database:
 - Use ISO country codes, normalized URLs, and stable enum slugs when possible.
 - Treat employee count/headcount as a core field. Record `employee_count` only when a source reports a concrete integer; record `employee_count_range` when only a range is supported. Do not convert ranges into midpoint guesses.
 - Treat revenue, funding, and traffic estimates as ranges unless a primary source gives exact values.
-- Include `last_enriched_at` with the current date when the schema has such a field.
+- Include the current date in `date_enriched` or `last_enriched_at` when the target schema has such a field.
 - Mark inaccessible LinkedIn data as unavailable instead of trying to bypass login, scraping controls, or paywalls.
 
 ## Output

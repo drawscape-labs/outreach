@@ -12,6 +12,9 @@ export function getCompanies() {
       c.description,
       c.industry,
       c.location,
+      c.employee_count AS employeeCount,
+      c.employee_count_range AS employeeCountRange,
+      c.date_enriched AS dateEnriched,
       c.notes,
       COUNT(pos.id) AS positionCount,
       COUNT(DISTINCT pos.person_id) AS peopleCount,
@@ -49,6 +52,9 @@ export function getCompany(companyId) {
       description,
       industry,
       location,
+      employee_count AS employeeCount,
+      employee_count_range AS employeeCountRange,
+      date_enriched AS dateEnriched,
       notes
     FROM companies
     WHERE id = ${id}

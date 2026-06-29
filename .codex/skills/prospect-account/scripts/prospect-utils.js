@@ -2,6 +2,16 @@ const fs = require("fs");
 const { spawnSync } = require("child_process");
 
 const CONFIDENCE_VALUES = new Set(["high", "medium", "low", "unknown", "needs_review"]);
+const EMPLOYEE_COUNT_RANGES = new Set([
+  "1-10",
+  "11-50",
+  "51-200",
+  "201-500",
+  "501-1000",
+  "1001-5000",
+  "5001-10000",
+  "10001+"
+]);
 
 function readJson(path) {
   const raw = path && path !== "-" ? fs.readFileSync(path, "utf8") : fs.readFileSync(0, "utf8");
@@ -91,6 +101,25 @@ function normalizeConfidence(value) {
   return CONFIDENCE_VALUES.has(normalized) ? normalized : "unknown";
 }
 
+function normalizeEmployeeCount(value) {
+  if (value === null || value === undefined || value === "") return null;
+  if (typeof value === "number" && Number.isInteger(value) && value >= 0) return value;
+  if (typeof value !== "string") return null;
+  const normalized = value.trim().replace(/,/g, "");
+  if (!/^\d+$/.test(normalized)) return null;
+  return Number(normalized);
+}
+
+function normalizeEmployeeCountRange(value) {
+  if (!value || typeof value !== "string") return null;
+  const normalized = value
+    .trim()
+    .replace(/,/g, "")
+    .replace(/\s+/g, "")
+    .replace(/employees?$/i, "");
+  return EMPLOYEE_COUNT_RANGES.has(normalized) ? normalized : normalizeWhitespace(value);
+}
+
 function sqlString(value) {
   if (value === null || value === undefined || value === "") return "NULL";
   return `'${String(value).replace(/'/g, "''")}'`;
@@ -98,6 +127,10 @@ function sqlString(value) {
 
 function sqlBoolean(value) {
   return value ? 1 : 0;
+}
+
+function sqlIntegerValue(value) {
+  return Number.isInteger(value) ? String(value) : "NULL";
 }
 
 function runSqliteJson(dbPath, sql) {
@@ -161,6 +194,7 @@ function normalizePerson(person, companyDomain) {
 function normalizeProspect(prospect) {
   const input = prospect.input || {};
   const company = prospect.company || {};
+  const companyDetails = company.company_details || prospect.company_details || {};
   const domain = normalizeDomain(company.domain || input.domain);
   const normalized = {
     ...prospect,
@@ -180,6 +214,10 @@ function normalizeProspect(prospect) {
       description: normalizeWhitespace(company.description || null),
       industry: normalizeWhitespace(company.industry || null),
       location: normalizeWhitespace(company.location || null),
+      employee_count: normalizeEmployeeCount(company.employee_count ?? company.headcount ?? companyDetails.employee_count),
+      employee_count_range: normalizeEmployeeCountRange(
+        company.employee_count_range || company.headcount_range || companyDetails.employee_count_range
+      ),
       notes: normalizeWhitespace(company.notes || null),
       confidence: normalizeConfidence(company.confidence),
       evidence: Array.isArray(company.evidence) ? company.evidence : []
@@ -266,6 +304,8 @@ module.exports = {
   CONFIDENCE_VALUES,
   normalizeConfidence,
   normalizeDomain,
+  normalizeEmployeeCount,
+  normalizeEmployeeCountRange,
   normalizeLinkedInUrl,
   normalizePerson,
   normalizePosition,
@@ -278,6 +318,7 @@ module.exports = {
   runSqliteExec,
   runSqliteJson,
   sqlBoolean,
+  sqlIntegerValue,
   sqlString,
   validateProspect
 };
