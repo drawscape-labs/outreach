@@ -66,10 +66,19 @@ Stable fields still need evidence, but may be accepted from older sources:
 - historical legal names
 - original location
 
+## Headcount Research
+
+- Treat `headcount`, `total employees`, `employee count`, `team size`, and `company size` as the same enrichment target.
+- Prefer source-reported total employee counts in this order: official company pages or press kits, public filings/registries, official investor relations, LinkedIn company size, connected enrichment APIs such as Hunter company metrics, reputable company profiles such as Crunchbase, then news/directories.
+- Set `company_details.employee_count` only for a concrete integer reported by a source. Set `company_details.employee_count_range` when the best source is a range such as LinkedIn company size.
+- Do not convert a range into a midpoint or rounded estimate. If a source says "more than 500 employees," use an open-ended range or note the phrasing in evidence rather than inventing `501`.
+- For dealerships, branches, subsidiaries, franchises, and local offices, verify whether the count belongs to the target entity or a parent group. Prefer the local/entity-specific count for the target company and record the parent separately when supported.
+- When sources disagree, prefer the newest primary or filing source. Otherwise keep the most defensible value, lower confidence, and list the conflict in review notes or evidence.
+
 ## Inference Rules
 
 - Infer industry/tags from the company's own positioning and product categories, not only from a directory.
 - Infer country from headquarters address only when the address is unambiguous.
 - Infer B2B/B2C from customers, pricing, product language, and sales motion.
-- Do not infer revenue, employee count, or funding from company size language such as "fast-growing."
+- Do not infer revenue, employee count/headcount, or funding from company size language such as "fast-growing."
 - Record inferred values with `medium` or `low` confidence unless backed by direct evidence.

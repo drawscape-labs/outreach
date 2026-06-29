@@ -1,5 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
+import {
+  QUICKMAIL_OPERATION_NAMES,
+  quickmailOperationPayload
+} from "./quickmail-graphql-operations";
 
 const QUICKMAIL_GRAPHQL_ENDPOINT = "https://api.quickmail.com/v2/graphql";
 
@@ -179,6 +183,18 @@ function duplicateLeadError(error) {
   return /already exists|duplicate/i.test(message);
 }
 
+function readQuickmailOperation(operationName, variables) {
+  const payload = quickmailOperationPayload(operationName, variables);
+
+  if (payload.error) {
+    throw new QuickmailError(payload.error, {
+      status: 400
+    });
+  }
+
+  return payload;
+}
+
 export async function quickmailGraphql({ query, variables, operationName }) {
   const response = await fetch(QUICKMAIL_GRAPHQL_ENDPOINT, {
     method: "POST",
@@ -225,32 +241,12 @@ export async function searchQuickmailLeads({ text, first = 25 }) {
     return [];
   }
 
-  const data = await quickmailGraphql({
-    operationName: "SearchQuickmailLeads",
-    query: `
-      query SearchQuickmailLeads($text: String!, $first: Int!) {
-        leads(text: $text, first: $first) {
-          nodes {
-            id
-            email
-            firstName
-            lastName
-            fullName
-            title
-            role
-            phone
-            linkedinId
-            language
-            appUrl
-          }
-        }
-      }
-    `,
-    variables: {
+  const data = await quickmailGraphql(
+    readQuickmailOperation(QUICKMAIL_OPERATION_NAMES.searchLeads, {
       text: queryText,
       first
-    }
-  });
+    })
+  );
 
   return data.leads.nodes;
 }
@@ -262,43 +258,11 @@ export async function getQuickmailLead({ leadId }) {
     return null;
   }
 
-  const data = await quickmailGraphql({
-    operationName: "GetQuickmailLead",
-    query: `
-      query GetQuickmailLead($id: ID!) {
-        lead(id: $id) {
-          id
-          email
-          firstName
-          lastName
-          fullName
-          title
-          role
-          phone
-          linkedinId
-          score
-          language
-          appUrl
-          tags(first: 20) {
-            nodes {
-              id
-              name
-            }
-          }
-          customProperties(first: 50) {
-            nodes {
-              id
-              name
-              value
-            }
-          }
-        }
-      }
-    `,
-    variables: {
+  const data = await quickmailGraphql(
+    readQuickmailOperation(QUICKMAIL_OPERATION_NAMES.getLead, {
       id
-    }
-  });
+    })
+  );
 
   return data.lead;
 }
@@ -396,35 +360,9 @@ export async function createOrReuseQuickmailLead({ workspaceId, lead }) {
 }
 
 export async function listQuickmailCampaigns({ text = "", first = 50, skip = 0 } = {}) {
-  const data = await quickmailGraphql({
-    operationName: "ListQuickmailCampaigns",
-    query: `
-      query ListQuickmailCampaigns {
-        workspaces(first: 100) {
-          nodes {
-            id
-            name
-            campaigns(first: 100) {
-              nodes {
-                id
-                name
-                paused
-                appUrl
-                leadStatus {
-                  active
-                  available
-                  completed
-                  failed
-                  total
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    variables: {}
-  });
+  const data = await quickmailGraphql(
+    readQuickmailOperation(QUICKMAIL_OPERATION_NAMES.listCampaigns)
+  );
 
   const needle = text.trim().toLowerCase();
   const campaigns = data.workspaces.nodes.flatMap((workspace) =>

@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS people (
   name TEXT NOT NULL,
   email TEXT,
   status TEXT NOT NULL DEFAULT 'New'
-    CHECK (status IN ('New', 'Contacted', 'Replied')),
+    CHECK (status IN ('New', 'Contacted', 'Replied', 'Converted')),
   qualified INTEGER NOT NULL DEFAULT 0 CHECK (qualified IN (0, 1)),
   notes TEXT,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,

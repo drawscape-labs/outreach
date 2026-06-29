@@ -1,0 +1,4 @@
+interface:
+  display_name: "Hunter.io"
+  short_description: "Use Hunter email and enrichment APIs"
+  default_prompt: "Use $hunter-io to find, verify, or enrich a prospect email with Hunter.io."

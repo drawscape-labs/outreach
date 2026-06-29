@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Button } from "../../../components/ui/button";
 import {
@@ -18,6 +19,11 @@ import {
 import { Field, Label } from "../../../components/ui/fieldset";
 import { Select } from "../../../components/ui/select";
 import { buildQuickmailPlaceholderEmail } from "../../../lib/placeholder-email";
+import {
+  addQuickmailLeadToCampaign,
+  fetchQuickmailCampaigns,
+  quickmailCampaignsQueryKey
+} from "../../../lib/quickmail-client";
 
 function IconDots(props) {
   return (
@@ -29,17 +35,6 @@ function IconDots(props) {
   );
 }
 
-async function fetchJson(url, options) {
-  const response = await fetch(url, options);
-  const payload = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(payload.error || "Request failed.");
-  }
-
-  return payload;
-}
-
 function CampaignModal({
   personId,
   personName,
@@ -49,46 +44,45 @@ function CampaignModal({
   onClose
 }) {
   const router = useRouter();
-  const [campaigns, setCampaigns] = useState([]);
+  const queryClient = useQueryClient();
   const [selectedCampaignId, setSelectedCampaignId] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const campaignsQuery = useQuery({
+    queryKey: quickmailCampaignsQueryKey,
+    queryFn: () => fetchQuickmailCampaigns()
+  });
+  const campaigns = campaignsQuery.data || [];
 
   useEffect(() => {
-    let isMounted = true;
-
-    async function loadCampaigns() {
-      setIsLoading(true);
-      setError("");
-
-      try {
-        const payload = await fetchJson("/api/quickmail/campaigns");
-
-        if (!isMounted) {
-          return;
-        }
-
-        setCampaigns(payload.campaigns || []);
-        setSelectedCampaignId(payload.campaigns?.[0]?.id || "");
-      } catch (loadError) {
-        if (isMounted) {
-          setError(loadError.message);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
+    if (
+      campaigns.length &&
+      !campaigns.some((campaign) => campaign.id === selectedCampaignId)
+    ) {
+      setSelectedCampaignId(campaigns[0].id);
     }
+  }, [campaigns, selectedCampaignId]);
 
-    loadCampaigns();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const addToCampaignMutation = useMutation({
+    mutationFn: ({ selectedCampaign }) =>
+      addQuickmailLeadToCampaign({
+        campaignId: selectedCampaign.id,
+        body: {
+          personId,
+          workspaceId: selectedCampaign.workspaceId,
+          markContacted: true
+        }
+      }),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: quickmailCampaignsQueryKey });
+      setSuccess("Added to campaign.");
+      router.refresh();
+      window.setTimeout(onClose, 700);
+    },
+    onError(saveError) {
+      setError(saveError.message);
+    }
+  });
 
   const selectedCampaign = campaigns.find(
     (campaign) => campaign.id === selectedCampaignId
@@ -101,7 +95,14 @@ function CampaignModal({
       profileKey,
       linkedinProfileUrl
     });
+  const isLoading = campaignsQuery.isLoading;
+  const isSaving = addToCampaignMutation.isPending;
+  const queryError =
+    campaignsQuery.isError && campaignsQuery.error
+      ? campaignsQuery.error.message
+      : "";
   const canSubmit = Boolean(selectedCampaign && !isLoading && !isSaving);
+  const visibleError = error || queryError;
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -111,34 +112,9 @@ function CampaignModal({
       return;
     }
 
-    setIsSaving(true);
     setError("");
     setSuccess("");
-
-    try {
-      await fetchJson(
-        `/api/quickmail/campaigns/${encodeURIComponent(selectedCampaign.id)}/leads`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            personId,
-            workspaceId: selectedCampaign.workspaceId,
-            markContacted: true
-          })
-        }
-      );
-
-      setSuccess("Added to campaign.");
-      router.refresh();
-      window.setTimeout(onClose, 700);
-    } catch (saveError) {
-      setError(saveError.message);
-    } finally {
-      setIsSaving(false);
-    }
+    addToCampaignMutation.mutate({ selectedCampaign });
   }
 
   return (
@@ -190,9 +166,9 @@ function CampaignModal({
             </p>
           ) : null}
 
-          {error ? (
+          {visibleError ? (
             <p className="mt-4 rounded-md bg-rose-50 px-3 py-2 text-sm/6 text-rose-700 ring-1 ring-rose-600/20">
-              {error}
+              {visibleError}
             </p>
           ) : null}
 

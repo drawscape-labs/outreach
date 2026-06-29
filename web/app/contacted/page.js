@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export default function ContactedPage() {
   return (
     <ProspectStatusPage
-      statuses={["Contacted", "Replied"]}
+      statuses={["Contacted", "Replied", "Converted"]}
       title="Contacted"
       emptyMessage="No contacted prospects yet."
     />

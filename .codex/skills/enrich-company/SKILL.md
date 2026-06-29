@@ -1,6 +1,6 @@
 ---
 name: enrich-company
-description: Enrich a company input into a complete database-ready company record. Use when the user provides a company name, website/domain, LinkedIn company profile, or partial company data and wants a normalized company record, CRM/account record, prospecting row, lead enrichment output, or database-ready JSON/CSV/SQL insert.
+description: Enrich a company input into a complete database-ready company record, including employee headcount when available. Use when the user provides a company name, website/domain, LinkedIn company profile, or partial company data and wants a normalized company record, CRM/account record, prospecting row, headcount or employee-count research, lead enrichment output, or database-ready JSON/CSV/SQL insert.
 ---
 
 # Enrich Company
@@ -29,9 +29,13 @@ If the active repo already has a company/account schema, inspect it first and ma
    - Detect subsidiaries, parent companies, similarly named companies, acquired brands, and local branches.
    - If more than one plausible entity remains, stop and ask for the minimum disambiguating detail.
 4. Gather evidence from primary sources first, then reputable secondary sources.
-5. Normalize values into the target database schema.
-6. Attach field-level sources and confidence.
-7. Return the record plus a short enrichment note listing major assumptions, conflicts, and unknown high-value fields.
+5. Always attempt headcount research:
+   - Treat headcount, total employees, employee count, and team size as the same field.
+   - Look for current official counts first, then filings/registries, LinkedIn company size, connected enrichment APIs, reputable company profiles, and news/directories.
+   - Distinguish local branch/dealership/location headcount from parent-company headcount; do not substitute the parent count unless the parent is the target company.
+6. Normalize values into the target database schema.
+7. Attach field-level sources and confidence.
+8. Return the record plus a short enrichment note listing major assumptions, conflicts, and unknown high-value fields.
 
 ## Database Integration
 
@@ -55,7 +59,8 @@ When the user wants the record written into a codebase or database:
 - Prefer legal or official names for legal fields; prefer public brand names for display fields.
 - Keep original user-supplied input in an `input` or `source_input` field when the schema allows it.
 - Use ISO country codes, normalized URLs, and stable enum slugs when possible.
-- Treat employee count, revenue, funding, and traffic estimates as ranges unless a primary source gives exact values.
+- Treat employee count/headcount as a core field. Record `employee_count` only when a source reports a concrete integer; record `employee_count_range` when only a range is supported. Do not convert ranges into midpoint guesses.
+- Treat revenue, funding, and traffic estimates as ranges unless a primary source gives exact values.
 - Include `last_enriched_at` with the current date when the schema has such a field.
 - Mark inaccessible LinkedIn data as unavailable instead of trying to bypass login, scraping controls, or paywalls.
 

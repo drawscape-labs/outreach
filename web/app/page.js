@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 export default function HomePage() {
   return (
     <ProspectStatusPage
-      statuses={["Replied"]}
+      statuses={["Replied", "Converted"]}
       title="Replied prospects"
       emptyMessage="No replied prospects yet."
     />

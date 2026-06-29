@@ -11,7 +11,7 @@ Prospecting workspace for finding companies and people to reach out to.
 - Person `profile_key` values are unique LinkedIn path keys, like `in/lewis-nisbet-097071137`.
 - Full person LinkedIn URLs live separately in `linkedin_profile_url`.
 - Person `quickmail_lead_id` stores the QuickMail lead id after a successful sync.
-- Person `status` values are `New`, `Contacted`, or `Replied`; SQLite enforces them with a `CHECK` constraint in `db/schema.sql`, and the web app imports the same enum from `web/lib/statuses.js`.
+- Person `status` values are `New`, `Contacted`, `Replied`, or `Converted`; SQLite enforces them with a `CHECK` constraint in `db/schema.sql`, and the web app imports the same enum from `web/lib/statuses.js`.
 - Person `qualified` is a boolean stored as `0` or `1`.
 - Position records map people to companies with `person_id` and `company_id`.
 - Position `is_current` is a boolean role-tenure flag, not a person status.
@@ -64,6 +64,10 @@ Routes:
 - `/companies`
 - `/companies/:id`
 - `/people`
+- `/people/:id`
+- `/contacted`
+- `/replied`
+- `/converted`
 
 Styling uses Tailwind CSS through `web/postcss.config.mjs` and the global import in `web/app/styles.css`.
 
@@ -71,6 +75,10 @@ Styling uses Tailwind CSS through `web/postcss.config.mjs` and the global import
 
 Set `QUICKMAIL_API_KEY` in `.env`. `QUICKMAIL_WORKSPACE_ID` is optional when
 the request body includes `workspaceId`.
+
+Browser-side QuickMail reads go through the local GraphQL proxy at
+`/api/quickmail/graphql`. The browser sends an allowed `operationName` and
+`variables`; the server supplies the QuickMail query and API key.
 
 List campaigns:
 

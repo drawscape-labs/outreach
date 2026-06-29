@@ -14,9 +14,19 @@ export function getCompanies() {
       c.location,
       c.notes,
       COUNT(pos.id) AS positionCount,
-      COUNT(DISTINCT pos.person_id) AS peopleCount
+      COUNT(DISTINCT pos.person_id) AS peopleCount,
+      COUNT(DISTINCT CASE
+        WHEN p.status IN ('Contacted', 'Replied', 'Converted') THEN pos.person_id
+      END) AS contactedCount,
+      COUNT(DISTINCT CASE
+        WHEN p.status IN ('Replied', 'Converted') THEN pos.person_id
+      END) AS repliedCount,
+      COUNT(DISTINCT CASE
+        WHEN p.status = 'Converted' THEN pos.person_id
+      END) AS convertedCount
     FROM companies c
     LEFT JOIN positions pos ON pos.company_id = c.id AND pos.is_current = 1
+    LEFT JOIN people p ON p.id = pos.person_id
     GROUP BY c.id
     ORDER BY c.name;
   `);
@@ -200,5 +210,5 @@ export function getPeopleByStatuses(statuses) {
 }
 
 export function getRepliedProspects() {
-  return getPeopleByStatus("Replied");
+  return getPeopleByStatuses(["Replied", "Converted"]);
 }

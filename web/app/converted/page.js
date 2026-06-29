@@ -3,12 +3,12 @@ import ProspectStatusPage from "../people/components/prospect-status-page";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export default function RepliedPage() {
+export default function ConvertedPage() {
   return (
     <ProspectStatusPage
-      statuses={["Replied", "Converted"]}
-      title="Replied"
-      emptyMessage="No replied prospects yet."
+      statuses={["Converted"]}
+      title="Converted"
+      emptyMessage="No converted prospects yet."
     />
   );
 }

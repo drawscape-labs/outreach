@@ -1,6 +1,6 @@
 ---
 name: prospect-account
-description: Research and prepare Drawscape Outreach prospect records from a company name, domain, LinkedIn company URL, and desired sales titles. Use when the user wants to find account contacts, discover sales reps or brokers, dedupe against the SQLite outreach database, produce a dry-run import plan, or upsert companies, people, and positions.
+description: Research and prepare Drawscape Outreach prospect records from a company name, domain, LinkedIn company URL, and desired sales titles. Use when the user wants to find account contacts, discover sales reps or brokers, dedupe against the SQLite outreach database, produce a dry-run import plan, upsert companies, people, and positions, or kick off email lookup after approved imports.
 ---
 
 # Prospect Account
@@ -15,6 +15,7 @@ Research one target account, find likely sales contacts, dedupe against the Draw
 - Never use company name alone as a database uniqueness key.
 - Do not scrape logged-in LinkedIn pages, bypass access controls, automate LinkedIn sessions, or collect data from paywalled/member-only pages. Record LinkedIn profile URLs found through public web search or public pages, but mark inaccessible LinkedIn details as unavailable.
 - If a match is ambiguous, stop at `needs_review` instead of forcing an insert.
+- After a successful approved import, start email lookup for imported people with missing emails. Preserve the `$find-person-email` rule that database email updates require explicit user approval unless the user already asked to import and save emails.
 
 ## Required References
 
@@ -55,7 +56,16 @@ Before a full prospecting run, read the relevant references:
    - Run `node .codex/skills/prospect-account/scripts/check-duplicates.js <prospect.json> --db data/outreach.sqlite`.
 8. Import only after approval:
    - Run `node .codex/skills/prospect-account/scripts/upsert-prospects.js <prospect.json> --db data/outreach.sqlite --apply`.
-   - Report inserted, updated, skipped, and conflicted records.
+   - Report inserted, updated, skipped, conflicted records, and the returned `affected_people` list.
+9. Kick off post-import email lookup:
+   - Parse `affected_people` from the successful import output.
+   - Target people where `needs_email_lookup` is `true`, especially entries with `action: "inserted"`.
+   - Skip people whose `email_status` is `present` unless the user asked to verify existing emails.
+   - Read and use `$find-person-email` before researching emails.
+   - Prefer a subagent when multi-agent tools are available. Spawn one focused email-research agent for the import batch, passing the exact person ids and this instruction:
+     `Use $find-person-email for these Drawscape Outreach people in data/outreach.sqlite: PERSON_IDS. Find public work emails only. Default to research-only; do not update the database unless the original user request explicitly approved saving emails. Return status, email if directly found, confidence, evidence URLs, and exact update commands when a save is appropriate.`
+   - If subagents are unavailable or the batch is tiny, run the same `$find-person-email` workflow inline.
+   - Save emails only when the original request explicitly included email updates or the user approves the email results. Never save pattern-only guesses.
 
 ## Output
 
@@ -64,6 +74,7 @@ For normal conversation, return:
 1. A compact account summary.
 2. Candidate people grouped by `ready_to_import`, `needs_review`, and `skipped`.
 3. Duplicate/conflict findings.
-4. The exact next command if the user wants to validate or import the JSON.
+4. Post-import email lookup status for imported people when an import ran.
+5. The exact next command if the user wants to validate, import, or save found emails.
 
 For artifacts, create a machine-readable JSON file under a user-approved path or a temporary working path. Keep evidence and confidence outside SQLite unless the schema is extended.

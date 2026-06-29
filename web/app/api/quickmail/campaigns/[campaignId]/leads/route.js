@@ -176,6 +176,7 @@ function updatePersonAfterQuickmailSync({ personId, quickmailLeadId, markContact
 
   revalidatePath("/people");
   revalidatePath("/contacted");
+  revalidatePath("/companies");
 }
 
 async function readPayload(request) {

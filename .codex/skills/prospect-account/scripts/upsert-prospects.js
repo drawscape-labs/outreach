@@ -21,6 +21,10 @@ function getSingleMatch(rows, label) {
   return rows[0] || null;
 }
 
+function sqlInList(values) {
+  return values.map(sqlString).join(", ");
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const inputPath = args._[0];
@@ -40,6 +44,21 @@ function main() {
   }
 
   const prospect = validation.normalized;
+  const importablePeople = prospect.people.filter((person) => importable(person, includeLow));
+  const importableProfileKeys = Array.from(
+    new Set(importablePeople.map((person) => person.profile_key).filter(Boolean))
+  );
+  const existingPeopleByKey = new Map();
+
+  if (importableProfileKeys.length > 0) {
+    runSqliteJson(
+      dbPath,
+      `SELECT id, profile_key
+       FROM people
+       WHERE profile_key IN (${sqlInList(importableProfileKeys)});`
+    ).forEach((row) => existingPeopleByKey.set(row.profile_key, row));
+  }
+
   const summary = {
     company: "skipped",
     people_inserted_or_updated: 0,
@@ -150,7 +169,32 @@ function main() {
 
   sql += "COMMIT;\n";
   runSqliteExec(dbPath, sql);
-  process.stdout.write(`${JSON.stringify({ ok: true, db: dbPath, summary }, null, 2)}\n`);
+
+  let affectedPeople = [];
+  if (importableProfileKeys.length > 0) {
+    const sortIndex = new Map(importableProfileKeys.map((key, index) => [key, index]));
+    affectedPeople = runSqliteJson(
+      dbPath,
+      `SELECT id, profile_key, linkedin_profile_url, name, email, status, qualified
+       FROM people
+       WHERE profile_key IN (${sqlInList(importableProfileKeys)});`
+    )
+      .map((row) => ({
+        id: row.id,
+        profile_key: row.profile_key,
+        linkedin_profile_url: row.linkedin_profile_url,
+        name: row.name,
+        email: row.email,
+        status: row.status,
+        qualified: Boolean(row.qualified),
+        action: existingPeopleByKey.has(row.profile_key) ? "updated" : "inserted",
+        email_status: row.email ? "present" : "missing",
+        needs_email_lookup: !row.email
+      }))
+      .sort((a, b) => sortIndex.get(a.profile_key) - sortIndex.get(b.profile_key));
+  }
+
+  process.stdout.write(`${JSON.stringify({ ok: true, db: dbPath, summary, affected_people: affectedPeople }, null, 2)}\n`);
 }
 
 main();

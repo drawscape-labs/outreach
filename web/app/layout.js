@@ -1,5 +1,6 @@
 import "./styles.css";
 import { Link } from "../components";
+import { QueryProvider } from "../components/query-provider";
 
 export const metadata = {
   title: "Drawscape Outreach",
@@ -13,7 +14,8 @@ const navigation = [
   { name: "Companies", href: "/companies" },
   { name: "People", href: "/people" },
   { name: "Contacted", href: "/contacted" },
-  { name: "Replied", href: "/replied" }
+  { name: "Replied", href: "/replied" },
+  { name: "Converted", href: "/converted" }
 ];
 
 export default function RootLayout({ children }) {
@@ -37,7 +39,7 @@ export default function RootLayout({ children }) {
               {navigation.map((item) => (
                 <Link
                   key={item.name}
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  className="rounded-md px-2 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 sm:px-3 sm:text-sm"
                   href={item.href}
                 >
                   {item.name}
@@ -46,7 +48,7 @@ export default function RootLayout({ children }) {
             </nav>
           </div>
         </header>
-        {children}
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );

@@ -22,6 +22,53 @@ export const runtime = "nodejs";
 const contactFilters = ["with_people", "without_people"];
 const legacyIndustryParam = "category";
 
+function CountPill({ label, tone = "gray", value }) {
+  const count = Number(value || 0);
+  const tones = {
+    amber: "bg-amber-400/20 text-amber-700",
+    blue: "bg-blue-500/15 text-blue-700",
+    emerald: "bg-emerald-500/15 text-emerald-700",
+    gray: "bg-zinc-600/10 text-zinc-700"
+  };
+
+  if (count === 0) {
+    return null;
+  }
+
+  return (
+    <span
+      title={label}
+      aria-label={`${label}: ${count}`}
+      className={`inline-flex h-6 min-w-8 items-center justify-center rounded-full px-2 text-xs font-semibold tabular-nums ${tones[tone]}`}
+    >
+      {count}
+    </span>
+  );
+}
+
+function PeoplePills({ company }) {
+  return (
+    <div className="inline-flex items-center gap-2">
+      <CountPill label="People" value={company.peopleCount} />
+      <CountPill
+        label="Contacted"
+        tone="blue"
+        value={company.contactedCount}
+      />
+      <CountPill
+        label="Replied"
+        tone="emerald"
+        value={company.repliedCount}
+      />
+      <CountPill
+        label="Converted"
+        tone="amber"
+        value={company.convertedCount}
+      />
+    </div>
+  );
+}
+
 function firstSearchParam(searchParams, key) {
   const value = searchParams?.[key];
 
@@ -99,10 +146,10 @@ export default async function CompaniesPage({ searchParams }) {
                 <TableHeader scope="col" className="hidden lg:table-cell">
                   Industry
                 </TableHeader>
-                <TableHeader scope="col" className="hidden xl:table-cell">
+                <TableHeader scope="col" className="hidden 2xl:table-cell">
                   Location
                 </TableHeader>
-                <TableHeader scope="col" className="text-right">
+                <TableHeader scope="col" className="hidden text-right sm:table-cell">
                   Links
                 </TableHeader>
               </TableRow>
@@ -135,6 +182,15 @@ export default async function CompaniesPage({ searchParams }) {
                         <dd className="mt-1 truncate text-gray-400">
                           {company.industry || "Industry missing"}
                         </dd>
+                        <dt className="sr-only">Links</dt>
+                        <dd className="mt-2 flex gap-x-3 sm:hidden">
+                          <ExternalAnchor href={company.linkedinCompanyUrl}>
+                            LinkedIn
+                          </ExternalAnchor>
+                          <ExternalAnchor href={company.websiteUrl} missingLabel="No site">
+                            Website
+                          </ExternalAnchor>
+                        </dd>
                       </dl>
                     </TableCell>
                     <TableCell className="hidden text-zinc-500 md:table-cell">
@@ -147,15 +203,15 @@ export default async function CompaniesPage({ searchParams }) {
                       )}
                     </TableCell>
                     <TableCell className="text-zinc-500">
-                      <span className="font-medium text-gray-900">{company.peopleCount}</span>
+                      <PeoplePills company={company} />
                     </TableCell>
                     <TableCell className="hidden text-zinc-500 lg:table-cell">
                       {company.industry || <EmptyValue />}
                     </TableCell>
-                    <TableCell className="hidden text-zinc-500 xl:table-cell">
+                    <TableCell className="hidden text-zinc-500 2xl:table-cell">
                       {company.location || <EmptyValue />}
                     </TableCell>
-                    <TableCell className="text-right font-medium">
+                    <TableCell className="hidden text-right font-medium sm:table-cell">
                       <div className="flex justify-end gap-x-4">
                         <ExternalAnchor href={company.linkedinCompanyUrl}>
                           LinkedIn

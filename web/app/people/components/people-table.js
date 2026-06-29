@@ -220,7 +220,7 @@ export function PeopleTable({
                     <QualifiedCell editableStatuses={editableStatuses} person={person} />
                   </TableCell>
                   <TableCell className="hidden text-zinc-500 2xl:table-cell">
-                    {person.email || <EmptyValue />}
+                    {person.email || null}
                   </TableCell>
                   <TableCell className="text-right font-medium">
                     <ExternalAnchor href={linkedinProfileUrl}>Profile</ExternalAnchor>

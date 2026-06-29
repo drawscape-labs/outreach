@@ -74,6 +74,12 @@ export async function PATCH(request, context) {
   }
 
   revalidatePath("/people");
+  revalidatePath(`/people/${person.id}`);
+  revalidatePath("/");
+  revalidatePath("/companies");
+  revalidatePath("/contacted");
+  revalidatePath("/replied");
+  revalidatePath("/converted");
 
   return Response.json({
     person: {

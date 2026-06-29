@@ -4,11 +4,9 @@ import {
   DataTable,
   EmptyValue,
   ExternalAnchor,
-  LeadStatus,
   Link,
   PageHeader,
   PageShell,
-  QualifiedStatus,
   SectionHeader,
   StatusPill,
   TableEmpty,
@@ -19,6 +17,10 @@ import {
   TableHeader,
   TableRow
 } from "../../../components";
+import {
+  EditableLeadStatus,
+  EditableQualifiedStatus
+} from "../../../components/lead-field-controls";
 import { PersonActions } from "../components/person-actions";
 import { findQuickmailLead, getQuickmailLead, QuickmailError } from "../../../lib/quickmail";
 import { getPerson, getPersonPositions } from "../../../lib/prospects";
@@ -261,10 +263,13 @@ export default async function PersonDetailPage({ params }) {
           </div>
           <dl className="grid grid-cols-1 sm:grid-cols-2">
             <DetailItem label="Status">
-              <LeadStatus status={person.status} />
+              <EditableLeadStatus personId={person.id} status={person.status} />
             </DetailItem>
             <DetailItem label="Qualified">
-              <QualifiedStatus qualified={person.qualified} />
+              <EditableQualifiedStatus
+                personId={person.id}
+                qualified={person.qualified}
+              />
             </DetailItem>
             <DetailItem label="Email">
               <FieldValue value={person.email} />

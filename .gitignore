@@ -27,6 +27,7 @@ coverage/
 .cache/
 .parcel-cache/
 .vite/
+.codex/tmp/
 
 # OS and editor files
 .DS_Store

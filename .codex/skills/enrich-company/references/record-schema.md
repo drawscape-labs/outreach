@@ -99,8 +99,9 @@ Use one evidence entry per source or per field when the target schema supports i
 - `industries`, `categories`, `tags`: lowercase slugs unless the project uses title-cased labels.
 - `country_code`: ISO 3166-1 alpha-2.
 - `founded_year`: integer year only.
-- `employee_count`: exact integer only when a primary source gives one.
-- `employee_count_range`: use a range string such as `1-10`, `11-50`, `51-200`, `201-500`, `501-1000`, `1001-5000`, `5001-10000`, `10001+`.
+- `employee_count`: concrete integer total headcount only when a source reports one. Use evidence confidence to distinguish official counts from secondary/platform estimates.
+- `employee_count_range`: use when only a range is available, such as `1-10`, `11-50`, `51-200`, `201-500`, `501-1000`, `1001-5000`, `5001-10000`, `10001+`.
+- Do not convert employee ranges into midpoint guesses. For branches, dealerships, subsidiaries, franchises, and local offices, avoid using parent-company headcount unless the parent is the target entity.
 - `revenue_range`: preserve the project's enum when available; otherwise use a conservative range string and low confidence.
 - `stock_ticker`: include exchange when known, such as `NASDAQ:ABCD`.
 - `last_enriched_at` and `observed_at`: use `YYYY-MM-DD`.
@@ -117,7 +118,7 @@ Aim to fill these high-value fields when evidence exists:
 - industry/category tags
 - headquarters city, region, and country
 - founded year
-- employee count or employee range
+- total employee headcount or employee range
 - ownership/status
 - parent company or acquisition status
 - founders and current chief executive
