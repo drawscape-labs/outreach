@@ -33,6 +33,13 @@ Use current sources; company staff and titles change frequently.
 - Assign `medium` when the company site confirms the role and email but the association requires light page-structure interpretation.
 - Keep as `needs_review` when the email is pattern-derived, appears only in page source without a visible/current role, or comes only from a third-party directory.
 
+## Phone Numbers
+
+- Store `phone_number` only when it is clearly personal/direct for the named person, such as a staff-card number, broker profile number, vCard number, `tel:` link adjacent to the person's name, or a number explicitly labeled direct, mobile, or cell.
+- Do not store office, main, location, department, receptionist, service, sales desk, fax, after-hours, or other shared numbers.
+- If the same number appears broadly across multiple staff, a footer/contact page, or a location page, treat it as shared and leave `phone_number` null.
+- If the association between the person and number is unclear, leave `phone_number` null and mention the ambiguity in evidence or assumptions when useful.
+
 ## Evidence Notes
 
 For dry-run reports, include short evidence objects with:

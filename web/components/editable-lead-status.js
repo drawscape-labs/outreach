@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LEAD_STATUSES } from "../lib/statuses";
+import { peopleApi } from "../lib/api";
 import { EditableFieldMenu } from "./editable-field-menu";
 import { LeadStatus } from "./lead-status";
-import { updatePerson } from "./update-person";
 
 export function EditableLeadStatus({ personId, status }) {
   const router = useRouter();
@@ -27,7 +27,7 @@ export function EditableLeadStatus({ personId, status }) {
         setCurrentStatus(option.value);
 
         try {
-          await updatePerson(personId, { status: option.value });
+          await peopleApi.update(personId, { status: option.value });
           router.refresh();
         } catch (error) {
           setCurrentStatus(previousStatus);

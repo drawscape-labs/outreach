@@ -8,7 +8,7 @@ import {
   SectionHeader
 } from "../../../components";
 import { PeopleTable } from "../../people/components/people-table";
-import { getCompany, getCompanyPositions } from "../../../lib/prospects";
+import prisma from "../../../lib/prisma";
 import { CompanyActions } from "../components/company-actions";
 
 export const dynamic = "force-dynamic";
@@ -119,20 +119,127 @@ function getCodexLaunchStatus(searchParams) {
   };
 }
 
+function companyFromPrisma(company) {
+  return {
+    id: company.id,
+    name: company.name,
+    domain: company.domain,
+    linkedinCompanyUrl: company.linkedin_company_url,
+    websiteUrl: company.website_url,
+    description: company.description,
+    industry: company.industry,
+    location: company.location,
+    employeeCount: company.employee_count,
+    employeeCountRange: company.employee_count_range,
+    dateEnriched: company.date_enriched,
+    notes: company.notes
+  };
+}
+
+function positionFromPrisma(position) {
+  return {
+    id: position.id,
+    title: position.title,
+    department: position.department,
+    seniority: position.seniority,
+    startDate: position.start_date,
+    endDate: position.end_date,
+    isCurrent: position.is_current,
+    positionCreatedAt: position.created_at,
+    notes: position.notes,
+    personId: position.people.id,
+    personName: position.people.name,
+    profileKey: position.people.profile_key,
+    linkedinProfileUrl: position.people.linkedin_profile_url,
+    createdAt: position.people.created_at,
+    email: position.people.email,
+    phoneNumber: position.people.phone_number,
+    status: position.people.status,
+    qualified: Boolean(position.people.qualified)
+  };
+}
+
+function readCompanyId(value) {
+  const id = Number(value);
+
+  return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+async function getCompanyDetail(companyId) {
+  const id = readCompanyId(companyId);
+
+  if (!id) {
+    return null;
+  }
+
+  return prisma.companies.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      domain: true,
+      linkedin_company_url: true,
+      website_url: true,
+      description: true,
+      industry: true,
+      location: true,
+      employee_count: true,
+      employee_count_range: true,
+      date_enriched: true,
+      notes: true,
+      positions: {
+        where: {
+          is_current: 1
+        },
+        orderBy: [
+          { created_at: "desc" },
+          { id: "desc" }
+        ],
+        select: {
+          id: true,
+          title: true,
+          department: true,
+          seniority: true,
+          start_date: true,
+          end_date: true,
+          is_current: true,
+          created_at: true,
+          notes: true,
+          people: {
+            select: {
+              id: true,
+              name: true,
+              profile_key: true,
+              linkedin_profile_url: true,
+              created_at: true,
+              email: true,
+              phone_number: true,
+              status: true,
+              qualified: true
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
 export default async function CompanyDetailPage({ params, searchParams }) {
   const { id } = await params;
   const resolvedSearchParams = await searchParams;
-  const company = getCompany(id);
+  const companyRecord = await getCompanyDetail(id);
 
-  if (!company) {
+  if (!companyRecord) {
     notFound();
   }
 
-  const positions = getCompanyPositions(id);
-  const people = positions.map((position) => ({
-    ...position,
+  const company = companyFromPrisma(companyRecord);
+  const people = companyRecord.positions.map((position) => ({
+    ...positionFromPrisma(position),
     companyId: company.id,
-    companyName: company.name
+    companyName: company.name,
+    companyDomain: company.domain,
+    companyWebsiteUrl: company.websiteUrl
   }));
 
   return (

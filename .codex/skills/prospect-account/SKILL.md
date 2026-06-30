@@ -15,6 +15,7 @@ Research one target account, find likely sales contacts, dedupe against the Draw
 - Never use company name alone as a database uniqueness key.
 - Do not scrape logged-in LinkedIn pages, bypass access controls, automate LinkedIn sessions, or collect data from paywalled/member-only pages. Record LinkedIn profile URLs found through public web search or public pages, but mark inaccessible LinkedIn details as unavailable.
 - LinkedIn is preferred but not required for people when the company website directly confirms the person's name, current sales/client-facing position, and public work email address.
+- Add `phone_number` when a source clearly identifies it as a personal/direct number for that person. Do not add office, main, location, department, receptionist, service, sales desk, fax, or other shared numbers; leave `phone_number` null when ambiguous.
 - If a match is ambiguous, stop at `needs_review` instead of forcing an insert.
 - After a successful approved import, start email lookup for imported people with missing emails. Preserve the `$find-person-email` rule that database email updates require explicit user approval unless the user already asked to import and save emails.
 
@@ -38,7 +39,7 @@ Before a full prospecting run, read the relevant references:
    - Look for people by `profile_key`, `linkedin_profile_url`, then email when available.
 3. Research the account:
    - Start with the company website: homepage, About, Team, Staff, Broker, Sales, Locations, Contact, News, press, and structured metadata.
-   - For car dealerships, explicitly check About Us / Meet Our Team / Staff pages. Dealer sites often list department-grouped staff cards with names, titles, direct phone numbers, and `Email Me` links; inspect visible text and link targets/source for `mailto:`, `/cdn-cgi/l/email-protection`, or similar encoded email patterns.
+   - For car dealerships, explicitly check About Us / Meet Our Team / Staff pages. Dealer sites often list department-grouped staff cards with names, titles, direct/personal phone numbers, and `Email Me` links; inspect visible text and link targets/source for `mailto:`, `/cdn-cgi/l/email-protection`, or similar encoded email patterns.
    - For car dealerships, prioritize Sales, Brand Ambassador, General Manager, Sales Manager, and Guest Experience people.
    - For sailboat and yacht companies, explicitly check Brokers, Brokerage, Yacht Sales, Sailboat Sales, New Yachts, Pre-Owned Yachts, Used Yachts, Team, Staff, Locations, and Contact pages. Treat broker/brokerage, sales, business development, manager, director, VP, and vice president as high-priority title keywords.
    - Use current web search for public corroboration and candidate profile discovery.
@@ -48,6 +49,7 @@ Before a full prospecting run, read the relevant references:
    - Prefer current sales/client-facing roles over operations, marketing, service, or former employees.
    - Require a stable person identity before import: use a canonical LinkedIn profile URL when available, otherwise use a website-confirmed public work email and allow the scripts to derive `profile_key` as `email/<normalized-email>`.
    - Do not import email-only people from weak secondary sources; use email identity only when the company website or another primary company-controlled source confirms name, position, and email together.
+   - Populate `phone_number` only from person-specific staff cards, broker profiles, vCards, `tel:` links next to the person's name, or source text that labels the number as direct/mobile/cell for that person.
 5. Assign confidence:
    - Use `high`, `medium`, `low`, `unknown`, or `needs_review`.
    - Import only `high` and `medium` people/positions by default.

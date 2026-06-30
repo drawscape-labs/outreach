@@ -18,39 +18,10 @@ import {
 } from "../../../components/ui/dropdown";
 import { Field, Label } from "../../../components/ui/fieldset";
 import { Select } from "../../../components/ui/select";
+import { quickmailApi } from "../../../lib/api";
 import { buildQuickmailPlaceholderEmail } from "../../../lib/placeholder-email";
 
 const quickmailCampaignsQueryKey = ["quickmail", "campaigns"];
-
-async function fetchJson(url, options) {
-  const response = await fetch(url, options);
-  const payload = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(payload.error || "Request failed.");
-  }
-
-  return payload;
-}
-
-async function fetchQuickmailCampaigns() {
-  const payload = await fetchJson("/api/quickmail/campaigns");
-
-  return payload.campaigns || [];
-}
-
-async function addQuickmailLeadToCampaign({ campaignId, body }) {
-  return fetchJson(
-    `/api/quickmail/campaigns/${encodeURIComponent(campaignId)}/leads`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
-    }
-  );
-}
 
 function IconDots(props) {
   return (
@@ -77,7 +48,7 @@ function CampaignModal({
   const [success, setSuccess] = useState("");
   const campaignsQuery = useQuery({
     queryKey: quickmailCampaignsQueryKey,
-    queryFn: () => fetchQuickmailCampaigns()
+    queryFn: () => quickmailApi.listCampaigns()
   });
   const campaigns = campaignsQuery.data || [];
 
@@ -92,14 +63,14 @@ function CampaignModal({
 
   const addToCampaignMutation = useMutation({
     mutationFn: ({ selectedCampaign }) =>
-      addQuickmailLeadToCampaign({
-        campaignId: selectedCampaign.id,
-        body: {
+      quickmailApi.addLeadToCampaign(
+        selectedCampaign.id,
+        {
           personId,
           workspaceId: selectedCampaign.workspaceId,
           markContacted: true
         }
-      }),
+      ),
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: quickmailCampaignsQueryKey });
       setSuccess("Added to campaign.");

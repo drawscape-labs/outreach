@@ -2,23 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "../../../components/ui/button";
-
-async function launchCodex(body) {
-  const response = await fetch("/api/codex", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
-  const payload = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    throw new Error(payload.error || "Could not launch Codex.");
-  }
-
-  return payload;
-}
+import { codexApi } from "../../../lib/api";
 
 function valueLine(label, value) {
   if (value === null || value === undefined || String(value).trim() === "") {
@@ -128,7 +112,7 @@ export function CompanyActions({ company, people = [], launchStatus }) {
     });
 
     try {
-      const payload = await launchCodex({
+      const payload = await codexApi.launch({
         skill: action.skill,
         input: action.buildInput({ company, people })
       });

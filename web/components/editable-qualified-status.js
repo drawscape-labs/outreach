@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { peopleApi } from "../lib/api";
 import { EditableFieldMenu } from "./editable-field-menu";
 import { QualifiedStatus } from "./qualified-status";
-import { updatePerson } from "./update-person";
 
 export function EditableQualifiedStatus({ personId, qualified }) {
   const router = useRouter();
@@ -26,7 +26,7 @@ export function EditableQualifiedStatus({ personId, qualified }) {
         setIsQualified(option.value);
 
         try {
-          await updatePerson(personId, { qualified: option.value });
+          await peopleApi.update(personId, { qualified: option.value });
           router.refresh();
         } catch (error) {
           setIsQualified(previousQualified);

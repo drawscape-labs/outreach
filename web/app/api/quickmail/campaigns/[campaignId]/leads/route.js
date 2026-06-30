@@ -1,5 +1,4 @@
 import { revalidatePath } from "next/cache";
-import { query, sqlInteger, sqlString } from "../../../../../../lib/db";
 import {
   addQuickmailLeadsToCampaign,
   createOrReuseQuickmailLead,
@@ -7,6 +6,7 @@ import {
   QuickmailError
 } from "../../../../../../lib/quickmail";
 import { buildQuickmailPlaceholderEmail } from "../../../../../../lib/placeholder-email";
+import prisma from "../../../../../../lib/prisma";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -36,6 +36,12 @@ function jsonError(error, status = 400, details) {
 
 function readStringId(value) {
   return typeof value === "string" && value.trim() ? value.trim() : "";
+}
+
+function readIntegerId(value) {
+  const parsed = Number(value);
+
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
 }
 
 function splitName(name) {
@@ -84,64 +90,75 @@ function cleanLeadInput(lead) {
   return { lead: cleanLead };
 }
 
-function getPersonLead(personId) {
-  const id = sqlInteger(personId);
+async function getPersonLead(personId) {
+  const id = readIntegerId(personId);
 
   if (!id) {
     return null;
   }
 
-  const people = query(`
-    SELECT
-      p.id,
-      p.profile_key AS profileKey,
-      p.quickmail_lead_id AS quickmailLeadId,
-      p.name,
-      p.email,
-      p.phone_number AS phoneNumber,
-      p.linkedin_profile_url AS linkedinProfileUrl,
-      pos.title,
-      c.name AS companyName
-    FROM people p
-    LEFT JOIN positions pos ON pos.person_id = p.id AND pos.is_current = 1
-    LEFT JOIN companies c ON c.id = pos.company_id
-    WHERE p.id = ${id}
-    ORDER BY pos.created_at DESC, pos.id DESC
-    LIMIT 1;
-  `);
-
-  const person = people[0];
+  const person = await prisma.people.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      profile_key: true,
+      quickmail_lead_id: true,
+      name: true,
+      email: true,
+      phone_number: true,
+      linkedin_profile_url: true,
+      positions: {
+        where: {
+          is_current: 1
+        },
+        orderBy: [
+          { created_at: "desc" },
+          { id: "desc" }
+        ],
+        take: 1,
+        select: {
+          title: true,
+          companies: {
+            select: {
+              name: true
+            }
+          }
+        }
+      }
+    }
+  });
 
   if (!person) {
     return null;
   }
 
   const { firstName, lastName } = splitName(person.name);
+  const currentPosition = person.positions[0];
 
   return {
     localPersonId: person.id,
-    quickmailLeadId: person.quickmailLeadId,
+    quickmailLeadId: person.quickmail_lead_id,
     lead: {
       email:
         person.email ||
         buildQuickmailPlaceholderEmail({
           personId: person.id,
           name: person.name,
-          profileKey: person.profileKey,
-          linkedinProfileUrl: person.linkedinProfileUrl
+          profileKey: person.profile_key,
+          linkedinProfileUrl: person.linkedin_profile_url
         }),
       firstName,
       lastName,
-      companyName: person.companyName,
-      title: person.title,
-      phone: person.phoneNumber,
-      linkedinId: person.linkedinProfileUrl
+      companyName: currentPosition?.companies?.name,
+      title: currentPosition?.title,
+      phone: person.phone_number,
+      linkedinId: person.linkedin_profile_url
     }
   };
 }
 
-function updatePersonAfterQuickmailSync({ personId, quickmailLeadId, markContacted }) {
-  const id = sqlInteger(personId);
+async function updatePersonAfterQuickmailSync({ personId, quickmailLeadId, markContacted }) {
+  const id = readIntegerId(personId);
   const leadId = readStringId(quickmailLeadId);
 
   if (!id) {
@@ -152,21 +169,39 @@ function updatePersonAfterQuickmailSync({ personId, quickmailLeadId, markContact
     return;
   }
 
-  if (leadId) {
-    query(`
-      UPDATE OR IGNORE people
-      SET quickmail_lead_id = ${sqlString(leadId)}
-      WHERE id = ${id};
-    `);
-  }
+  await prisma.$transaction(async (tx) => {
+    const data = {};
 
-  if (markContacted) {
-    query(`
-      UPDATE people
-      SET status = 'Contacted'
-      WHERE id = ${id};
-    `);
-  }
+    if (leadId) {
+      const existingLeadOwner = await tx.people.findFirst({
+        where: {
+          quickmail_lead_id: leadId,
+          NOT: {
+            id
+          }
+        },
+        select: {
+          id: true
+        }
+      });
+
+      if (!existingLeadOwner) {
+        data.quickmail_lead_id = leadId;
+      }
+    }
+
+    if (markContacted) {
+      data.status = "Contacted";
+    }
+
+    if (Object.keys(data).length) {
+      await tx.people.update({
+        where: { id },
+        data,
+        select: { id: true }
+      });
+    }
+  });
 
   revalidatePath("/people");
   revalidatePath("/contacted");
@@ -218,7 +253,7 @@ export async function POST(request, context) {
       let leadInput = payload.lead;
 
       if (hasPersonId) {
-        const personLead = getPersonLead(payload.personId);
+        const personLead = await getPersonLead(payload.personId);
 
         if (!personLead) {
           return jsonError("Person not found.", 404);
@@ -259,7 +294,7 @@ export async function POST(request, context) {
     });
 
     if (localPersonId) {
-      updatePersonAfterQuickmailSync({
+      await updatePersonAfterQuickmailSync({
         personId: localPersonId,
         quickmailLeadId: quickmailLead.id,
         markContacted: payload.markContacted === true

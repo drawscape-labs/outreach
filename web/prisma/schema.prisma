@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model companies {
+  id                   Int         @id @default(autoincrement())
+  name                 String
+  domain               String      @unique(map: "sqlite_autoindex_companies_1")
+  linkedin_company_url String      @unique(map: "sqlite_autoindex_companies_2")
+  website_url          String?
+  industry             String?
+  location             String?
+  notes                String?
+  created_at           String      @default(dbgenerated("CURRENT_TIMESTAMP"))
+  updated_at           String      @default(dbgenerated("CURRENT_TIMESTAMP"))
+  description          String?
+  employee_count       Int?
+  employee_count_range String?
+  date_enriched        String?
+  positions            positions[]
+}
+
+model people {
+  id                   Int         @id @default(autoincrement())
+  profile_key          String      @unique(map: "sqlite_autoindex_people_1")
+  linkedin_profile_url String?
+  quickmail_lead_id    String?
+  name                 String
+  email                String?
+  status               String      @default("New")
+  qualified            Int         @default(0)
+  notes                String?
+  created_at           String      @default(dbgenerated("CURRENT_TIMESTAMP"))
+  updated_at           String      @default(dbgenerated("CURRENT_TIMESTAMP"))
+  phone_number         String?
+  positions            positions[]
+}
+
+model positions {
+  id         Int       @id @default(autoincrement())
+  company_id Int
+  person_id  Int
+  title      String?
+  department String?
+  seniority  String?
+  start_date String?
+  end_date   String?
+  is_current Int       @default(1)
+  notes      String?
+  created_at String    @default(dbgenerated("CURRENT_TIMESTAMP"))
+  updated_at String    @default(dbgenerated("CURRENT_TIMESTAMP"))
+  people     people    @relation(fields: [person_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  companies  companies @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([person_id])
+  @@index([company_id])
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model schema_migrations {
+  filename       String? @id
+  checksum       String
+  applied_at     String  @default(dbgenerated("CURRENT_TIMESTAMP"))
+  execution_type String  @default("applied")
+
+  @@ignore
+}

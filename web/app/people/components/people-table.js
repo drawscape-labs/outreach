@@ -5,7 +5,6 @@ import {
   ExternalAnchor,
   LeadStatus,
   Link,
-  PersonIdentity,
   QualifiedStatus,
   TableEmpty,
   TableBody,
@@ -34,7 +33,12 @@ function companiesForPerson(person) {
   }
 
   if (person.companyId && person.companyName) {
-    return [{ id: person.companyId, name: person.companyName }];
+    return [{
+      id: person.companyId,
+      name: person.companyName,
+      domain: person.companyDomain || person.domain,
+      websiteUrl: person.companyWebsiteUrl || person.websiteUrl
+    }];
   }
 
   return splitCompanies(person.companies).map((name) => ({ name }));
@@ -46,7 +50,7 @@ function companyKey(company, index) {
 
 function CompanyLinks({ companies }) {
   if (!companies.length) {
-    return <EmptyValue />;
+    return <EmptyValue>No company</EmptyValue>;
   }
 
   return (
@@ -67,6 +71,154 @@ function CompanyLinks({ companies }) {
         </span>
       ))}
     </span>
+  );
+}
+
+function websiteDomain(value) {
+  const trimmedValue = String(value || "").trim();
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  try {
+    const url = new URL(
+      trimmedValue.includes("://") ? trimmedValue : `https://${trimmedValue}`
+    );
+
+    return url.hostname.replace(/^www\./, "");
+  } catch {
+    return trimmedValue
+      .replace(/^https?:\/\//, "")
+      .replace(/^www\./, "")
+      .replace(/\/.*$/, "");
+  }
+}
+
+function companyDomain(company) {
+  return String(company.domain || "").trim() || websiteDomain(company.websiteUrl);
+}
+
+function externalWebsiteHref(value) {
+  const trimmedValue = String(value || "").trim();
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  return /^https?:\/\//.test(trimmedValue)
+    ? trimmedValue
+    : `https://${trimmedValue}`;
+}
+
+function companyWebsiteHref(company) {
+  const websiteHref = externalWebsiteHref(company.websiteUrl);
+
+  if (websiteHref) {
+    return websiteHref;
+  }
+
+  const domain = companyDomain(company);
+
+  return domain ? `https://${domain}` : "";
+}
+
+function CompanyDomains({ companies }) {
+  const domains = companies
+    .map((company, index) => ({
+      domain: companyDomain(company),
+      href: companyWebsiteHref(company),
+      key: companyKey(company, index)
+    }))
+    .filter((company) => company.domain);
+
+  if (!domains.length) {
+    return <EmptyValue>No domain</EmptyValue>;
+  }
+
+  return (
+    <span className="inline-flex flex-wrap gap-x-1.5 gap-y-1">
+      {domains.map((company, index) => (
+        <span key={company.key}>
+          {index > 0 ? <span className="text-gray-400">, </span> : null}
+          {company.href ? (
+            <ExternalAnchor href={company.href}>{company.domain}</ExternalAnchor>
+          ) : (
+            company.domain
+          )}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function PersonStack({ id, name, position }) {
+  const content = (
+    <>
+      <span className="block font-semibold text-gray-900">
+        {position || <EmptyValue>No position</EmptyValue>}
+      </span>
+      <span className="mt-0.5 block font-normal text-gray-600">
+        {name || <EmptyValue>No name</EmptyValue>}
+      </span>
+    </>
+  );
+
+  if (!id) {
+    return content;
+  }
+
+  return (
+    <Link
+      className="block min-w-0 hover:text-teal-800"
+      href={`/people/${id}`}
+    >
+      {content}
+    </Link>
+  );
+}
+
+function CompanyStack({ companies }) {
+  return (
+    <div className="min-w-0">
+      <div className="text-gray-900">
+        <CompanyLinks companies={companies} />
+      </div>
+      <div className="mt-1 text-gray-500">
+        <CompanyDomains companies={companies} />
+      </div>
+    </div>
+  );
+}
+
+function ContactLine({ label, children }) {
+  return (
+    <div className="min-w-0">
+      <dt className="sr-only">{label}</dt>
+      <dd className="min-w-0 break-words text-gray-600">{children}</dd>
+    </div>
+  );
+}
+
+function ContactStack({ email, phoneNumber, linkedinProfileUrl }) {
+  return (
+    <dl className="min-w-0 space-y-1">
+      <ContactLine label="Email">
+        {email ? (
+          <span className="break-all">{email}</span>
+        ) : (
+          <EmptyValue>No email</EmptyValue>
+        )}
+      </ContactLine>
+      <ContactLine label="Phone">
+        {phoneNumber || <EmptyValue>No phone</EmptyValue>}
+      </ContactLine>
+      <ContactLine label="LinkedIn">
+        <ExternalAnchor href={linkedinProfileUrl} missingLabel="No LinkedIn">
+          LinkedIn
+        </ExternalAnchor>
+      </ContactLine>
+    </dl>
   );
 }
 
@@ -207,11 +359,20 @@ function QualifiedCell({ editableStatuses, person }) {
   return <QualifiedStatus qualified={person.qualified} />;
 }
 
+function ProgressCell({ editableStatuses, person }) {
+  return (
+    <div className="flex flex-col items-start gap-2">
+      <StatusCell editableStatuses={editableStatuses} person={person} />
+      <QualifiedCell editableStatuses={editableStatuses} person={person} />
+    </div>
+  );
+}
+
 export function PeopleTable({
   people,
   emptyMessage = "No people found.",
   label = "People table",
-  nameHeader = "Name",
+  nameHeader = "Person",
   editableStatuses = true,
   createdAtSortDirection,
   createdAtSortHref
@@ -221,24 +382,21 @@ export function PeopleTable({
       <DataTable>
         <TableHead>
           <TableRow>
-            <TableHeader scope="col">
+            <TableHeader scope="col" className="w-[22%]">
               {nameHeader}
             </TableHeader>
-            <TableHeader scope="col" className="hidden md:table-cell">
-              Companies
+            <TableHeader scope="col" className="w-[22%]">
+              Company
             </TableHeader>
-            <TableHeader scope="col">
-              Position
+            <TableHeader scope="col" className="w-[26%]">
+              Contact
             </TableHeader>
-            <TableHeader scope="col">
-              Status
-            </TableHeader>
-            <TableHeader scope="col">
-              Qualified
+            <TableHeader scope="col" className="w-28">
+              Progress
             </TableHeader>
             <TableHeader
               scope="col"
-              className="hidden xl:table-cell"
+              className="hidden w-44 xl:table-cell"
               aria-sort={
                 createdAtSortDirection
                   ? createdAtSortDirection === "asc"
@@ -252,15 +410,6 @@ export function PeopleTable({
                 sortHref={createdAtSortHref}
               />
             </TableHeader>
-            <TableHeader scope="col" className="hidden 2xl:table-cell">
-              Email
-            </TableHeader>
-            <TableHeader scope="col" className="hidden 2xl:table-cell">
-              Phone
-            </TableHeader>
-            <TableHeader scope="col" className="text-right">
-              LinkedIn
-            </TableHeader>
             <TableHeader scope="col" className="text-right !pr-8">
               <span className="sr-only">Actions</span>
             </TableHeader>
@@ -268,7 +417,7 @@ export function PeopleTable({
         </TableHead>
         <TableBody>
           {people.length === 0 ? (
-            <TableEmpty colSpan={10}>{emptyMessage}</TableEmpty>
+            <TableEmpty colSpan={6}>{emptyMessage}</TableEmpty>
           ) : (
             people.map((person) => {
               const id = personId(person);
@@ -276,68 +425,35 @@ export function PeopleTable({
               const profileKey = personProfileKey(person);
               const linkedinProfileUrl = personLinkedInProfileUrl(person);
               const companies = companiesForPerson(person);
-              const companyNames = companies.map((company) => company.name).join(", ");
               const position = positionText(person);
               const createdAt = personCreatedAt(person);
               const formattedCreatedAt = formatCreatedAt(createdAt);
 
               return (
                 <TableRow key={person.id || person.personId}>
-                  <TableCell className="w-full max-w-0 font-medium text-zinc-950 sm:w-auto sm:max-w-none">
-                    <Link
-                      className="block text-gray-900 hover:text-teal-800"
-                      href={`/people/${id}`}
-                    >
-                      <PersonIdentity
-                        name={name}
-                        profileKey={profileKey}
-                        details={[
-                          {
-                            label: "Position",
-                            value: position,
-                            missingValue: "No position"
-                          },
-                          {
-                            label: "Companies",
-                            value: companyNames,
-                            missingValue: "No company mapped"
-                          }
-                        ]}
-                      />
-                    </Link>
+                  <TableCell className="max-w-0 whitespace-normal align-top text-zinc-950">
+                    <PersonStack id={id} name={name} position={position} />
                   </TableCell>
-                  <TableCell className="hidden text-zinc-500 md:table-cell">
-                    <CompanyLinks companies={companies} />
+                  <TableCell className="max-w-0 whitespace-normal align-top text-zinc-500">
+                    <CompanyStack companies={companies} />
                   </TableCell>
-                  <TableCell className="max-w-xs whitespace-normal text-zinc-500">
-                    {position ? (
-                      <span className="font-medium text-gray-900">{position}</span>
-                    ) : (
-                      <EmptyValue>No position</EmptyValue>
-                    )}
+                  <TableCell className="max-w-0 whitespace-normal align-top text-zinc-500">
+                    <ContactStack
+                      email={person.email}
+                      phoneNumber={person.phoneNumber}
+                      linkedinProfileUrl={linkedinProfileUrl}
+                    />
                   </TableCell>
-                  <TableCell className="text-zinc-500">
-                    <StatusCell editableStatuses={editableStatuses} person={person} />
-                  </TableCell>
-                  <TableCell className="text-zinc-500">
-                    <QualifiedCell editableStatuses={editableStatuses} person={person} />
+                  <TableCell className="whitespace-normal align-top text-zinc-500">
+                    <ProgressCell editableStatuses={editableStatuses} person={person} />
                   </TableCell>
                   <TableCell
-                    className="hidden text-zinc-500 xl:table-cell"
+                    className="hidden w-44 whitespace-nowrap align-top text-zinc-500 xl:table-cell"
                     title={createdAt || undefined}
                   >
                     {formattedCreatedAt || <EmptyValue />}
                   </TableCell>
-                  <TableCell className="hidden text-zinc-500 2xl:table-cell">
-                    {person.email || null}
-                  </TableCell>
-                  <TableCell className="hidden text-zinc-500 2xl:table-cell">
-                    {person.phoneNumber || null}
-                  </TableCell>
-                  <TableCell className="text-right font-medium">
-                    <ExternalAnchor href={linkedinProfileUrl}>Profile</ExternalAnchor>
-                  </TableCell>
-                  <TableCell className="text-right font-medium !pr-8">
+                  <TableCell className="align-top text-right font-medium !pr-8">
                     <PersonActions
                       personId={id}
                       personName={name}

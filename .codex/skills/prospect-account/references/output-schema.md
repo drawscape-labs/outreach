@@ -83,12 +83,15 @@ Person:
 
 - `name`
 - `linkedin_profile_url` or a website-confirmed `email`
+- `phone_number` only when it is a personal/direct number for that person; otherwise use `null`
 
 Position:
 
 - `title`
 
 The scripts derive `profile_key` from `linkedin_profile_url` when possible. If no LinkedIn URL is available and the company website confirms the person's name, position, and public work email, the scripts derive `profile_key` as `email/<normalized-email>`.
+
+Do not put office, main, location, department, service, sales desk, fax, or other shared numbers in `phone_number`.
 
 ## Evidence
 

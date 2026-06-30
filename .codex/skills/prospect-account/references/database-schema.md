@@ -61,6 +61,7 @@ Rules:
 - Default `status` to `New`.
 - Set `qualified` to `1` only when the person appears sales/client-facing and relevant to the target vertical.
 - Prefer LinkedIn profile URLs when available.
+- Store `phone_number` only for personal/direct numbers tied to the named person. Do not store company main, office, location, department, service, sales desk, fax, or shared numbers.
 - Insert email-only people only when a company website or other primary company-controlled source confirms the person's name, current position, and public work email together.
 - Do not insert people without either a canonical LinkedIn profile URL or a website-confirmed public work email.
 

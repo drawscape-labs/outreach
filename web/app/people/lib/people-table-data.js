@@ -23,10 +23,10 @@ export function splitCompanyRefs(companyRefs) {
   const companies = new Map();
 
   splitList(companyRefs).forEach((companyRef) => {
-    const [id, name] = companyRef.split(fieldSeparator);
+    const [id, name, domain = "", websiteUrl = ""] = companyRef.split(fieldSeparator);
 
     if (id && name && !companies.has(id)) {
-      companies.set(id, { id, name });
+      companies.set(id, { id, name, domain, websiteUrl });
     }
   });
 
