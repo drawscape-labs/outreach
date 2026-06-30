@@ -75,7 +75,9 @@ export const PERSON_REQUIRED_CREATE_FIELDS = [
 
 export const PERSON_FILTER_PARAMS = {
   companyId: ["companyId", "company_id"],
+  companyIndustry: ["industry", "companyIndustry", "company_industry"],
   email: ["email"],
+  linkedin: ["linkedin", "linkedinProfile", "linkedin_profile"],
   qualified: ["qualified"],
   status: ["status"]
 };
@@ -84,8 +86,12 @@ export const PERSON_QUALIFIED_FILTER_VALUES = ["yes", "no"];
 
 export const PERSON_EMAIL_FILTER_VALUES = ["has", "missing"];
 
+export const PERSON_LINKEDIN_FILTER_VALUES = ["has", "missing"];
+
 export const PERSON_API_MESSAGES = {
   emptyPatch: "Provide at least one person field.",
+  invalidEmailFilter: "Invalid email filter.",
+  invalidLinkedinFilter: "Invalid LinkedIn filter.",
   invalidStatus: "Invalid status.",
   notFound: "Person not found."
 };

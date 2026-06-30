@@ -12,12 +12,13 @@ function FilterSelect({
   name,
   onChange,
   options,
-  value
+  value,
+  widthClass = "sm:w-44"
 }) {
   const id = `people-filter-${name}`;
 
   return (
-    <Field className="w-full sm:w-52">
+    <Field className={`w-full ${widthClass}`}>
       <Label htmlFor={id}>
         {label}
       </Label>
@@ -38,11 +39,17 @@ function FilterSelect({
   );
 }
 
-export function PeopleFilters({ filters }) {
+export function PeopleFilters({ filters, options }) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const hasFilters = Boolean(filters.status || filters.qualified || filters.email);
+  const hasFilters = Boolean(
+    filters.status ||
+      filters.qualified ||
+      filters.email ||
+      filters.linkedin ||
+      filters.industry
+  );
 
   function replaceWithParams(params) {
     const queryString = params.toString();
@@ -54,6 +61,18 @@ export function PeopleFilters({ filters }) {
 
   function updateFilter(name, value) {
     const params = new URLSearchParams(searchParams.toString());
+
+    params.delete("page");
+
+    if (name === "industry") {
+      params.delete("companyIndustry");
+      params.delete("company_industry");
+    }
+
+    if (name === "linkedin") {
+      params.delete("linkedinProfile");
+      params.delete("linkedin_profile");
+    }
 
     if (value) {
       params.set(name, value);
@@ -70,12 +89,19 @@ export function PeopleFilters({ filters }) {
     params.delete("status");
     params.delete("qualified");
     params.delete("email");
+    params.delete("linkedin");
+    params.delete("linkedinProfile");
+    params.delete("linkedin_profile");
+    params.delete("industry");
+    params.delete("companyIndustry");
+    params.delete("company_industry");
+    params.delete("page");
 
     replaceWithParams(params);
   }
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+    <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
       <FilterSelect
         emptyLabel="All statuses"
         label="Status"
@@ -108,6 +134,29 @@ export function PeopleFilters({ filters }) {
           { label: "Missing email", value: "missing" }
         ]}
         value={filters.email}
+      />
+      <FilterSelect
+        emptyLabel="All LinkedIn"
+        label="LinkedIn"
+        name="linkedin"
+        onChange={updateFilter}
+        options={[
+          { label: "Has LinkedIn", value: "has" },
+          { label: "No LinkedIn", value: "missing" }
+        ]}
+        value={filters.linkedin}
+      />
+      <FilterSelect
+        emptyLabel="All industries"
+        label="Company industry"
+        name="industry"
+        onChange={updateFilter}
+        options={(options?.industries || []).map((industry) => ({
+          label: industry,
+          value: industry
+        }))}
+        value={filters.industry}
+        widthClass="sm:w-64"
       />
       {hasFilters ? (
         <Button

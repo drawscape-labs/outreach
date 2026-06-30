@@ -12,9 +12,11 @@ import {
 } from "../lib/model-helpers";
 import {
   PERSON_API_MESSAGES,
+  PERSON_EMAIL_FILTER_VALUES,
   PERSON_FIELD_ALIASES,
   PERSON_FIELDS,
   PERSON_FILTER_PARAMS,
+  PERSON_LINKEDIN_FILTER_VALUES,
   PERSON_REVALIDATION_PATHS,
   PERSON_STATUSES
 } from "./schema";
@@ -282,13 +284,62 @@ export function positionCompany(position) {
   };
 }
 
-function peopleWhere(searchParams) {
+function searchParamValue(searchParams, names) {
+  for (const name of names) {
+    const value = searchParams.get(name);
+
+    if (value !== null && value !== undefined && value !== "") {
+      return value.trim();
+    }
+  }
+
+  return "";
+}
+
+function addAndFilter(where, filter) {
+  where.AND = [...(where.AND || []), filter];
+}
+
+function addTextPresenceFilter(where, field, value) {
+  if (value === "has") {
+    addAndFilter(where, {
+      [field]: {
+        not: null
+      }
+    });
+    addAndFilter(where, {
+      [field]: {
+        not: ""
+      }
+    });
+  } else if (value === "missing") {
+    addAndFilter(where, {
+      OR: [
+        { [field]: null },
+        { [field]: "" }
+      ]
+    });
+  }
+}
+
+function peopleWhere(searchParams, { currentPositionsOnly = false } = {}) {
   const where = {};
-  const status = searchParams.get(PERSON_FILTER_PARAMS.status[0]);
+  const positionFilter = {};
+  const status = searchParamValue(searchParams, PERSON_FILTER_PARAMS.status);
+  const email = searchParamValue(searchParams, PERSON_FILTER_PARAMS.email);
+  const linkedin = searchParamValue(searchParams, PERSON_FILTER_PARAMS.linkedin);
+  const companyIndustry = searchParamValue(
+    searchParams,
+    PERSON_FILTER_PARAMS.companyIndustry
+  );
   const qualified = readBooleanFilter(
-    searchParams.get(PERSON_FILTER_PARAMS.qualified[0]),
+    searchParamValue(searchParams, PERSON_FILTER_PARAMS.qualified),
     "qualified"
   );
+
+  if (currentPositionsOnly) {
+    positionFilter.isCurrent = true;
+  }
 
   if (status) {
     if (!PERSON_STATUSES.includes(status)) {
@@ -302,6 +353,22 @@ function peopleWhere(searchParams) {
     where.qualified = qualified;
   }
 
+  if (email) {
+    if (!PERSON_EMAIL_FILTER_VALUES.includes(email)) {
+      throw new ApiError(PERSON_API_MESSAGES.invalidEmailFilter);
+    }
+
+    addTextPresenceFilter(where, "email", email);
+  }
+
+  if (linkedin) {
+    if (!PERSON_LINKEDIN_FILTER_VALUES.includes(linkedin)) {
+      throw new ApiError(PERSON_API_MESSAGES.invalidLinkedinFilter);
+    }
+
+    addTextPresenceFilter(where, "linkedinProfileUrl", linkedin);
+  }
+
   const companyIdParams = PERSON_FILTER_PARAMS.companyId;
 
   if (companyIdParams.some((name) => searchParams.has(name))) {
@@ -309,10 +376,18 @@ function peopleWhere(searchParams) {
       searchParams.get(companyIdParams[0]) ||
       searchParams.get(companyIdParams[1]);
 
+    positionFilter.companyId = readPositiveInteger(companyId, "companyId");
+  }
+
+  if (companyIndustry) {
+    positionFilter.company = {
+      industry: companyIndustry
+    };
+  }
+
+  if (Object.keys(positionFilter).length > 0) {
     where.positions = {
-      some: {
-        companyId: readPositiveInteger(companyId, "companyId")
-      }
+      some: positionFilter
     };
   }
 
@@ -331,6 +406,70 @@ export function listPeople(searchParams) {
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     select: personSelect
   });
+}
+
+export async function listPeopleTableRows(searchParams, { orderBy } = {}) {
+  const people = await prisma.person.findMany({
+    where: peopleWhere(searchParams, { currentPositionsOnly: true }),
+    orderBy: orderBy || [{ createdAt: "desc" }, { id: "desc" }],
+    select: personTableSelect
+  });
+
+  return people.map(personTableRow);
+}
+
+export async function listPeopleTablePage(
+  searchParams,
+  { orderBy, page = 1, pageSize = 100 } = {}
+) {
+  const where = peopleWhere(searchParams, { currentPositionsOnly: true });
+  const totalCount = await prisma.person.count({ where });
+  const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const people = await prisma.person.findMany({
+    where,
+    orderBy: orderBy || [{ createdAt: "desc" }, { id: "desc" }],
+    skip: (currentPage - 1) * pageSize,
+    take: pageSize,
+    select: personTableSelect
+  });
+
+  return {
+    currentPage,
+    people: people.map(personTableRow),
+    totalCount,
+    totalPages
+  };
+}
+
+export async function listPeopleCompanyIndustries() {
+  const companies = await prisma.company.findMany({
+    where: {
+      industry: {
+        not: null
+      },
+      positions: {
+        some: {
+          isCurrent: true
+        }
+      }
+    },
+    orderBy: [
+      { industry: "asc" },
+      { id: "asc" }
+    ],
+    select: {
+      industry: true
+    }
+  });
+
+  return Array.from(
+    new Set(
+      companies
+        .map((company) => String(company.industry || "").trim())
+        .filter(Boolean)
+    )
+  ).sort((first, second) => first.localeCompare(second));
 }
 
 export function createPerson(payload) {

@@ -22,6 +22,23 @@ import { quickmailApi } from "../../../lib/api";
 import { buildQuickmailPlaceholderEmail } from "../../../lib/placeholder-email";
 
 const quickmailCampaignsQueryKey = ["quickmail", "campaigns"];
+const lastCampaignStorageKey = "drawscape.quickmail.lastCampaignId";
+
+function readLastCampaignId() {
+  try {
+    return window.localStorage.getItem(lastCampaignStorageKey) || "";
+  } catch {
+    return "";
+  }
+}
+
+function writeLastCampaignId(campaignId) {
+  try {
+    window.localStorage.setItem(lastCampaignStorageKey, campaignId);
+  } catch {
+    // Remembering the last campaign is a convenience; the picker still works without storage.
+  }
+}
 
 function IconDots(props) {
   return (
@@ -57,7 +74,12 @@ function CampaignModal({
       campaigns.length &&
       !campaigns.some((campaign) => campaign.id === selectedCampaignId)
     ) {
-      setSelectedCampaignId(campaigns[0].id);
+      const lastCampaignId = readLastCampaignId();
+      const rememberedCampaign = campaigns.find(
+        (campaign) => campaign.id === lastCampaignId
+      );
+
+      setSelectedCampaignId(rememberedCampaign?.id || campaigns[0].id);
     }
   }, [campaigns, selectedCampaignId]);
 
@@ -112,7 +134,18 @@ function CampaignModal({
 
     setError("");
     setSuccess("");
+    writeLastCampaignId(selectedCampaign.id);
     addToCampaignMutation.mutate({ selectedCampaign });
+  }
+
+  function handleCampaignChange(event) {
+    const campaignId = event.target.value;
+
+    setSelectedCampaignId(campaignId);
+
+    if (campaignId) {
+      writeLastCampaignId(campaignId);
+    }
   }
 
   return (
@@ -136,7 +169,7 @@ function CampaignModal({
               id={`campaign-${personId}`}
               value={selectedCampaignId}
               disabled={isLoading || isSaving || campaigns.length === 0}
-              onChange={(event) => setSelectedCampaignId(event.target.value)}
+              onChange={handleCampaignChange}
             >
               {campaigns.length ? (
                 campaigns.map((campaign) => (
