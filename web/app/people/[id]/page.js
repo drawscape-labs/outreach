@@ -24,6 +24,11 @@ import {
 import { PersonActions } from "../components/person-actions";
 import { findQuickmailLead, getQuickmailLead, QuickmailError } from "../../../lib/quickmail";
 import prisma from "../../../lib/prisma";
+import {
+  personDetailSelect,
+  personJson,
+  positionCompany
+} from "../../api/people/model";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -233,41 +238,6 @@ function QuickmailPanel({ person, state }) {
   );
 }
 
-function personFromPrisma(person) {
-  return {
-    id: person.id,
-    profileKey: person.profile_key,
-    linkedinProfileUrl: person.linkedin_profile_url,
-    quickmailLeadId: person.quickmail_lead_id,
-    name: person.name,
-    email: person.email,
-    phoneNumber: person.phone_number,
-    status: person.status,
-    qualified: Boolean(person.qualified),
-    notes: person.notes,
-    createdAt: person.created_at,
-    updatedAt: person.updated_at
-  };
-}
-
-function positionFromPrisma(position) {
-  return {
-    id: position.id,
-    title: position.title,
-    department: position.department,
-    seniority: position.seniority,
-    startDate: position.start_date,
-    endDate: position.end_date,
-    isCurrent: position.is_current,
-    notes: position.notes,
-    companyId: position.companies.id,
-    companyName: position.companies.name,
-    domain: position.companies.domain,
-    linkedinCompanyUrl: position.companies.linkedin_company_url,
-    websiteUrl: position.companies.website_url
-  };
-}
-
 function readPersonId(value) {
   const id = Number(value);
 
@@ -281,48 +251,9 @@ async function getPersonDetail(personId) {
     return null;
   }
 
-  return prisma.people.findUnique({
+  return prisma.person.findUnique({
     where: { id },
-    select: {
-      id: true,
-      profile_key: true,
-      linkedin_profile_url: true,
-      quickmail_lead_id: true,
-      name: true,
-      email: true,
-      phone_number: true,
-      status: true,
-      qualified: true,
-      notes: true,
-      created_at: true,
-      updated_at: true,
-      positions: {
-        orderBy: [
-          { is_current: "desc" },
-          { created_at: "desc" },
-          { id: "desc" }
-        ],
-        select: {
-          id: true,
-          title: true,
-          department: true,
-          seniority: true,
-          start_date: true,
-          end_date: true,
-          is_current: true,
-          notes: true,
-          companies: {
-            select: {
-              id: true,
-              name: true,
-              domain: true,
-              linkedin_company_url: true,
-              website_url: true
-            }
-          }
-        }
-      }
-    }
+    select: personDetailSelect
   });
 }
 
@@ -334,8 +265,8 @@ export default async function PersonDetailPage({ params }) {
     notFound();
   }
 
-  const person = personFromPrisma(personRecord);
-  const positions = personRecord.positions.map(positionFromPrisma);
+  const person = personJson(personRecord);
+  const positions = personRecord.positions.map(positionCompany);
   const quickmailState = await loadQuickmailLead(person);
 
   return (

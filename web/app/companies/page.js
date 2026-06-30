@@ -24,6 +24,10 @@ import {
 } from "../../components/ui/pagination";
 import prisma from "../../lib/prisma";
 import { CompanyFilters } from "./components/company-filters";
+import {
+  companyListSelect,
+  companyTableRow
+} from "../api/companies/model";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -159,86 +163,20 @@ function getSort(searchParams) {
   return { direction: "asc", sort: "name" };
 }
 
-function companyFromPrisma(company) {
-  const currentPositions = company.positions || [];
-  const personStatuses = new Map();
-
-  currentPositions.forEach((position) => {
-    if (!personStatuses.has(position.person_id)) {
-      personStatuses.set(position.person_id, position.people?.status || "");
-    }
-  });
-
-  const statuses = Array.from(personStatuses.values());
-
-  return {
-    id: company.id,
-    name: company.name,
-    domain: company.domain,
-    linkedinCompanyUrl: company.linkedin_company_url,
-    websiteUrl: company.website_url,
-    description: company.description,
-    industry: company.industry,
-    location: company.location,
-    employeeCount: company.employee_count,
-    employeeCountRange: company.employee_count_range,
-    dateEnriched: company.date_enriched,
-    createdAt: company.created_at,
-    notes: company.notes,
-    positionCount: currentPositions.length,
-    peopleCount: personStatuses.size,
-    contactedCount: statuses.filter((status) =>
-      ["Contacted", "Replied", "Converted"].includes(status)
-    ).length,
-    repliedCount: statuses.filter((status) =>
-      ["Replied", "Converted"].includes(status)
-    ).length,
-    convertedCount: statuses.filter((status) => status === "Converted").length
-  };
-}
-
 async function getCompanies(sort) {
   const orderBy = sort.sort === "created_at"
     ? [
-        { created_at: sort.direction },
+        { createdAt: sort.direction },
         { id: sort.direction },
         { name: "asc" }
       ]
     : [{ name: "asc" }, { id: "asc" }];
-  const companies = await prisma.companies.findMany({
+  const companies = await prisma.company.findMany({
     orderBy,
-    select: {
-      id: true,
-      name: true,
-      domain: true,
-      linkedin_company_url: true,
-      website_url: true,
-      description: true,
-      industry: true,
-      location: true,
-      employee_count: true,
-      employee_count_range: true,
-      date_enriched: true,
-      created_at: true,
-      notes: true,
-      positions: {
-        where: {
-          is_current: 1
-        },
-        select: {
-          id: true,
-          person_id: true,
-          people: {
-            select: {
-              status: true
-            }
-          }
-        }
-      }
-    }
+    select: companyListSelect
   });
 
-  return companies.map(companyFromPrisma);
+  return companies.map(companyTableRow);
 }
 
 function getUniqueValues(items, key) {

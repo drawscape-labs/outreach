@@ -20,10 +20,14 @@ We are creating a basic SQLite database to track companies/people/positions with
   /components - truely global componets used everywhere. status, labels, modals, dialogs, buttons, etc.
     /ui - these are the ui componets we should be reusing everywhere (select, form elemesnt, etc.) based on Headless UI v2.1
   /types - store global type information here, indtead of stuffing into each component.
-  /lib - for pure library files quickmail api, datbase wrapper, api wrappers, etc.
-  /api - server routes for different api calls. this should map basic CRUD operations for our DB models. 
+  /lib - for pure library files quickmail api, datbase wrapper, api wrappers, prisma etc.
+  /api - server routes for different api calls. this should map basic CRUD operations for our DB models. will also include non db features like 
     /quickmail - proxy for the front end to comminicatw with quickmail via the server util librayra
     /people - CRUD operations for our people table
+      /[id] - people detail routes for retrive, update, delete, etc
+      model.js - let's keep our model definiation here for primsma and model data read/write and manipulations. 
+      types.js - any typscript def we need specific to this model
+      schema.js - Use this for constants, enums, arrays, config variables that are needed in mutiple places. no logic, just statis values
     /companies CRUID operations for our companies table
 
 

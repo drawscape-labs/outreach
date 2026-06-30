@@ -97,28 +97,28 @@ async function getPersonLead(personId) {
     return null;
   }
 
-  const person = await prisma.people.findUnique({
+  const person = await prisma.person.findUnique({
     where: { id },
     select: {
       id: true,
-      profile_key: true,
-      quickmail_lead_id: true,
+      profileKey: true,
+      quickmailLeadId: true,
       name: true,
       email: true,
-      phone_number: true,
-      linkedin_profile_url: true,
+      phoneNumber: true,
+      linkedinProfileUrl: true,
       positions: {
         where: {
-          is_current: 1
+          isCurrent: true
         },
         orderBy: [
-          { created_at: "desc" },
+          { createdAt: "desc" },
           { id: "desc" }
         ],
         take: 1,
         select: {
           title: true,
-          companies: {
+          company: {
             select: {
               name: true
             }
@@ -137,22 +137,22 @@ async function getPersonLead(personId) {
 
   return {
     localPersonId: person.id,
-    quickmailLeadId: person.quickmail_lead_id,
+    quickmailLeadId: person.quickmailLeadId,
     lead: {
       email:
         person.email ||
         buildQuickmailPlaceholderEmail({
           personId: person.id,
           name: person.name,
-          profileKey: person.profile_key,
-          linkedinProfileUrl: person.linkedin_profile_url
+          profileKey: person.profileKey,
+          linkedinProfileUrl: person.linkedinProfileUrl
         }),
       firstName,
       lastName,
-      companyName: currentPosition?.companies?.name,
+      companyName: currentPosition?.company?.name,
       title: currentPosition?.title,
-      phone: person.phone_number,
-      linkedinId: person.linkedin_profile_url
+      phone: person.phoneNumber,
+      linkedinId: person.linkedinProfileUrl
     }
   };
 }
@@ -173,9 +173,9 @@ async function updatePersonAfterQuickmailSync({ personId, quickmailLeadId, markC
     const data = {};
 
     if (leadId) {
-      const existingLeadOwner = await tx.people.findFirst({
+      const existingLeadOwner = await tx.person.findFirst({
         where: {
-          quickmail_lead_id: leadId,
+          quickmailLeadId: leadId,
           NOT: {
             id
           }
@@ -186,7 +186,7 @@ async function updatePersonAfterQuickmailSync({ personId, quickmailLeadId, markC
       });
 
       if (!existingLeadOwner) {
-        data.quickmail_lead_id = leadId;
+        data.quickmailLeadId = leadId;
       }
     }
 
@@ -195,7 +195,7 @@ async function updatePersonAfterQuickmailSync({ personId, quickmailLeadId, markC
     }
 
     if (Object.keys(data).length) {
-      await tx.people.update({
+      await tx.person.update({
         where: { id },
         data,
         select: { id: true }

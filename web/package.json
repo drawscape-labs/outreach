@@ -5,7 +5,11 @@
   "scripts": {
     "dev": "node scripts/dev-server.js",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db:generate": "prisma generate --schema prisma/schema.prisma",
+    "db:migrate": "prisma migrate dev --schema prisma/schema.prisma",
+    "db:migrate:deploy": "prisma migrate deploy --schema prisma/schema.prisma",
+    "db:migrate:status": "prisma migrate status --schema prisma/schema.prisma"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",

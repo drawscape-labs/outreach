@@ -7,66 +7,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model companies {
-  id                   Int         @id @default(autoincrement())
-  name                 String
-  domain               String      @unique(map: "sqlite_autoindex_companies_1")
-  linkedin_company_url String      @unique(map: "sqlite_autoindex_companies_2")
-  website_url          String?
-  industry             String?
-  location             String?
-  notes                String?
-  created_at           String      @default(dbgenerated("CURRENT_TIMESTAMP"))
-  updated_at           String      @default(dbgenerated("CURRENT_TIMESTAMP"))
-  description          String?
-  employee_count       Int?
-  employee_count_range String?
-  date_enriched        String?
-  positions            positions[]
+model Company {
+  id                 Int        @id @default(autoincrement())
+  name               String
+  domain             String     @unique(map: "sqlite_autoindex_companies_1")
+  linkedinCompanyUrl String     @unique(map: "sqlite_autoindex_companies_2") @map("linkedin_company_url")
+  websiteUrl         String?    @map("website_url")
+  description        String?
+  industry           String?
+  location           String?
+  employeeCount      Int?       @map("employee_count")
+  employeeCountRange String?    @map("employee_count_range")
+  dateEnriched       String?    @map("date_enriched")
+  notes              String?
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @default(now()) @updatedAt @map("updated_at")
+  positions          Position[]
+
+  @@map("companies")
 }
 
-model people {
-  id                   Int         @id @default(autoincrement())
-  profile_key          String      @unique(map: "sqlite_autoindex_people_1")
-  linkedin_profile_url String?
-  quickmail_lead_id    String?
-  name                 String
-  email                String?
-  status               String      @default("New")
-  qualified            Int         @default(0)
-  notes                String?
-  created_at           String      @default(dbgenerated("CURRENT_TIMESTAMP"))
-  updated_at           String      @default(dbgenerated("CURRENT_TIMESTAMP"))
-  phone_number         String?
-  positions            positions[]
+model Person {
+  id                 Int        @id @default(autoincrement())
+  profileKey         String     @unique(map: "sqlite_autoindex_people_1") @map("profile_key")
+  linkedinProfileUrl String?    @unique(map: "people_linkedin_profile_url_idx") @map("linkedin_profile_url")
+  quickmailLeadId    String?    @unique(map: "people_quickmail_lead_id_idx") @map("quickmail_lead_id")
+  name               String
+  email              String?
+  phoneNumber        String?    @map("phone_number")
+  status             String     @default("New")
+  qualified          Boolean    @default(false)
+  notes              String?
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @default(now()) @updatedAt @map("updated_at")
+  positions          Position[]
+
+  @@map("people")
 }
 
-model positions {
-  id         Int       @id @default(autoincrement())
-  company_id Int
-  person_id  Int
+model Position {
+  id         Int      @id @default(autoincrement())
+  companyId Int      @map("company_id")
+  personId  Int      @map("person_id")
   title      String?
   department String?
   seniority  String?
-  start_date String?
-  end_date   String?
-  is_current Int       @default(1)
+  startDate  String?  @map("start_date")
+  endDate    String?  @map("end_date")
+  isCurrent  Boolean  @default(true) @map("is_current")
   notes      String?
-  created_at String    @default(dbgenerated("CURRENT_TIMESTAMP"))
-  updated_at String    @default(dbgenerated("CURRENT_TIMESTAMP"))
-  people     people    @relation(fields: [person_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  companies  companies @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+  person     Person   @relation(fields: [personId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@index([person_id])
-  @@index([company_id])
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model schema_migrations {
-  filename       String? @id
-  checksum       String
-  applied_at     String  @default(dbgenerated("CURRENT_TIMESTAMP"))
-  execution_type String  @default("applied")
-
-  @@ignore
+  @@unique([companyId, personId, title, startDate], map: "positions_unique_role_idx")
+  @@index([personId], map: "positions_person_id_idx")
+  @@index([companyId], map: "positions_company_id_idx")
+  @@map("positions")
 }

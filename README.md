@@ -11,23 +11,30 @@ Prospecting workspace for finding companies and people to reach out to.
 - Person `profile_key` values are unique identity keys, usually LinkedIn path keys like `in/lewis-nisbet-097071137`; website-confirmed email-only identities use `email/name@example.com`.
 - Full person LinkedIn URLs live separately in `linkedin_profile_url` when available.
 - Person `quickmail_lead_id` stores the QuickMail lead id after a successful sync.
-- Person `status` values are `New`, `Contacted`, `Replied`, or `Converted`; SQLite enforces them with a `CHECK` constraint in `db/schema.sql`, and the web app imports the same enum from `web/lib/statuses.js`.
+- Person `status` values are `New`, `Contacted`, `Replied`, or `Converted`; the web app and API model layer import the same enum from `web/lib/statuses.js`.
 - Person `qualified` is a boolean stored as `0` or `1`.
 - Position records map people to companies with `person_id` and `company_id`.
 - Position `is_current` is a boolean role-tenure flag, not a person status.
 
 ## Database
 
-The local SQLite database lives at `data/outreach.sqlite`.
+The local SQLite database lives at `data/outreach.sqlite`. Prisma schema and
+checked-in migrations live in `web/prisma/`.
 
 ```bash
 npm run db:init
 ```
 
-Run pending SQL migrations:
+Create and apply a development migration after editing `web/prisma/schema.prisma`:
 
 ```bash
 npm run db:migrate
+```
+
+Apply checked-in migrations without creating new ones:
+
+```bash
+npm run db:migrate:deploy
 ```
 
 Check migration status:
@@ -36,11 +43,11 @@ Check migration status:
 npm run db:migrate:status
 ```
 
-Add migrations as sorted `.sql` files in `db/migrations/`. The runner records
-applied files in `schema_migrations` and fails if an applied migration file is
-edited later. For migrations already represented in `db/schema.sql`, add
-`-- migrate:verify-column <table> <column>` comments so fresh databases can
-baseline the migration instead of running duplicate `ALTER TABLE` statements.
+Regenerate Prisma Client after schema changes:
+
+```bash
+npm run db:generate
+```
 
 ## Run
 

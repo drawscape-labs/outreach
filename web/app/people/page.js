@@ -7,6 +7,10 @@ import prisma from "../../lib/prisma";
 import { isLeadStatus } from "../../lib/statuses";
 import { PeopleTable } from "./components/people-table";
 import { PeopleFilters } from "./components/people-filters";
+import {
+  personTableRow,
+  personTableSelect
+} from "../api/people/model";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -33,101 +37,29 @@ function createdAtSort(searchParams) {
 function peopleOrderBy(sort) {
   if (sort.sort === "created_at") {
     return [
-      { created_at: sort.direction },
+      { createdAt: sort.direction },
       { id: sort.direction },
       { name: "asc" }
     ];
   }
 
-  return [{ created_at: "desc" }, { id: "desc" }];
-}
-
-function personFromPrisma(person) {
-  const currentPositions = person.positions || [];
-  const companies = new Map();
-  const titles = [];
-
-  currentPositions.forEach((position) => {
-    if (position.title) {
-      titles.push(position.title);
-    }
-
-    if (position.companies && !companies.has(position.companies.id)) {
-      companies.set(position.companies.id, position.companies);
-    }
-  });
-
-  return {
-    id: person.id,
-    profileKey: person.profile_key,
-    linkedinProfileUrl: person.linkedin_profile_url,
-    name: person.name,
-    createdAt: person.created_at,
-    email: person.email,
-    phoneNumber: person.phone_number,
-    status: person.status,
-    qualified: Boolean(person.qualified),
-    positionCreatedAt: currentPositions[0]?.created_at || null,
-    positionCount: currentPositions.length,
-    companies: Array.from(companies.values()).map((company) => company.name).join(","),
-    companyRefs: Array.from(companies.values())
-      .map((company) => [
-        company.id,
-        company.name,
-        company.domain || "",
-        company.website_url || ""
-      ].join("::"))
-      .join("||"),
-    currentPositionTitles: titles.join("||")
-  };
+  return [{ createdAt: "desc" }, { id: "desc" }];
 }
 
 async function getPeople(sort) {
-  const people = await prisma.people.findMany({
+  const people = await prisma.person.findMany({
     where: {
       positions: {
         some: {
-          is_current: 1
+          isCurrent: true
         }
       }
     },
     orderBy: peopleOrderBy(sort),
-    select: {
-      id: true,
-      profile_key: true,
-      linkedin_profile_url: true,
-      name: true,
-      created_at: true,
-      email: true,
-      phone_number: true,
-      status: true,
-      qualified: true,
-      positions: {
-        where: {
-          is_current: 1
-        },
-        orderBy: [
-          { created_at: "desc" },
-          { id: "desc" }
-        ],
-        select: {
-          id: true,
-          title: true,
-          created_at: true,
-          companies: {
-            select: {
-              id: true,
-              name: true,
-              domain: true,
-              website_url: true
-            }
-          }
-        }
-      }
-    }
+    select: personTableSelect
   });
 
-  return people.map(personFromPrisma);
+  return people.map(personTableRow);
 }
 
 function getFilters(searchParams) {
