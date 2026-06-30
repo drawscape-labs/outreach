@@ -7,6 +7,14 @@ import {
   readNonNegativeInteger,
   readText
 } from "../lib/model-helpers";
+import { PERSON_STATUS_BUCKETS } from "../people/schema";
+import {
+  COMPANY_API_MESSAGES,
+  COMPANY_FIELD_ALIASES,
+  COMPANY_FIELDS,
+  COMPANY_FILTER_PARAMS,
+  COMPANY_REVALIDATION_PATHS
+} from "./schema";
 
 const companySelect = {
   id: true,
@@ -103,46 +111,96 @@ export const companyDetailSelect = {
   }
 };
 
+const companyTextFields = [
+  {
+    column: COMPANY_FIELDS.name,
+    label: "name",
+    names: COMPANY_FIELD_ALIASES.name,
+    requiredOnCreate: true
+  },
+  {
+    column: COMPANY_FIELDS.domain,
+    label: "domain",
+    names: COMPANY_FIELD_ALIASES.domain,
+    requiredOnCreate: true
+  },
+  {
+    column: COMPANY_FIELDS.linkedinCompanyUrl,
+    label: "linkedinCompanyUrl",
+    names: COMPANY_FIELD_ALIASES.linkedinCompanyUrl,
+    requiredOnCreate: true
+  },
+  {
+    column: COMPANY_FIELDS.websiteUrl,
+    label: "websiteUrl",
+    names: COMPANY_FIELD_ALIASES.websiteUrl
+  },
+  {
+    column: COMPANY_FIELDS.description,
+    label: "description",
+    names: COMPANY_FIELD_ALIASES.description
+  },
+  {
+    column: COMPANY_FIELDS.industry,
+    label: "industry",
+    names: COMPANY_FIELD_ALIASES.industry
+  },
+  {
+    column: COMPANY_FIELDS.location,
+    label: "location",
+    names: COMPANY_FIELD_ALIASES.location
+  },
+  {
+    column: COMPANY_FIELDS.employeeCountRange,
+    label: "employeeCountRange",
+    names: COMPANY_FIELD_ALIASES.employeeCountRange
+  },
+  {
+    column: COMPANY_FIELDS.dateEnriched,
+    label: "dateEnriched",
+    names: COMPANY_FIELD_ALIASES.dateEnriched
+  },
+  {
+    column: COMPANY_FIELDS.notes,
+    label: "notes",
+    names: COMPANY_FIELD_ALIASES.notes
+  }
+];
+
+const companyNumberFields = [
+  {
+    column: COMPANY_FIELDS.employeeCount,
+    label: "employeeCount",
+    names: COMPANY_FIELD_ALIASES.employeeCount
+  }
+];
+
 function companyData(payload, { partial = false } = {}) {
   assertPayloadObject(payload);
 
   const data = {};
-  const textFields = [
-    ["name", ["name"], "name", !partial],
-    ["domain", ["domain"], "domain", !partial],
-    ["linkedinCompanyUrl", ["linkedinCompanyUrl", "linkedin_company_url"], "linkedinCompanyUrl", !partial],
-    ["websiteUrl", ["websiteUrl", "website_url"], "websiteUrl", false],
-    ["description", ["description"], "description", false],
-    ["industry", ["industry"], "industry", false],
-    ["location", ["location"], "location", false],
-    ["employeeCountRange", ["employeeCountRange", "employee_count_range"], "employeeCountRange", false],
-    ["dateEnriched", ["dateEnriched", "date_enriched"], "dateEnriched", false],
-    ["notes", ["notes"], "notes", false]
-  ];
 
-  for (const [column, names, label, required] of textFields) {
-    const value = readText(payload, names, label, {
+  for (const field of companyTextFields) {
+    const value = readText(payload, field.names, field.label, {
       nullAsUndefined: !partial,
-      required
+      required: !partial && field.requiredOnCreate
     });
 
     if (value !== undefined) {
-      data[column] = value;
+      data[field.column] = value;
     }
   }
 
-  const employeeCount = readNonNegativeInteger(
-    payload,
-    ["employeeCount", "employee_count"],
-    "employeeCount"
-  );
+  for (const field of companyNumberFields) {
+    const value = readNonNegativeInteger(payload, field.names, field.label);
 
-  if (employeeCount !== undefined) {
-    data.employeeCount = employeeCount;
+    if (value !== undefined) {
+      data[field.column] = value;
+    }
   }
 
   if (partial && Object.keys(data).length === 0) {
-    throw new ApiError("Provide at least one company field.");
+    throw new ApiError(COMPANY_API_MESSAGES.emptyPatch);
   }
 
   return data;
@@ -200,23 +258,25 @@ export function companyTableRow(company) {
     positionCount: currentPositions.length,
     peopleCount: personStatuses.size,
     contactedCount: statuses.filter((status) =>
-      ["Contacted", "Replied", "Converted"].includes(status)
+      PERSON_STATUS_BUCKETS.contacted.includes(status)
     ).length,
     repliedCount: statuses.filter((status) =>
-      ["Replied", "Converted"].includes(status)
+      PERSON_STATUS_BUCKETS.replied.includes(status)
     ).length,
-    convertedCount: statuses.filter((status) => status === "Converted").length
+    convertedCount: statuses.filter((status) =>
+      PERSON_STATUS_BUCKETS.converted.includes(status)
+    ).length
   };
 }
 
 export function revalidateCompany(company) {
-  ["/", "/companies", `/companies/${company.id}`].forEach((path) =>
+  [...COMPANY_REVALIDATION_PATHS, `/companies/${company.id}`].forEach((path) =>
     revalidatePath(path)
   );
 }
 
 export function listCompanies(searchParams) {
-  const industry = searchParams.get("industry")?.trim();
+  const industry = searchParams.get(COMPANY_FILTER_PARAMS.industry[0])?.trim();
 
   return prisma.company.findMany({
     where: industry ? { industry } : {},

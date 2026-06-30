@@ -10,6 +10,13 @@ import {
   readPositiveInteger,
   readText
 } from "../lib/model-helpers";
+import {
+  POSITION_API_MESSAGES,
+  POSITION_FIELD_ALIASES,
+  POSITION_FIELDS,
+  POSITION_FILTER_PARAMS,
+  POSITION_REVALIDATION_PATHS
+} from "./schema";
 
 const positionSelect = {
   id: true,
@@ -26,57 +33,95 @@ const positionSelect = {
   updatedAt: true
 };
 
+const positionIdFields = [
+  {
+    column: POSITION_FIELDS.companyId,
+    label: "companyId",
+    names: POSITION_FIELD_ALIASES.companyId,
+    requiredOnCreate: true
+  },
+  {
+    column: POSITION_FIELDS.personId,
+    label: "personId",
+    names: POSITION_FIELD_ALIASES.personId,
+    requiredOnCreate: true
+  }
+];
+
+const positionTextFields = [
+  {
+    column: POSITION_FIELDS.title,
+    label: "title",
+    names: POSITION_FIELD_ALIASES.title
+  },
+  {
+    column: POSITION_FIELDS.department,
+    label: "department",
+    names: POSITION_FIELD_ALIASES.department
+  },
+  {
+    column: POSITION_FIELDS.seniority,
+    label: "seniority",
+    names: POSITION_FIELD_ALIASES.seniority
+  },
+  {
+    column: POSITION_FIELDS.startDate,
+    label: "startDate",
+    names: POSITION_FIELD_ALIASES.startDate
+  },
+  {
+    column: POSITION_FIELDS.endDate,
+    label: "endDate",
+    names: POSITION_FIELD_ALIASES.endDate
+  },
+  {
+    column: POSITION_FIELDS.notes,
+    label: "notes",
+    names: POSITION_FIELD_ALIASES.notes
+  }
+];
+
+const positionBooleanFields = [
+  {
+    column: POSITION_FIELDS.isCurrent,
+    label: "isCurrent",
+    names: POSITION_FIELD_ALIASES.isCurrent
+  }
+];
+
 function positionData(payload, { partial = false } = {}) {
   assertPayloadObject(payload);
 
   const data = {};
 
-  if (payloadValue(payload, ["companyId", "company_id"]) !== undefined) {
-    data.companyId = readPositiveInteger(
-      payloadValue(payload, ["companyId", "company_id"]),
-      "companyId"
-    );
-  } else if (!partial) {
-    throw new ApiError("companyId is required.");
-  }
-
-  if (payloadValue(payload, ["personId", "person_id"]) !== undefined) {
-    data.personId = readPositiveInteger(
-      payloadValue(payload, ["personId", "person_id"]),
-      "personId"
-    );
-  } else if (!partial) {
-    throw new ApiError("personId is required.");
-  }
-
-  const textFields = [
-    ["title", ["title"], "title"],
-    ["department", ["department"], "department"],
-    ["seniority", ["seniority"], "seniority"],
-    ["startDate", ["startDate", "start_date"], "startDate"],
-    ["endDate", ["endDate", "end_date"], "endDate"],
-    ["notes", ["notes"], "notes"]
-  ];
-
-  for (const [column, names, label] of textFields) {
-    const value = readText(payload, names, label);
+  for (const field of positionIdFields) {
+    const value = payloadValue(payload, field.names);
 
     if (value !== undefined) {
-      data[column] = value;
+      data[field.column] = readPositiveInteger(value, field.label);
+    } else if (!partial && field.requiredOnCreate) {
+      throw new ApiError(`${field.label} is required.`);
     }
   }
 
-  const isCurrent = readBoolean(
-    payloadValue(payload, ["isCurrent", "is_current"]),
-    "isCurrent"
-  );
+  for (const field of positionTextFields) {
+    const value = readText(payload, field.names, field.label);
 
-  if (isCurrent !== undefined) {
-    data.isCurrent = isCurrent;
+    if (value !== undefined) {
+      data[field.column] = value;
+    }
+  }
+
+  for (const field of positionBooleanFields) {
+    const value = readBoolean(payloadValue(payload, field.names), field.label);
+
+    if (value !== undefined) {
+      data[field.column] = value;
+    }
   }
 
   if (partial && Object.keys(data).length === 0) {
-    throw new ApiError("Provide at least one position field.");
+    throw new ApiError(POSITION_API_MESSAGES.emptyPatch);
   }
 
   return data;
@@ -101,24 +146,29 @@ export function positionJson(position) {
 
 function positionsWhere(searchParams) {
   const where = {};
+  const currentParams = POSITION_FILTER_PARAMS.isCurrent;
+  const companyIdParams = POSITION_FILTER_PARAMS.companyId;
+  const personIdParams = POSITION_FILTER_PARAMS.personId;
   const currentValue =
-    searchParams.get("isCurrent") ??
-    searchParams.get("is_current") ??
-    searchParams.get("current");
+    searchParams.get(currentParams[0]) ??
+    searchParams.get(currentParams[1]) ??
+    searchParams.get(currentParams[2]);
   const isCurrent = readBooleanFilter(currentValue, "isCurrent");
 
-  if (searchParams.has("companyId") || searchParams.has("company_id")) {
-    where.companyId = readPositiveInteger(
-      searchParams.get("companyId") || searchParams.get("company_id"),
-      "companyId"
-    );
+  if (companyIdParams.some((name) => searchParams.has(name))) {
+    const companyId =
+      searchParams.get(companyIdParams[0]) ||
+      searchParams.get(companyIdParams[1]);
+
+    where.companyId = readPositiveInteger(companyId, "companyId");
   }
 
-  if (searchParams.has("personId") || searchParams.has("person_id")) {
-    where.personId = readPositiveInteger(
-      searchParams.get("personId") || searchParams.get("person_id"),
-      "personId"
-    );
+  if (personIdParams.some((name) => searchParams.has(name))) {
+    const personId =
+      searchParams.get(personIdParams[0]) ||
+      searchParams.get(personIdParams[1]);
+
+    where.personId = readPositiveInteger(personId, "personId");
   }
 
   if (isCurrent !== undefined) {
@@ -129,7 +179,7 @@ function positionsWhere(searchParams) {
 }
 
 export function revalidatePosition(position) {
-  const paths = new Set(["/", "/people", "/companies", "/contacted", "/replied", "/converted"]);
+  const paths = new Set(POSITION_REVALIDATION_PATHS);
 
   if (position?.personId) {
     paths.add(`/people/${position.personId}`);

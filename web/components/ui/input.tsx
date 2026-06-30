@@ -11,7 +11,7 @@ export function InputGroup({ children }: React.ComponentPropsWithoutRef<'span'>)
         'has-[[data-slot=icon]:first-child]:[&_input]:pl-10 has-[[data-slot=icon]:last-child]:[&_input]:pr-10 sm:has-[[data-slot=icon]:first-child]:[&_input]:pl-8 sm:has-[[data-slot=icon]:last-child]:[&_input]:pr-8',
         '*:data-[slot=icon]:pointer-events-none *:data-[slot=icon]:absolute *:data-[slot=icon]:top-3 *:data-[slot=icon]:z-10 *:data-[slot=icon]:size-5 sm:*:data-[slot=icon]:top-2.5 sm:*:data-[slot=icon]:size-4',
         '[&>[data-slot=icon]:first-child]:left-3 sm:[&>[data-slot=icon]:first-child]:left-2.5 [&>[data-slot=icon]:last-child]:right-3 sm:[&>[data-slot=icon]:last-child]:right-2.5',
-        '*:data-[slot=icon]:text-zinc-500'
+        '*:data-[slot=icon]:text-zinc-500 dark:*:data-[slot=icon]:text-zinc-400'
       )}
     >
       {children}
@@ -54,20 +54,20 @@ export const Input = forwardRef(function Input(
     // Basic layout
     'relative block w-full appearance-none rounded-lg px-[calc(--spacing(3.5)-1px)] py-[calc(--spacing(2.5)-1px)] sm:px-[calc(--spacing(3)-1px)] sm:py-[calc(--spacing(1.5)-1px)]',
     props.type === 'file' && [
-      'cursor-pointer file:mr-4 file:rounded-md file:border-0 file:bg-zinc-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-700 hover:file:bg-zinc-200',
+      'cursor-pointer file:mr-4 file:rounded-md file:border-0 file:bg-zinc-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-zinc-700 hover:file:bg-zinc-200 dark:file:bg-white/10 dark:file:text-zinc-200 dark:hover:file:bg-white/15',
     ],
     // Typography
-    'text-base/6 text-zinc-950 placeholder:text-zinc-500 sm:text-sm/6',
+    'text-base/6 text-zinc-950 placeholder:text-zinc-500 dark:text-white dark:placeholder:text-zinc-400 sm:text-sm/6',
     // Border
-    'border border-zinc-950/10 data-hover:border-zinc-950/20',
+    'border border-zinc-950/10 data-hover:border-zinc-950/20 dark:border-white/10 dark:data-hover:border-white/20',
     // Background color
-    'bg-transparent',
+    'bg-transparent dark:bg-white/5',
     // Hide default focus styles
     'focus:outline-hidden',
     // Invalid state
     'data-invalid:border-red-500 data-invalid:data-hover:border-red-500',
     // Disabled state
-    'data-disabled:border-zinc-950/20',
+    'data-disabled:border-zinc-950/20 dark:data-disabled:border-white/15',
     // System icons
     'dark:scheme-dark',
   ])

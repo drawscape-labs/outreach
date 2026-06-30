@@ -127,7 +127,7 @@ function CampaignModal({
     >
       <form onSubmit={handleSubmit}>
         <DialogTitle>Add to campaign</DialogTitle>
-        <p className="mt-1 text-sm/6 text-zinc-500">{personName}</p>
+        <p className="mt-1 text-sm/6 text-zinc-500 dark:text-zinc-400">{personName}</p>
 
         <DialogBody>
           <Field>
@@ -153,25 +153,25 @@ function CampaignModal({
           </Field>
 
           {selectedCampaign?.workspaceName ? (
-            <p className="mt-2 text-xs/5 text-zinc-500">
+            <p className="mt-2 text-xs/5 text-zinc-500 dark:text-zinc-400">
               {selectedCampaign.workspaceName}
             </p>
           ) : null}
 
           {!email ? (
-            <p className="mt-4 rounded-md bg-amber-50 px-3 py-2 text-sm/6 text-amber-800 ring-1 ring-amber-600/20">
+            <p className="mt-4 rounded-md bg-amber-50 px-3 py-2 text-sm/6 text-amber-800 ring-1 ring-amber-600/20 dark:bg-amber-400/10 dark:text-amber-300 dark:ring-amber-400/20">
               No email. Sending as {quickmailEmail}.
             </p>
           ) : null}
 
           {visibleError ? (
-            <p className="mt-4 rounded-md bg-rose-50 px-3 py-2 text-sm/6 text-rose-700 ring-1 ring-rose-600/20">
+            <p className="mt-4 rounded-md bg-rose-50 px-3 py-2 text-sm/6 text-rose-700 ring-1 ring-rose-600/20 dark:bg-rose-400/10 dark:text-rose-300 dark:ring-rose-400/20">
               {visibleError}
             </p>
           ) : null}
 
           {success ? (
-            <p className="mt-4 rounded-md bg-emerald-50 px-3 py-2 text-sm/6 text-emerald-700 ring-1 ring-emerald-600/20">
+            <p className="mt-4 rounded-md bg-emerald-50 px-3 py-2 text-sm/6 text-emerald-700 ring-1 ring-emerald-600/20 dark:bg-emerald-400/10 dark:text-emerald-300 dark:ring-emerald-400/20">
               {success}
             </p>
           ) : null}

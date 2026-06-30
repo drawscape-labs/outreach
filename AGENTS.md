@@ -27,7 +27,7 @@ We are creating a basic SQLite database to track companies/people/positions with
       /[id] - people detail routes for retrive, update, delete, etc
       model.js - let's keep our model definiation here for primsma and model data read/write and manipulations. 
       types.js - any typscript def we need specific to this model
-      schema.js - Use this for constants, enums, arrays, config variables that are needed in mutiple places. no logic, just statis values
+      schema.js - static vocabulary/config home: enums, allowed values, field names, aliases, default values
     /companies CRUID operations for our companies table
 
 
@@ -37,6 +37,9 @@ Use the `/web/components/ui` Headless UI v2.1 compoents when building.
 
 ## Design Philsophy
 When designing elements/screens/pages for the web app, i value minimalistic design. We do not want endless headers, descirptions, and helper text explaining everyting. We was simple lables/headers and necesssary information.
+
+## Dark Mode
+We need to support it!
 
 ## global components
 we want to create global components only when thigns are being reused more than once, simple stuff like status fields, people avatars, labels, etc. so that we can a constistent design on each page. 

@@ -17,19 +17,19 @@ export function PageStats({ stats }) {
   return (
     <dl
       className={classNames(
-        "mt-6 grid grid-cols-1 overflow-hidden rounded-lg bg-gray-200 shadow-sm ring-1 ring-gray-200",
+        "mt-6 grid grid-cols-1 overflow-hidden rounded-lg bg-gray-200 shadow-sm ring-1 ring-gray-200 dark:bg-white/10 dark:ring-white/10",
         gridClass
       )}
     >
       {stats.map((stat) => (
-        <div key={stat.name} className="bg-white px-4 py-5 sm:p-6">
-          <dt className="text-sm/6 font-medium text-gray-500">{stat.name}</dt>
+        <div key={stat.name} className="bg-white px-4 py-5 dark:bg-zinc-900 sm:p-6">
+          <dt className="text-sm/6 font-medium text-gray-500 dark:text-zinc-400">{stat.name}</dt>
           <dd className="mt-1 flex items-baseline gap-x-2">
-            <span className="text-2xl font-semibold text-gray-900">
+            <span className="text-2xl font-semibold text-gray-900 dark:text-white">
               {stat.value}
             </span>
             {stat.caption ? (
-              <span className="text-sm font-medium text-gray-500">
+              <span className="text-sm font-medium text-gray-500 dark:text-zinc-400">
                 {stat.caption}
               </span>
             ) : null}

@@ -100,7 +100,7 @@ export function UserIdentity({
       />
       <span
         title={normalizeUserValue(email) ?? displayName}
-        className={cn("truncate text-sm font-medium text-gray-900", labelClassName)}
+        className={cn("truncate text-sm font-medium text-gray-900 dark:text-white", labelClassName)}
       >
         {displayName}
       </span>

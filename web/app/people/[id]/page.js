@@ -37,14 +37,14 @@ function DetailItem({ label, children, className }) {
   return (
     <div
       className={classNames(
-        "min-w-0 border-t border-gray-100 px-4 py-3 sm:px-5",
+        "min-w-0 border-t border-gray-100 px-4 py-3 dark:border-white/10 sm:px-5",
         className
       )}
     >
-      <dt className="text-xs/5 font-medium uppercase tracking-normal text-gray-500">
+      <dt className="text-xs/5 font-medium uppercase tracking-normal text-gray-500 dark:text-zinc-400">
         {label}
       </dt>
-      <dd className="mt-1 min-w-0 break-words text-sm/6 text-gray-700">
+      <dd className="mt-1 min-w-0 break-words text-sm/6 text-gray-700 dark:text-zinc-300">
         {children}
       </dd>
     </div>
@@ -155,17 +155,17 @@ function CustomProperties({ customProperties }) {
   }
 
   return (
-    <div className="border-t border-gray-100 px-4 py-3 sm:px-5">
-      <h3 className="text-xs/5 font-medium uppercase tracking-normal text-gray-500">
+    <div className="border-t border-gray-100 px-4 py-3 dark:border-white/10 sm:px-5">
+      <h3 className="text-xs/5 font-medium uppercase tracking-normal text-gray-500 dark:text-zinc-400">
         Custom properties
       </h3>
       <dl className="mt-2 grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-2">
         {properties.map((property) => (
           <div key={property.id || property.name}>
-            <dt className="text-xs/5 font-medium text-gray-500">
+            <dt className="text-xs/5 font-medium text-gray-500 dark:text-zinc-400">
               {property.name || property.id}
             </dt>
-            <dd className="break-words text-sm/6 text-gray-700">
+            <dd className="break-words text-sm/6 text-gray-700 dark:text-zinc-300">
               {property.value || <EmptyValue />}
             </dd>
           </div>
@@ -179,9 +179,9 @@ function QuickmailPanel({ person, state }) {
   const lead = state.lead;
 
   return (
-    <section className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-200">
+    <section className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-200 dark:bg-zinc-900 dark:ring-white/10">
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5">
-        <h2 className="text-sm/6 font-semibold text-gray-900">QuickMail</h2>
+        <h2 className="text-sm/6 font-semibold text-gray-900 dark:text-white">QuickMail</h2>
         <QuickmailStatus state={state} />
       </div>
       <dl className="grid grid-cols-1 sm:grid-cols-2">
@@ -282,9 +282,9 @@ export default async function PersonDetailPage({ params }) {
       </PageHeader>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <section className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-200">
+        <section className="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-200 dark:bg-zinc-900 dark:ring-white/10">
           <div className="px-4 py-3 sm:px-5">
-            <h2 className="text-sm/6 font-semibold text-gray-900">Details</h2>
+            <h2 className="text-sm/6 font-semibold text-gray-900 dark:text-white">Details</h2>
           </div>
           <dl className="grid grid-cols-1 sm:grid-cols-2">
             <DetailItem label="Status">
@@ -346,24 +346,24 @@ export default async function PersonDetailPage({ params }) {
               ) : (
                 positions.map((position) => (
                   <TableRow key={position.id}>
-                    <TableCell className="w-full max-w-0 font-medium text-zinc-950 sm:w-auto sm:max-w-none">
+                    <TableCell className="w-full max-w-0 font-medium text-zinc-950 dark:text-white sm:w-auto sm:max-w-none">
                       <Link
-                        className="font-medium text-teal-700 hover:text-teal-900"
+                        className="font-medium text-teal-700 hover:text-teal-900 dark:text-teal-400 dark:hover:text-teal-300"
                         href={`/companies/${position.companyId}`}
                       >
                         {position.companyName}
                       </Link>
-                      <div className="mt-1 truncate font-normal text-gray-400 md:hidden">
+                      <div className="mt-1 truncate font-normal text-gray-400 dark:text-zinc-500 md:hidden">
                         {position.title || "No position"}
                       </div>
                     </TableCell>
-                    <TableCell className="text-zinc-500">
+                    <TableCell className="text-zinc-500 dark:text-zinc-400">
                       {position.title || <EmptyValue />}
                     </TableCell>
-                    <TableCell className="hidden text-zinc-500 md:table-cell">
+                    <TableCell className="hidden text-zinc-500 dark:text-zinc-400 md:table-cell">
                       {position.department || <EmptyValue />}
                     </TableCell>
-                    <TableCell className="hidden text-zinc-500 lg:table-cell">
+                    <TableCell className="hidden text-zinc-500 dark:text-zinc-400 lg:table-cell">
                       <StatusPill tone={position.isCurrent ? "teal" : "gray"}>
                         {position.isCurrent ? "Yes" : "No"}
                       </StatusPill>

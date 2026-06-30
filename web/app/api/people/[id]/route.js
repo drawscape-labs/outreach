@@ -11,11 +11,12 @@ import {
   revalidatePerson,
   updatePerson
 } from "../model";
+import { PERSON_API_MESSAGES } from "../schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const notFoundMessage = "Person not found.";
+const notFoundMessage = PERSON_API_MESSAGES.notFound;
 
 export async function GET(_request, context) {
   try {

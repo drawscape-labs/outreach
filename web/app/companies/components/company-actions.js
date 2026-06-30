@@ -165,8 +165,8 @@ export function CompanyActions({ company, people = [], launchStatus }) {
         <p
           className={
             launchState.status === "error"
-              ? "max-w-xs text-right text-xs/5 text-rose-600"
-              : "max-w-xs text-right text-xs/5 text-zinc-500"
+              ? "max-w-xs text-right text-xs/5 text-rose-600 dark:text-rose-400"
+              : "max-w-xs text-right text-xs/5 text-zinc-500 dark:text-zinc-400"
           }
         >
           {launchState.message}

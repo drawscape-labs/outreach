@@ -57,10 +57,10 @@ function CompanyLinks({ companies }) {
     <span className="inline-flex flex-wrap gap-x-1.5 gap-y-1">
       {companies.map((company, index) => (
         <span key={companyKey(company, index)}>
-          {index > 0 ? <span className="text-gray-400">, </span> : null}
+          {index > 0 ? <span className="text-gray-400 dark:text-zinc-500">, </span> : null}
           {company.id ? (
             <Link
-              className="font-medium text-teal-700 hover:text-teal-900"
+              className="font-medium text-teal-700 hover:text-teal-900 dark:text-teal-400 dark:hover:text-teal-300"
               href={`/companies/${company.id}`}
             >
               {company.name}
@@ -140,7 +140,7 @@ function CompanyDomains({ companies }) {
     <span className="inline-flex flex-wrap gap-x-1.5 gap-y-1">
       {domains.map((company, index) => (
         <span key={company.key}>
-          {index > 0 ? <span className="text-gray-400">, </span> : null}
+          {index > 0 ? <span className="text-gray-400 dark:text-zinc-500">, </span> : null}
           {company.href ? (
             <ExternalAnchor href={company.href}>{company.domain}</ExternalAnchor>
           ) : (
@@ -155,10 +155,10 @@ function CompanyDomains({ companies }) {
 function PersonStack({ id, name, position }) {
   const content = (
     <>
-      <span className="block font-semibold text-gray-900">
+      <span className="block font-semibold text-gray-900 dark:text-white">
         {position || <EmptyValue>No position</EmptyValue>}
       </span>
-      <span className="mt-0.5 block font-normal text-gray-600">
+      <span className="mt-0.5 block font-normal text-gray-600 dark:text-zinc-400">
         {name || <EmptyValue>No name</EmptyValue>}
       </span>
     </>
@@ -170,7 +170,7 @@ function PersonStack({ id, name, position }) {
 
   return (
     <Link
-      className="block min-w-0 hover:text-teal-800"
+      className="block min-w-0 hover:text-teal-800 dark:hover:text-teal-300"
       href={`/people/${id}`}
     >
       {content}
@@ -181,10 +181,10 @@ function PersonStack({ id, name, position }) {
 function CompanyStack({ companies }) {
   return (
     <div className="min-w-0">
-      <div className="text-gray-900">
+      <div className="text-gray-900 dark:text-white">
         <CompanyLinks companies={companies} />
       </div>
-      <div className="mt-1 text-gray-500">
+      <div className="mt-1 text-gray-500 dark:text-zinc-400">
         <CompanyDomains companies={companies} />
       </div>
     </div>
@@ -195,7 +195,7 @@ function ContactLine({ label, children }) {
   return (
     <div className="min-w-0">
       <dt className="sr-only">{label}</dt>
-      <dd className="min-w-0 break-words text-gray-600">{children}</dd>
+      <dd className="min-w-0 break-words text-gray-600 dark:text-zinc-400">{children}</dd>
     </div>
   );
 }
@@ -325,7 +325,7 @@ function CreatedAtHeader({ sortDirection, sortHref }) {
   return (
     <Link
       aria-label={`Sort by created at ${nextDirection}`}
-      className="inline-flex items-center gap-1.5 text-zinc-700 hover:text-teal-700"
+      className="inline-flex items-center gap-1.5 text-zinc-700 hover:text-teal-700 dark:text-zinc-300 dark:hover:text-teal-300"
       href={sortHref}
     >
       <span>Created at</span>
@@ -431,24 +431,24 @@ export function PeopleTable({
 
               return (
                 <TableRow key={person.id || person.personId}>
-                  <TableCell className="max-w-0 whitespace-normal align-top text-zinc-950">
+                  <TableCell className="max-w-0 whitespace-normal align-top text-zinc-950 dark:text-white">
                     <PersonStack id={id} name={name} position={position} />
                   </TableCell>
-                  <TableCell className="max-w-0 whitespace-normal align-top text-zinc-500">
+                  <TableCell className="max-w-0 whitespace-normal align-top text-zinc-500 dark:text-zinc-400">
                     <CompanyStack companies={companies} />
                   </TableCell>
-                  <TableCell className="max-w-0 whitespace-normal align-top text-zinc-500">
+                  <TableCell className="max-w-0 whitespace-normal align-top text-zinc-500 dark:text-zinc-400">
                     <ContactStack
                       email={person.email}
                       phoneNumber={person.phoneNumber}
                       linkedinProfileUrl={linkedinProfileUrl}
                     />
                   </TableCell>
-                  <TableCell className="whitespace-normal align-top text-zinc-500">
+                  <TableCell className="whitespace-normal align-top text-zinc-500 dark:text-zinc-400">
                     <ProgressCell editableStatuses={editableStatuses} person={person} />
                   </TableCell>
                   <TableCell
-                    className="hidden w-44 whitespace-nowrap align-top text-zinc-500 xl:table-cell"
+                    className="hidden w-44 whitespace-nowrap align-top text-zinc-500 dark:text-zinc-400 xl:table-cell"
                     title={createdAt || undefined}
                   >
                     {formattedCreatedAt || <EmptyValue />}

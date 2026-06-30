@@ -12,7 +12,7 @@ export function PersonIdentity({
       ? {
           label: "Profile key",
           value: profileKey,
-          className: "text-gray-500"
+          className: "text-gray-500 dark:text-zinc-400"
         }
       : null,
     ...details
@@ -33,7 +33,7 @@ export function PersonIdentity({
           {secondaryDetails.map((detail) => (
             <div key={detail.label}>
               <dt className="sr-only">{detail.label}</dt>
-              <dd className={classNames("mt-1 truncate", detail.className || "text-gray-400")}>
+              <dd className={classNames("mt-1 truncate", detail.className || "text-gray-400 dark:text-zinc-500")}>
                 {detail.value || detail.missingValue}
               </dd>
             </div>

@@ -7,6 +7,10 @@ import {
 } from "../../../../../../lib/quickmail";
 import { buildQuickmailPlaceholderEmail } from "../../../../../../lib/placeholder-email";
 import prisma from "../../../../../../lib/prisma";
+import {
+  PERSON_API_MESSAGES,
+  PERSON_STATUS
+} from "../../../../people/schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -191,7 +195,7 @@ async function updatePersonAfterQuickmailSync({ personId, quickmailLeadId, markC
     }
 
     if (markContacted) {
-      data.status = "Contacted";
+      data.status = PERSON_STATUS.contacted;
     }
 
     if (Object.keys(data).length) {
@@ -256,7 +260,7 @@ export async function POST(request, context) {
         const personLead = await getPersonLead(payload.personId);
 
         if (!personLead) {
-          return jsonError("Person not found.", 404);
+          return jsonError(PERSON_API_MESSAGES.notFound, 404);
         }
 
         localPersonId = personLead.localPersonId;

@@ -11,11 +11,12 @@ import {
   revalidateCompany,
   updateCompany
 } from "../model";
+import { COMPANY_API_MESSAGES } from "../schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const notFoundMessage = "Company not found.";
+const notFoundMessage = COMPANY_API_MESSAGES.notFound;
 
 export async function GET(_request, context) {
   try {

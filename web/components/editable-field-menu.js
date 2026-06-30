@@ -61,14 +61,14 @@ export function EditableFieldMenu({
             <DropdownItem
               key={option.key}
               aria-current={isSelected ? "true" : undefined}
-              className={isSelected ? "bg-teal-50 text-teal-900" : undefined}
+              className={isSelected ? "bg-teal-50 text-teal-900 dark:bg-teal-400/10 dark:text-teal-200" : undefined}
               onClick={() => handleSelect(option)}
             >
               <DropdownLabel>
                 {renderOption(option)}
               </DropdownLabel>
               {isSelected ? (
-                <span className="col-start-5 row-start-1 text-xs font-medium text-teal-700 group-data-focus:text-white">
+                <span className="col-start-5 row-start-1 text-xs font-medium text-teal-700 group-data-focus:text-white dark:text-teal-300">
                   Current
                 </span>
               ) : null}

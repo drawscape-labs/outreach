@@ -46,10 +46,10 @@ const createdDateFormatter = new Intl.DateTimeFormat("en-US", {
 function CountPill({ label, tone = "gray", value }) {
   const count = Number(value || 0);
   const tones = {
-    amber: "bg-amber-400/20 text-amber-700",
-    blue: "bg-blue-500/15 text-blue-700",
-    emerald: "bg-emerald-500/15 text-emerald-700",
-    gray: "bg-zinc-600/10 text-zinc-700"
+    amber: "bg-amber-400/20 text-amber-700 dark:bg-amber-400/10 dark:text-amber-300",
+    blue: "bg-blue-500/15 text-blue-700 dark:bg-blue-400/10 dark:text-blue-300",
+    emerald: "bg-emerald-500/15 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300",
+    gray: "bg-zinc-600/10 text-zinc-700 dark:bg-white/10 dark:text-zinc-300"
   };
 
   if (count === 0) {
@@ -286,7 +286,7 @@ function CreatedHeader({ filters, sort }) {
   return (
     <Link
       aria-label={`Sort by created ${nextDirection}`}
-      className="inline-flex items-center gap-1.5 text-zinc-700 hover:text-teal-700"
+      className="inline-flex items-center gap-1.5 text-zinc-700 hover:text-teal-700 dark:text-zinc-300 dark:hover:text-teal-300"
       href={createdSortHref(filters, sort)}
     >
       <span>Created</span>
@@ -340,14 +340,14 @@ function CompaniesPagination({
   const pages = paginationPages(currentPage, totalPages);
 
   return (
-    <div className="flex flex-col gap-3 border-t border-gray-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-      <p className="text-sm text-zinc-600">
+    <div className="flex flex-col gap-3 border-t border-gray-200 px-4 py-3 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <p className="text-sm text-zinc-600 dark:text-zinc-400">
         Showing{" "}
-        <span className="font-medium text-zinc-900">{firstItem}</span>
+        <span className="font-medium text-zinc-900 dark:text-white">{firstItem}</span>
         {" "}to{" "}
-        <span className="font-medium text-zinc-900">{lastItem}</span>
+        <span className="font-medium text-zinc-900 dark:text-white">{lastItem}</span>
         {" "}of{" "}
-        <span className="font-medium text-zinc-900">{totalCount}</span>
+        <span className="font-medium text-zinc-900 dark:text-white">{totalCount}</span>
       </p>
       {totalPages > 1 ? (
         <Pagination className="w-full sm:w-auto">
@@ -446,15 +446,15 @@ export default async function CompaniesPage({ searchParams }) {
 
                   return (
                     <TableRow key={company.id}>
-                      <TableCell className="w-full max-w-0 font-medium text-zinc-950 sm:w-auto sm:max-w-none">
+                      <TableCell className="w-full max-w-0 font-medium text-zinc-950 dark:text-white sm:w-auto sm:max-w-none">
                         <div className="min-w-0">
                           <Link
-                            className="text-gray-900 hover:text-teal-700"
+                            className="text-gray-900 hover:text-teal-700 dark:text-white dark:hover:text-teal-300"
                             href={`/companies/${company.id}`}
                           >
                             {company.name}
                           </Link>
-                          <div className="mt-1 truncate text-sm font-normal text-gray-500">
+                          <div className="mt-1 truncate text-sm font-normal text-gray-500 dark:text-zinc-400">
                             {company.domain ? (
                               <ExternalAnchor href={company.websiteUrl || `https://${company.domain}`}>
                                 {company.domain}
@@ -466,15 +466,15 @@ export default async function CompaniesPage({ searchParams }) {
                         </div>
                         <dl className="font-normal lg:hidden">
                           <dt className="sr-only">Industry</dt>
-                          <dd className="mt-1 truncate text-gray-400">
+                          <dd className="mt-1 truncate text-gray-400 dark:text-zinc-500">
                             {company.industry || "Industry missing"}
                           </dd>
                           <dt className="sr-only">Headcount</dt>
-                          <dd className="mt-1 truncate text-gray-400">
+                          <dd className="mt-1 truncate text-gray-400 dark:text-zinc-500">
                             {formatHeadcount(company)}
                           </dd>
                           <dt className="sr-only">Created</dt>
-                          <dd className="mt-1 truncate text-gray-400">
+                          <dd className="mt-1 truncate text-gray-400 dark:text-zinc-500">
                             {formattedCreatedAt || "Created date missing"}
                           </dd>
                           <dt className="sr-only">Links</dt>
@@ -488,20 +488,20 @@ export default async function CompaniesPage({ searchParams }) {
                           </dd>
                         </dl>
                       </TableCell>
-                      <TableCell className="text-zinc-500">
+                      <TableCell className="text-zinc-500 dark:text-zinc-400">
                         <PeoplePills company={company} />
                       </TableCell>
-                      <TableCell className="hidden text-zinc-500 lg:table-cell">
+                      <TableCell className="hidden text-zinc-500 dark:text-zinc-400 lg:table-cell">
                         {company.industry || <EmptyValue />}
                       </TableCell>
-                      <TableCell className="hidden text-zinc-500 2xl:table-cell">
+                      <TableCell className="hidden text-zinc-500 dark:text-zinc-400 2xl:table-cell">
                         {formatHeadcount(company)}
                       </TableCell>
-                      <TableCell className="hidden text-zinc-500 2xl:table-cell">
+                      <TableCell className="hidden text-zinc-500 dark:text-zinc-400 2xl:table-cell">
                         {company.location || <EmptyValue />}
                       </TableCell>
                       <TableCell
-                        className="hidden text-zinc-500 xl:table-cell"
+                        className="hidden text-zinc-500 dark:text-zinc-400 xl:table-cell"
                         title={company.createdAt || undefined}
                       >
                         {formattedCreatedAt || <EmptyValue />}

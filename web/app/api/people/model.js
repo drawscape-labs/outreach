@@ -1,7 +1,6 @@
 import { revalidatePath } from "next/cache";
 import prisma from "../../../lib/prisma";
 import { toJsonDate } from "../../../lib/date-json";
-import { isLeadStatus } from "../../../lib/statuses";
 import {
   ApiError,
   assertPayloadObject,
@@ -11,6 +10,14 @@ import {
   readPositiveInteger,
   readText
 } from "../lib/model-helpers";
+import {
+  PERSON_API_MESSAGES,
+  PERSON_FIELD_ALIASES,
+  PERSON_FIELDS,
+  PERSON_FILTER_PARAMS,
+  PERSON_REVALIDATION_PATHS,
+  PERSON_STATUSES
+} from "./schema";
 
 const personSelect = {
   id: true,
@@ -91,49 +98,83 @@ export const personDetailSelect = {
   }
 };
 
+const personTextFields = [
+  {
+    column: PERSON_FIELDS.profileKey,
+    label: "profileKey",
+    names: PERSON_FIELD_ALIASES.profileKey,
+    requiredOnCreate: true
+  },
+  {
+    column: PERSON_FIELDS.linkedinProfileUrl,
+    label: "linkedinProfileUrl",
+    names: PERSON_FIELD_ALIASES.linkedinProfileUrl
+  },
+  {
+    column: PERSON_FIELDS.quickmailLeadId,
+    label: "quickmailLeadId",
+    names: PERSON_FIELD_ALIASES.quickmailLeadId
+  },
+  {
+    column: PERSON_FIELDS.name,
+    label: "name",
+    names: PERSON_FIELD_ALIASES.name,
+    requiredOnCreate: true
+  },
+  {
+    column: PERSON_FIELDS.email,
+    label: "email",
+    names: PERSON_FIELD_ALIASES.email
+  },
+  {
+    column: PERSON_FIELDS.phoneNumber,
+    label: "phoneNumber",
+    names: PERSON_FIELD_ALIASES.phoneNumber
+  },
+  {
+    column: PERSON_FIELDS.notes,
+    label: "notes",
+    names: PERSON_FIELD_ALIASES.notes
+  }
+];
+
 function personData(payload, { partial = false } = {}) {
   assertPayloadObject(payload);
 
   const data = {};
-  const textFields = [
-    ["profileKey", ["profileKey", "profile_key"], "profileKey", !partial],
-    ["linkedinProfileUrl", ["linkedinProfileUrl", "linkedin_profile_url"], "linkedinProfileUrl", false],
-    ["quickmailLeadId", ["quickmailLeadId", "quickmail_lead_id"], "quickmailLeadId", false],
-    ["name", ["name"], "name", !partial],
-    ["email", ["email"], "email", false],
-    ["phoneNumber", ["phoneNumber", "phone_number"], "phoneNumber", false],
-    ["notes", ["notes"], "notes", false]
-  ];
 
-  for (const [column, names, label, required] of textFields) {
-    const value = readText(payload, names, label, {
+  for (const field of personTextFields) {
+    const value = readText(payload, field.names, field.label, {
       nullAsUndefined: !partial,
-      required
+      required: !partial && field.requiredOnCreate
     });
 
     if (value !== undefined) {
-      data[column] = value;
+      data[field.column] = value;
     }
   }
 
-  const status = payloadValue(payload, ["status"]);
+  const status = payloadValue(payload, PERSON_FIELD_ALIASES.status);
 
   if (status !== undefined) {
-    if (!isLeadStatus(status)) {
-      throw new ApiError("Invalid status.");
+    if (!PERSON_STATUSES.includes(status)) {
+      throw new ApiError(PERSON_API_MESSAGES.invalidStatus);
     }
 
     data.status = status;
   }
 
-  const qualified = readBoolean(payloadValue(payload, ["qualified"]), "qualified");
+  const qualified = readBoolean(
+    payloadValue(payload, PERSON_FIELD_ALIASES.qualified),
+    "qualified"
+  );
 
   if (qualified !== undefined) {
     data.qualified = qualified;
   }
 
   if (partial && Object.keys(data).length === 0) {
-    throw new ApiError("Provide at least one person field.");
+    throw new ApiError(PERSON_API_MESSAGES.emptyPatch);
   }
 
   return data;
@@ -243,12 +284,15 @@ export function positionCompany(position) {
 
 function peopleWhere(searchParams) {
   const where = {};
-  const status = searchParams.get("status");
-  const qualified = readBooleanFilter(searchParams.get("qualified"), "qualified");
+  const status = searchParams.get(PERSON_FILTER_PARAMS.status[0]);
+  const qualified = readBooleanFilter(
+    searchParams.get(PERSON_FILTER_PARAMS.qualified[0]),
+    "qualified"
+  );
 
   if (status) {
-    if (!isLeadStatus(status)) {
-      throw new ApiError("Invalid status.");
+    if (!PERSON_STATUSES.includes(status)) {
+      throw new ApiError(PERSON_API_MESSAGES.invalidStatus);
     }
 
     where.status = status;
@@ -258,13 +302,16 @@ function peopleWhere(searchParams) {
     where.qualified = qualified;
   }
 
-  if (searchParams.has("companyId") || searchParams.has("company_id")) {
+  const companyIdParams = PERSON_FILTER_PARAMS.companyId;
+
+  if (companyIdParams.some((name) => searchParams.has(name))) {
+    const companyId =
+      searchParams.get(companyIdParams[0]) ||
+      searchParams.get(companyIdParams[1]);
+
     where.positions = {
       some: {
-        companyId: readPositiveInteger(
-          searchParams.get("companyId") || searchParams.get("company_id"),
-          "companyId"
-        )
+        companyId: readPositiveInteger(companyId, "companyId")
       }
     };
   }
@@ -273,7 +320,7 @@ function peopleWhere(searchParams) {
 }
 
 export function revalidatePerson(person) {
-  ["/", "/people", "/companies", "/contacted", "/replied", "/converted", `/people/${person.id}`].forEach((path) =>
+  [...PERSON_REVALIDATION_PATHS, `/people/${person.id}`].forEach((path) =>
     revalidatePath(path)
   );
 }

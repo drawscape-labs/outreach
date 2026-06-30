@@ -8,7 +8,7 @@ export function ExternalAnchor({ href, children, missingLabel = "Missing" }) {
 
   return (
     <Link
-      className="font-medium text-teal-700 hover:text-teal-900"
+      className="font-medium text-teal-700 hover:text-teal-900 dark:text-teal-400 dark:hover:text-teal-300"
       href={href}
       target="_blank"
       rel="noreferrer"

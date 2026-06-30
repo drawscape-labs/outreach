@@ -27,10 +27,10 @@ function CompanyDetailItem({ label, children, className }) {
         className
       )}
     >
-      <dt className="text-xs/5 font-medium uppercase tracking-normal text-gray-500">
+      <dt className="text-xs/5 font-medium uppercase tracking-normal text-gray-500 dark:text-zinc-400">
         {label}
       </dt>
-      <dd className="mt-1 min-w-0 break-words text-sm/6 text-gray-700">
+      <dd className="mt-1 min-w-0 break-words text-sm/6 text-gray-700 dark:text-zinc-300">
         {children}
       </dd>
     </div>
@@ -41,7 +41,7 @@ function CompanyDetailColumn({ children, className }) {
   return (
     <dl
       className={classNames(
-        "min-w-0 divide-y divide-gray-100 px-4 sm:px-5",
+        "min-w-0 divide-y divide-gray-100 px-4 dark:divide-white/10 sm:px-5",
         className
       )}
     >
@@ -170,11 +170,11 @@ export default async function CompanyDetailPage({ params, searchParams }) {
         />
       </PageHeader>
 
-      <section className="mt-6 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-200">
+      <section className="mt-6 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-200 dark:bg-zinc-900 dark:ring-white/10">
         <div className="px-4 py-3 sm:px-5">
-          <h2 className="text-sm/6 font-semibold text-gray-900">Company Details</h2>
+          <h2 className="text-sm/6 font-semibold text-gray-900 dark:text-white">Company Details</h2>
         </div>
-        <div className="grid grid-cols-1 divide-y divide-gray-100 lg:grid-cols-4 lg:divide-x lg:divide-y-0">
+        <div className="grid grid-cols-1 divide-y divide-gray-100 dark:divide-white/10 lg:grid-cols-4 lg:divide-x lg:divide-y-0">
           <CompanyDetailColumn>
             <CompanyDetailItem label="Description">
               <FieldValue value={company.description} />

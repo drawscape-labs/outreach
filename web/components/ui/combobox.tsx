@@ -75,24 +75,24 @@ export function Combobox<T>({
             // Horizontal padding
             'pr-[calc(--spacing(10)-1px)] pl-[calc(--spacing(3.5)-1px)] sm:pr-[calc(--spacing(9)-1px)] sm:pl-[calc(--spacing(3)-1px)]',
             // Typography
-            'text-base/6 text-zinc-950 placeholder:text-zinc-500 sm:text-sm/6',
+            'text-base/6 text-zinc-950 placeholder:text-zinc-500 dark:text-white dark:placeholder:text-zinc-400 sm:text-sm/6',
             // Border
-            'border border-zinc-950/10 data-hover:border-zinc-950/20',
+            'border border-zinc-950/10 data-hover:border-zinc-950/20 dark:border-white/10 dark:data-hover:border-white/20',
             // Background color
-            'bg-transparent',
+            'bg-transparent dark:bg-white/5',
             // Hide default focus styles
             'focus:outline-hidden',
             // Invalid state
             'data-invalid:border-red-500 data-invalid:data-hover:border-red-500',
             // Disabled state
-            'data-disabled:border-zinc-950/20',
+            'data-disabled:border-zinc-950/20 dark:data-disabled:border-white/15',
             // System icons
             'dark:scheme-dark',
           ])}
         />
         <Headless.ComboboxButton className="group absolute inset-y-0 right-0 flex items-center px-2">
           <svg
-            className="size-5 stroke-zinc-500 group-data-disabled:stroke-zinc-600 group-data-hover:stroke-zinc-700 sm:size-4 forced-colors:stroke-[CanvasText]"
+            className="size-5 stroke-zinc-500 group-data-disabled:stroke-zinc-600 group-data-hover:stroke-zinc-700 dark:stroke-zinc-400 dark:group-data-disabled:stroke-zinc-500 dark:group-data-hover:stroke-zinc-300 sm:size-4 forced-colors:stroke-[CanvasText]"
             viewBox="0 0 16 16"
             aria-hidden="true"
             fill="none"
@@ -115,9 +115,9 @@ export function Combobox<T>({
           // Handle scrolling when menu won't fit in viewport
           'overflow-y-scroll overscroll-contain',
           // Popover background
-          'bg-white/75 backdrop-blur-xl',
+          'bg-white/75 backdrop-blur-xl dark:bg-zinc-800/90',
           // Shadows
-          'shadow-lg ring-1 ring-zinc-950/10',
+          'shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10',
           // Transitions
           'transition-opacity duration-100 ease-in data-closed:data-leave:opacity-0 data-transition:pointer-events-none'
         )}
@@ -141,7 +141,7 @@ export function ComboboxOption<T>({
     'flex min-w-0 items-center',
     // Icons
     '*:data-[slot=icon]:size-5 *:data-[slot=icon]:shrink-0 sm:*:data-[slot=icon]:size-4',
-    '*:data-[slot=icon]:text-zinc-500 group-data-focus/option:*:data-[slot=icon]:text-white',
+    '*:data-[slot=icon]:text-zinc-500 group-data-focus/option:*:data-[slot=icon]:text-white dark:*:data-[slot=icon]:text-zinc-400',
     'forced-colors:*:data-[slot=icon]:text-[CanvasText] forced-colors:group-data-focus/option:*:data-[slot=icon]:text-[Canvas]',
     // Avatars
     '*:data-[slot=avatar]:-mx-0.5 *:data-[slot=avatar]:size-6 sm:*:data-[slot=avatar]:size-5'
@@ -154,7 +154,7 @@ export function ComboboxOption<T>({
         // Basic layout
         'group/option grid w-full cursor-default grid-cols-[1fr_--spacing(5)] items-baseline gap-x-2 rounded-lg py-2.5 pr-2 pl-3.5 sm:grid-cols-[1fr_--spacing(4)] sm:py-1.5 sm:pr-2 sm:pl-3',
         // Typography
-        'text-base/6 text-zinc-950 sm:text-sm/6 forced-colors:text-[CanvasText]',
+        'text-base/6 text-zinc-950 dark:text-zinc-100 sm:text-sm/6 forced-colors:text-[CanvasText]',
         // Focus
         'outline-hidden data-focus:bg-blue-500 data-focus:text-white',
         // Forced colors mode
@@ -186,7 +186,7 @@ export function ComboboxDescription({ className, children, ...props }: React.Com
       {...props}
       className={cn(
         className,
-        'flex flex-1 overflow-hidden text-zinc-500 group-data-focus/option:text-white before:w-2 before:min-w-0 before:shrink'
+        'flex flex-1 overflow-hidden text-zinc-500 group-data-focus/option:text-white dark:text-zinc-400 before:w-2 before:min-w-0 before:shrink'
       )}
     >
       <span className="flex-1 truncate">{children}</span>

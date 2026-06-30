@@ -5,11 +5,12 @@ import {
   positionJson,
   revalidatePosition
 } from "./model";
+import { POSITION_API_MESSAGES } from "./schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const foreignKeyMessage = "Related company or person was not found.";
+const foreignKeyMessage = POSITION_API_MESSAGES.foreignKey;
 
 export async function GET(request) {
   try {

@@ -11,12 +11,13 @@ import {
   revalidatePosition,
   updatePosition
 } from "../model";
+import { POSITION_API_MESSAGES } from "../schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const foreignKeyMessage = "Related company or person was not found.";
-const notFoundMessage = "Position not found.";
+const foreignKeyMessage = POSITION_API_MESSAGES.foreignKey;
+const notFoundMessage = POSITION_API_MESSAGES.notFound;
 
 export async function GET(_request, context) {
   try {
