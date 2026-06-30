@@ -1,3 +1,5 @@
+// Shared status vocabulary for UI code.
+// Keep display-facing aliases and guards here; the API schema stays the source of truth.
 import {
   PERSON_STATUSES,
   PERSON_STATUS_TONES

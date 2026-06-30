@@ -1,3 +1,5 @@
+// People list shaping helpers for table UI.
+// Keep parsing and normalization of database aggregate strings here so components receive simple arrays.
 const fieldSeparator = "::";
 const itemSeparator = "||";
 

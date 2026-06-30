@@ -11,7 +11,7 @@ Prospecting workspace for finding companies and people to reach out to.
 - Person `profile_key` values are unique identity keys, usually LinkedIn path keys like `in/lewis-nisbet-097071137`; website-confirmed email-only identities use `email/name@example.com`.
 - Full person LinkedIn URLs live separately in `linkedin_profile_url` when available.
 - Person `quickmail_lead_id` stores the QuickMail lead id after a successful sync.
-- Person `status` values are `New`, `Contacted`, `Replied`, or `Converted`; the web app and API model layer import the same enum from `web/lib/statuses.js`.
+- Person `status` values are `New`, `Contacted`, `Replied`, or `Converted`; the source enum lives in `web/app/api/people/schema.js`, and `web/lib/statuses.js` re-exports it for shared UI imports.
 - Person `qualified` is a boolean stored as `0` or `1`.
 - Position records map people to companies with `person_id` and `company_id`.
 - Position `is_current` is a boolean role-tenure flag, not a person status.
@@ -20,6 +20,12 @@ Prospecting workspace for finding companies and people to reach out to.
 
 The local SQLite database lives at `data/outreach.sqlite`. Prisma schema and
 checked-in migrations live in `web/prisma/`.
+
+Migration history is intentionally forward-only. The first Prisma migration
+creates the legacy `schema_migrations` table so existing databases can be
+baselined consistently, the next migration drops it, and later migrations add
+Prisma-era direct-write guards such as SQLite triggers and expression indexes
+that Prisma schema syntax cannot represent.
 
 ```bash
 npm run db:init
@@ -55,24 +61,6 @@ npm run db:generate
 npm start
 ```
 
-## List Companies
-
-```bash
-npm run companies
-```
-
-## List People
-
-```bash
-npm run people
-```
-
-## List Positions
-
-```bash
-npm run positions
-```
-
 ## Web App
 
 The Next.js app lives in `web/`.
@@ -81,8 +69,7 @@ The Next.js app lives in `web/`.
 npm run web:dev
 ```
 
-Then open the URL printed in the terminal. The web dev server starts at
-`http://127.0.0.1:4200` and increments by 1 if that port is already in use.
+Then open `http://127.0.0.1:4200`.
 
 Routes:
 

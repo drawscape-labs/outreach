@@ -1,3 +1,5 @@
+// Browser-safe fetch wrappers for internal app routes.
+// Add client API calls here so UI components share JSON encoding and ApiError handling.
 export class ApiError extends Error {
   constructor(message, { status, payload } = {}) {
     super(message);

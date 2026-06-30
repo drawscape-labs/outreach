@@ -1,3 +1,5 @@
+// Server-only Quickmail integration helpers.
+// Keep GraphQL operations, auth/env loading, and request normalization here for route handlers.
 import "server-only";
 
 import fs from "node:fs";

@@ -20,7 +20,7 @@ We are creating a basic SQLite database to track companies/people/positions with
   /components - truely global componets used everywhere. status, labels, modals, dialogs, buttons, etc.
     /ui - these are the ui componets we should be reusing everywhere (select, form elemesnt, etc.) based on Headless UI v2.1
   /types - store global type information here, indtead of stuffing into each component.
-  /lib - for pure library files quickmail api, datbase wrapper, api wrappers, prisma etc.
+  /lib - for pure library files quickmail api, datbase wrapper, api wrappers, prisma etc. Make sure these are commented properly to state goal of the lib file. 
   /api - server routes for different api calls. this should map basic CRUD operations for our DB models. will also include non db features like 
     /quickmail - proxy for the front end to comminicatw with quickmail via the server util librayra
     /people - CRUD operations for our people table

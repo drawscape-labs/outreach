@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/dev-server.js",
+    "dev": "next dev --port 4200",
     "build": "next build",
     "start": "next start",
     "db:generate": "prisma generate --schema prisma/schema.prisma",

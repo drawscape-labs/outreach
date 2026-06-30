@@ -1,3 +1,5 @@
+// Shared API route validation and Prisma error handling helpers.
+// Keep generic request parsing, coercion, and error mapping here; model rules belong with each model.
 export class ApiError extends Error {
   constructor(message, status = 400) {
     super(message);

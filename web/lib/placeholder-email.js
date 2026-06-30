@@ -1,3 +1,5 @@
+// Deterministic placeholder email generation for prospects without known work emails.
+// Keep Quickmail-safe formatting helpers here so imports can produce stable placeholder identities.
 const PLACEHOLDER_EMAIL_DOMAIN = "linkedin.profile";
 const MAX_EMAIL_LOCAL_PART_LENGTH = 64;
 

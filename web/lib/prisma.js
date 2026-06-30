@@ -1,3 +1,5 @@
+// Server-side Prisma client setup and local DATABASE_URL bootstrap.
+// Keep connection lifecycle code here; model-specific queries belong in app/api/*/model.js.
 import fs from "node:fs";
 import path from "node:path";
 
