@@ -77,6 +77,13 @@ function normalizeLinkedInUrl(value) {
   }
 }
 
+function normalizeEmail(value) {
+  if (!value || typeof value !== "string") return null;
+  const normalized = value.trim().toLowerCase();
+  if (!normalized || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) return null;
+  return normalized;
+}
+
 function profileKeyFromLinkedIn(value) {
   const normalized = normalizeLinkedInUrl(value);
   if (!normalized) return null;
@@ -89,6 +96,11 @@ function profileKeyFromLinkedIn(value) {
   } catch {
     return null;
   }
+}
+
+function profileKeyFromEmail(value) {
+  const normalized = normalizeEmail(value);
+  return normalized ? `email/${normalized}` : null;
 }
 
 function normalizeTitle(value) {
@@ -174,13 +186,18 @@ function normalizePosition(position, companyDomain) {
 
 function normalizePerson(person, companyDomain) {
   const linkedinProfileUrl = normalizeLinkedInUrl(person.linkedin_profile_url);
-  const profileKey = normalizeWhitespace(person.profile_key) || profileKeyFromLinkedIn(linkedinProfileUrl);
+  const email = normalizeEmail(person.email);
+  const profileKey =
+    normalizeWhitespace(person.profile_key) ||
+    profileKeyFromLinkedIn(linkedinProfileUrl) ||
+    profileKeyFromEmail(email);
   const positions = Array.isArray(person.positions) ? person.positions : [];
   return {
     name: normalizeWhitespace(person.name || null),
     linkedin_profile_url: linkedinProfileUrl,
     profile_key: profileKey,
-    email: normalizeWhitespace(person.email || null),
+    email,
+    phone_number: normalizeWhitespace(person.phone_number || person.phone || null),
     status: normalizeWhitespace(person.status || "New"),
     qualified: Boolean(person.qualified),
     notes: normalizeWhitespace(person.notes || null),
@@ -243,11 +260,14 @@ function validateProspect(prospect) {
 
   const seenProfileKeys = new Map();
   const seenProfileUrls = new Map();
+  const seenEmails = new Map();
 
   normalized.people.forEach((person, index) => {
     const label = `people[${index}]`;
     if (!person.name) errors.push(`${label}.name is required`);
-    if (!person.linkedin_profile_url) errors.push(`${label}.linkedin_profile_url is required for import`);
+    if (!person.linkedin_profile_url && !person.email) {
+      errors.push(`${label}.linkedin_profile_url or verified email is required for import`);
+    }
     if (!person.profile_key) errors.push(`${label}.profile_key could not be derived`);
     if (person.status && !["New", "Contacted", "Replied"].includes(person.status)) {
       errors.push(`${label}.status must be New, Contacted, or Replied`);
@@ -263,6 +283,12 @@ function validateProspect(prospect) {
         errors.push(`${label}.linkedin_profile_url duplicates people[${seenProfileUrls.get(person.linkedin_profile_url)}]`);
       }
       seenProfileUrls.set(person.linkedin_profile_url, index);
+    }
+    if (person.email) {
+      if (seenEmails.has(person.email)) {
+        errors.push(`${label}.email duplicates people[${seenEmails.get(person.email)}]`);
+      }
+      seenEmails.set(person.email, index);
     }
     if (!["high", "medium"].includes(person.confidence)) {
       warnings.push(`${label} is ${person.confidence}; default import will skip it`);
@@ -304,6 +330,7 @@ module.exports = {
   CONFIDENCE_VALUES,
   normalizeConfidence,
   normalizeDomain,
+  normalizeEmail,
   normalizeEmployeeCount,
   normalizeEmployeeCountRange,
   normalizeLinkedInUrl,
@@ -313,6 +340,7 @@ module.exports = {
   normalizeTitle,
   normalizeUrl,
   parseArgs,
+  profileKeyFromEmail,
   profileKeyFromLinkedIn,
   readJson,
   runSqliteExec,

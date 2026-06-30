@@ -26,6 +26,13 @@ Use current sources; company staff and titles change frequently.
 - `unknown`: no usable evidence.
 - `needs_review`: plausible match with ambiguity, conflict, or insufficient identity certainty.
 
+## Email-Only People
+
+- Import without LinkedIn only when a primary company-controlled source, such as a staff/team/broker page, confirms the person's name, current position, and public work email together.
+- Assign `high` when the company site shows all three fields in the same staff card or clearly associated page section.
+- Assign `medium` when the company site confirms the role and email but the association requires light page-structure interpretation.
+- Keep as `needs_review` when the email is pattern-derived, appears only in page source without a visible/current role, or comes only from a third-party directory.
+
 ## Evidence Notes
 
 For dry-run reports, include short evidence objects with:

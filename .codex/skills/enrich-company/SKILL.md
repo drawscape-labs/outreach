@@ -56,6 +56,9 @@ When the user wants the record written into a codebase or database:
 - Use deterministic IDs only if the project already has a convention for them.
 - Do not invent schema fields. Put useful extra data in a notes/metadata field only if one exists.
 - For Drawscape Outreach, do not store source URLs, evidence links, or source-only text in `notes`; the schema intentionally does not track source information yet.
+- For Drawscape Outreach, treat `companies.date_enriched` as the enrichment completion marker. When a company enrichment is successfully applied to `data/outreach.sqlite` through SQL, API, or import, set `date_enriched` to the current date in ISO `YYYY-MM-DD` format in the same write, or in a follow-up update before reporting success.
+- Apply the `date_enriched` stamp on both new company inserts and updates to existing companies. Do not stamp it for dry runs, blocked or conflicted enrichments, or records that are researched but not written.
+- Before reporting a database enrichment complete, read back the row or affected payload and confirm `date_enriched` is non-empty.
 - Avoid writing to production systems unless the user explicitly asks and confirms the target.
 
 ## Research Rules
@@ -66,7 +69,7 @@ When the user wants the record written into a codebase or database:
 - Use ISO country codes, normalized URLs, and stable enum slugs when possible.
 - Treat employee count/headcount as a core field. Record `employee_count` only when a source reports a concrete integer; record `employee_count_range` when only a range is supported. Do not convert ranges into midpoint guesses.
 - Treat revenue, funding, and traffic estimates as ranges unless a primary source gives exact values.
-- Include the current date in `date_enriched` or `last_enriched_at` when the target schema has such a field.
+- Include the current date in `date_enriched` or `last_enriched_at` when the target schema has such a field; for database writes, follow the completion-marker rules above.
 - Mark inaccessible LinkedIn data as unavailable instead of trying to bypass login, scraping controls, or paywalls.
 
 ## Output

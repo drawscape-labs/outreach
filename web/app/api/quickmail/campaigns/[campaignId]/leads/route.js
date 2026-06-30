@@ -98,6 +98,7 @@ function getPersonLead(personId) {
       p.quickmail_lead_id AS quickmailLeadId,
       p.name,
       p.email,
+      p.phone_number AS phoneNumber,
       p.linkedin_profile_url AS linkedinProfileUrl,
       pos.title,
       c.name AS companyName
@@ -133,6 +134,7 @@ function getPersonLead(personId) {
       lastName,
       companyName: person.companyName,
       title: person.title,
+      phone: person.phoneNumber,
       linkedinId: person.linkedinProfileUrl
     }
   };

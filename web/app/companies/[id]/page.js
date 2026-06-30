@@ -9,31 +9,16 @@ import {
 } from "../../../components";
 import { PeopleTable } from "../../people/components/people-table";
 import { getCompany, getCompanyPositions } from "../../../lib/prospects";
+import { CompanyActions } from "../components/company-actions";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-function CompactStat({ name, value, caption }) {
-  return (
-    <div className="bg-white px-4 py-3 sm:px-5">
-      <dt className="text-xs/5 font-medium uppercase tracking-normal text-gray-500">
-        {name}
-      </dt>
-      <dd className="mt-0.5 flex items-baseline gap-x-1.5">
-        <span className="text-lg font-semibold text-gray-900">{value}</span>
-        {caption ? (
-          <span className="text-xs font-medium text-gray-500">{caption}</span>
-        ) : null}
-      </dd>
-    </div>
-  );
-}
 
 function CompanyDetailItem({ label, children, className }) {
   return (
     <div
       className={classNames(
-        "min-w-0 border-t border-gray-100 px-4 py-3 sm:px-5",
+        "min-w-0 py-2.5 first:pt-3 last:pb-3",
         className
       )}
     >
@@ -45,6 +30,27 @@ function CompanyDetailItem({ label, children, className }) {
       </dd>
     </div>
   );
+}
+
+function CompanyDetailColumn({ children, className }) {
+  return (
+    <dl
+      className={classNames(
+        "min-w-0 divide-y divide-gray-100 px-4 sm:px-5",
+        className
+      )}
+    >
+      {children}
+    </dl>
+  );
+}
+
+function FieldValue({ value }) {
+  if (value === null || value === undefined || String(value).trim() === "") {
+    return <EmptyValue />;
+  }
+
+  return value;
 }
 
 function formatHeadcount(company) {
@@ -89,8 +95,33 @@ function formatDate(value) {
   return dateFormatter.format(date);
 }
 
-export default async function CompanyDetailPage({ params }) {
+function firstSearchParam(searchParams, key) {
+  const value = searchParams?.[key];
+
+  if (Array.isArray(value)) {
+    return value[0] || "";
+  }
+
+  return value || "";
+}
+
+function getCodexLaunchStatus(searchParams) {
+  const state = firstSearchParam(searchParams, "codexStatus");
+
+  if (!state) {
+    return null;
+  }
+
+  return {
+    state,
+    pid: firstSearchParam(searchParams, "codexPid"),
+    message: firstSearchParam(searchParams, "codexMessage")
+  };
+}
+
+export default async function CompanyDetailPage({ params, searchParams }) {
   const { id } = await params;
+  const resolvedSearchParams = await searchParams;
   const company = getCompany(id);
 
   if (!company) {
@@ -103,78 +134,65 @@ export default async function CompanyDetailPage({ params }) {
     companyId: company.id,
     companyName: company.name
   }));
-  const currentPeople = new Set(positions.map((position) => position.personId));
-  const peopleWithEmail = positions.filter((position) => position.email).length;
-  const seniorities = new Set(positions.map((position) => position.seniority).filter(Boolean));
-  const stats = [
-    {
-      name: "People",
-      value: currentPeople.size,
-      caption: currentPeople.size === 1 ? "contact" : "contacts"
-    },
-    {
-      name: "Positions",
-      value: positions.length,
-      caption: positions.length === 1 ? "role" : "roles"
-    },
-    {
-      name: "Emails",
-      value: peopleWithEmail,
-      caption: "found"
-    },
-    {
-      name: "Seniority bands",
-      value: seniorities.size,
-      caption: "known"
-    }
-  ];
 
   return (
     <PageShell>
       <PageHeader
         eyebrow="Company"
         title={company.name}
-      />
+      >
+        <CompanyActions
+          company={company}
+          people={people}
+          launchStatus={getCodexLaunchStatus(resolvedSearchParams)}
+        />
+      </PageHeader>
 
       <section className="mt-6 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-200">
-        <dl className="grid grid-cols-2 gap-px bg-gray-100 sm:grid-cols-4">
-          {stats.map((stat) => (
-            <CompactStat key={stat.name} {...stat} />
-          ))}
-        </dl>
-        <div className="border-t border-gray-100 px-4 py-3 sm:px-5">
+        <div className="px-4 py-3 sm:px-5">
           <h2 className="text-sm/6 font-semibold text-gray-900">Company Details</h2>
         </div>
-        <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          <CompanyDetailItem label="Description" className="sm:col-span-2 lg:col-span-2">
-            {company.description || <EmptyValue />}
-          </CompanyDetailItem>
-          <CompanyDetailItem label="Domain">
-            {company.domain || <EmptyValue />}
-          </CompanyDetailItem>
-          <CompanyDetailItem label="Industry">
-            {company.industry || <EmptyValue />}
-          </CompanyDetailItem>
-          <CompanyDetailItem label="Headcount">
-            {formatHeadcount(company)}
-          </CompanyDetailItem>
-          <CompanyDetailItem label="Date Enriched">
-            {formatDate(company.dateEnriched)}
-          </CompanyDetailItem>
-          <CompanyDetailItem label="LinkedIn">
-            <ExternalAnchor href={company.linkedinCompanyUrl}>
-              {company.linkedinCompanyUrl}
-            </ExternalAnchor>
-          </CompanyDetailItem>
-          <CompanyDetailItem label="Website" className="lg:col-span-2">
-            <ExternalAnchor href={company.websiteUrl}>
-              {company.websiteUrl}
-            </ExternalAnchor>
-          </CompanyDetailItem>
-          <CompanyDetailItem label="Location">
-            {company.location || <EmptyValue />}
-          </CompanyDetailItem>
-        </dl>
+        <div className="grid grid-cols-1 divide-y divide-gray-100 lg:grid-cols-4 lg:divide-x lg:divide-y-0">
+          <CompanyDetailColumn>
+            <CompanyDetailItem label="Description">
+              <FieldValue value={company.description} />
+            </CompanyDetailItem>
+          </CompanyDetailColumn>
+
+          <CompanyDetailColumn>
+            <CompanyDetailItem label="Domain">
+              <FieldValue value={company.domain} />
+            </CompanyDetailItem>
+            <CompanyDetailItem label="Website">
+              <ExternalAnchor href={company.websiteUrl}>
+                {company.domain || company.websiteUrl || "Website"}
+              </ExternalAnchor>
+            </CompanyDetailItem>
+          </CompanyDetailColumn>
+
+          <CompanyDetailColumn>
+            <CompanyDetailItem label="Industry">
+              <FieldValue value={company.industry} />
+            </CompanyDetailItem>
+            <CompanyDetailItem label="Location">
+              <FieldValue value={company.location} />
+            </CompanyDetailItem>
+          </CompanyDetailColumn>
+
+          <CompanyDetailColumn>
+            <CompanyDetailItem label="Headcount">
+              <FieldValue value={formatHeadcount(company)} />
+            </CompanyDetailItem>
+            <CompanyDetailItem label="LinkedIn">
+              <ExternalAnchor href={company.linkedinCompanyUrl}>
+                Company profile
+              </ExternalAnchor>
+            </CompanyDetailItem>
+            <CompanyDetailItem label="Date Enriched">
+              <FieldValue value={formatDate(company.dateEnriched)} />
+            </CompanyDetailItem>
+          </CompanyDetailColumn>
+        </div>
       </section>
 
       <section className="mt-10">

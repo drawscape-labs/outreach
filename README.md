@@ -8,8 +8,8 @@ Prospecting workspace for finding companies and people to reach out to.
 - Company LinkedIn pages live in `linkedin_company_url`.
 - Company `description` values should be a single sentence suitable for display.
 - Person records use generated `id` values as the primary key.
-- Person `profile_key` values are unique LinkedIn path keys, like `in/lewis-nisbet-097071137`.
-- Full person LinkedIn URLs live separately in `linkedin_profile_url`.
+- Person `profile_key` values are unique identity keys, usually LinkedIn path keys like `in/lewis-nisbet-097071137`; website-confirmed email-only identities use `email/name@example.com`.
+- Full person LinkedIn URLs live separately in `linkedin_profile_url` when available.
 - Person `quickmail_lead_id` stores the QuickMail lead id after a successful sync.
 - Person `status` values are `New`, `Contacted`, `Replied`, or `Converted`; SQLite enforces them with a `CHECK` constraint in `db/schema.sql`, and the web app imports the same enum from `web/lib/statuses.js`.
 - Person `qualified` is a boolean stored as `0` or `1`.

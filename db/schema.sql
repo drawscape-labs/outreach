@@ -64,6 +64,7 @@ END;
     - quickmail_lead_id
     - name
     - email
+    - phone_number
     - status
     - qualified
     - notes
@@ -73,10 +74,11 @@ END;
 CREATE TABLE IF NOT EXISTS people (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   profile_key TEXT NOT NULL UNIQUE,
-  linkedin_profile_url TEXT NOT NULL UNIQUE,
+  linkedin_profile_url TEXT,
   quickmail_lead_id TEXT,
   name TEXT NOT NULL,
   email TEXT,
+  phone_number TEXT,
   status TEXT NOT NULL DEFAULT 'New'
     CHECK (status IN ('New', 'Contacted', 'Replied', 'Converted')),
   qualified INTEGER NOT NULL DEFAULT 0 CHECK (qualified IN (0, 1)),
@@ -84,6 +86,10 @@ CREATE TABLE IF NOT EXISTS people (
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS people_linkedin_profile_url_idx
+ON people(linkedin_profile_url)
+WHERE linkedin_profile_url IS NOT NULL;
 
 CREATE UNIQUE INDEX IF NOT EXISTS people_quickmail_lead_id_idx
 ON people(quickmail_lead_id)

@@ -14,6 +14,7 @@ Research one target account, find likely sales contacts, dedupe against the Draw
 - Treat the provided domain and LinkedIn company URL as identity hints; verify them before importing.
 - Never use company name alone as a database uniqueness key.
 - Do not scrape logged-in LinkedIn pages, bypass access controls, automate LinkedIn sessions, or collect data from paywalled/member-only pages. Record LinkedIn profile URLs found through public web search or public pages, but mark inaccessible LinkedIn details as unavailable.
+- LinkedIn is preferred but not required for people when the company website directly confirms the person's name, current sales/client-facing position, and public work email address.
 - If a match is ambiguous, stop at `needs_review` instead of forcing an insert.
 - After a successful approved import, start email lookup for imported people with missing emails. Preserve the `$find-person-email` rule that database email updates require explicit user approval unless the user already asked to import and save emails.
 
@@ -39,12 +40,14 @@ Before a full prospecting run, read the relevant references:
    - Start with the company website: homepage, About, Team, Staff, Broker, Sales, Locations, Contact, News, press, and structured metadata.
    - For car dealerships, explicitly check About Us / Meet Our Team / Staff pages. Dealer sites often list department-grouped staff cards with names, titles, direct phone numbers, and `Email Me` links; inspect visible text and link targets/source for `mailto:`, `/cdn-cgi/l/email-protection`, or similar encoded email patterns.
    - For car dealerships, prioritize Sales, Brand Ambassador, General Manager, Sales Manager, and Guest Experience people.
+   - For sailboat and yacht companies, explicitly check Brokers, Brokerage, Yacht Sales, Sailboat Sales, New Yachts, Pre-Owned Yachts, Used Yachts, Team, Staff, Locations, and Contact pages. Treat broker/brokerage, sales, business development, manager, director, VP, and vice president as high-priority title keywords.
    - Use current web search for public corroboration and candidate profile discovery.
    - Use LinkedIn only as a public identity hint. Do not attempt authenticated scraping.
 4. Find candidate people:
    - Match requested titles exactly first, then use title-taxonomy synonyms.
    - Prefer current sales/client-facing roles over operations, marketing, service, or former employees.
-   - Require a stable person identity before import; for this database that usually means a canonical LinkedIn profile URL.
+   - Require a stable person identity before import: use a canonical LinkedIn profile URL when available, otherwise use a website-confirmed public work email and allow the scripts to derive `profile_key` as `email/<normalized-email>`.
+   - Do not import email-only people from weak secondary sources; use email identity only when the company website or another primary company-controlled source confirms name, position, and email together.
 5. Assign confidence:
    - Use `high`, `medium`, `low`, `unknown`, or `needs_review`.
    - Import only `high` and `medium` people/positions by default.
@@ -77,4 +80,4 @@ For normal conversation, return:
 4. Post-import email lookup status for imported people when an import ran.
 5. The exact next command if the user wants to validate, import, or save found emails.
 
-For artifacts, create a machine-readable JSON file under a user-approved path or a temporary working path. Keep evidence and confidence outside SQLite unless the schema is extended.
+For artifacts, create a machine-readable JSON file under a user-approved path. If the user did not provide a path, use `.codex/tmp/` as the temporary working path and create it if needed. Do not create or write to a root-level `tmp/` directory. Keep evidence and confidence outside SQLite unless the schema is extended.

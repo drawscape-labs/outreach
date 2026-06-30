@@ -1,7 +1,19 @@
 import { query, sqlInteger } from "./db";
 import { isLeadStatus } from "./statuses";
 
-export function getCompanies() {
+function companiesOrderBy(sort, direction) {
+  if (sort === "created_at") {
+    const sqlDirection = direction === "asc" ? "ASC" : "DESC";
+
+    return `c.created_at ${sqlDirection}, c.id ${sqlDirection}, c.name`;
+  }
+
+  return "c.name";
+}
+
+export function getCompanies({ sort = "name", direction = "asc" } = {}) {
+  const orderBy = companiesOrderBy(sort, direction);
+
   return query(`
     SELECT
       c.id,
@@ -15,6 +27,7 @@ export function getCompanies() {
       c.employee_count AS employeeCount,
       c.employee_count_range AS employeeCountRange,
       c.date_enriched AS dateEnriched,
+      c.created_at AS createdAt,
       c.notes,
       COUNT(pos.id) AS positionCount,
       COUNT(DISTINCT pos.person_id) AS peopleCount,
@@ -31,7 +44,7 @@ export function getCompanies() {
     LEFT JOIN positions pos ON pos.company_id = c.id AND pos.is_current = 1
     LEFT JOIN people p ON p.id = pos.person_id
     GROUP BY c.id
-    ORDER BY c.name;
+    ORDER BY ${orderBy};
   `);
 }
 
@@ -86,7 +99,9 @@ export function getCompanyPositions(companyId) {
       p.name AS personName,
       p.profile_key AS profileKey,
       p.linkedin_profile_url AS linkedinProfileUrl,
+      p.created_at AS createdAt,
       p.email,
+      p.phone_number AS phoneNumber,
       p.status AS status,
       p.qualified AS qualified
     FROM positions pos
@@ -112,6 +127,7 @@ export function getPerson(personId) {
       quickmail_lead_id AS quickmailLeadId,
       name,
       email,
+      phone_number AS phoneNumber,
       status,
       qualified,
       notes,
@@ -154,14 +170,28 @@ export function getPersonPositions(personId) {
   `);
 }
 
-export function getPeople() {
+function peopleOrderBy(sort, direction) {
+  if (sort === "created_at") {
+    const sqlDirection = direction === "asc" ? "ASC" : "DESC";
+
+    return `p.created_at ${sqlDirection}, p.id ${sqlDirection}, p.name`;
+  }
+
+  return "positionCreatedAt DESC, p.name";
+}
+
+export function getPeople({ sort = "created_at", direction = "desc" } = {}) {
+  const orderBy = peopleOrderBy(sort, direction);
+
   return query(`
     SELECT
       p.id,
       p.profile_key AS profileKey,
       p.linkedin_profile_url AS linkedinProfileUrl,
       p.name,
+      p.created_at AS createdAt,
       p.email,
+      p.phone_number AS phoneNumber,
       p.status AS status,
       p.qualified AS qualified,
       MAX(pos.created_at) AS positionCreatedAt,
@@ -173,7 +203,7 @@ export function getPeople() {
     JOIN positions pos ON pos.person_id = p.id AND pos.is_current = 1
     LEFT JOIN companies c ON c.id = pos.company_id
     GROUP BY p.id
-    ORDER BY positionCreatedAt DESC, p.name;
+    ORDER BY ${orderBy};
   `);
 }
 
@@ -196,7 +226,9 @@ export function getPeopleByStatuses(statuses) {
       p.profile_key AS profileKey,
       p.linkedin_profile_url AS linkedinProfileUrl,
       p.name,
+      p.created_at AS createdAt,
       p.email,
+      p.phone_number AS phoneNumber,
       p.status AS status,
       p.qualified AS qualified,
       MAX(pos.created_at) AS positionCreatedAt,

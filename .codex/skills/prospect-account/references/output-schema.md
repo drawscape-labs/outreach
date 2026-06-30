@@ -34,6 +34,7 @@ Use this JSON shape for dry-run files and import scripts.
       "linkedin_profile_url": "https://www.linkedin.com/in/jane-smith",
       "profile_key": "in/jane-smith",
       "email": null,
+      "phone_number": null,
       "qualified": true,
       "confidence": "medium",
       "match_reason": "Search result and company page indicate current sales role.",
@@ -81,13 +82,13 @@ Company:
 Person:
 
 - `name`
-- `linkedin_profile_url`
+- `linkedin_profile_url` or a website-confirmed `email`
 
 Position:
 
 - `title`
 
-The scripts derive `profile_key` from `linkedin_profile_url` when possible.
+The scripts derive `profile_key` from `linkedin_profile_url` when possible. If no LinkedIn URL is available and the company website confirms the person's name, position, and public work email, the scripts derive `profile_key` as `email/<normalized-email>`.
 
 ## Evidence
 

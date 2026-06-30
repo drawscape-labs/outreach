@@ -22,6 +22,8 @@ coverage/
 *.sqlite-journal
 *.sqlite-shm
 *.sqlite-wal
+data/codex-runs/
+data/backups/
 
 # Caches
 .cache/

@@ -62,22 +62,56 @@ Usually skip:
 
 ## Sailboat And Yacht Sales
 
+Treat broker and brokerage as sales keywords for yacht and sailing companies. Prefer people who sell boats, manage brokers, lead sales, or own business development relationships.
+
 High relevance:
 
+- Broker
 - Yacht Broker
-- Yacht Sales
-- Yacht Sales Consultant
-- Sailboat Broker
+- Certified Professional Yacht Broker
+- Managing Broker
+- Principal Broker
+- Broker Associate
+- Sales Broker
+- Brokerage Sales
 - Brokerage Manager
-- Sales Director
+- Yacht Sales
+- New Yacht Sales
+- Pre-Owned Yacht Sales
+- Used Yacht Sales
+- Sailboat Sales
+- Yacht Sales Consultant
+- Yacht Sales Advisor
+- Yacht Sales Executive
+- Yacht Sales Representative
+- Yacht Consultant
+- Yacht Advisor
+- Sailboat Broker
 - Sales Manager
+- Yacht Sales Manager
+- Regional Sales Manager
+- General Manager
+- Sales Director
+- Director of Sales
+- Director of Yacht Sales
+- Managing Director
+- VP Sales
+- VP of Sales
+- Vice President of Sales
+- Business Development
+- Business Development Manager
+- Director of Business Development
+- VP of Business Development
+- Vice President of Business Development
 - Client Advisor
 
 Review:
 
-- Business Development
 - Charter Sales
-- General Manager
+- Charter Broker
+- Charter Manager
+- Owner
+- Founder
 - Location Manager
 
 Usually skip:

@@ -26,6 +26,29 @@ function sqlInList(values) {
   return values.map(sqlString).join(", ");
 }
 
+function unique(values) {
+  return Array.from(new Set(values.filter((value) => value !== null && value !== undefined && value !== "")));
+}
+
+function matchingPeopleForInput(person, rows) {
+  const matchedIds = new Set();
+  const matches = [];
+
+  rows.forEach((row) => {
+    const matchesProfileKey = person.profile_key && row.profile_key === person.profile_key;
+    const matchesLinkedIn =
+      person.linkedin_profile_url && row.linkedin_profile_url === person.linkedin_profile_url;
+    const matchesEmail = person.email && row.email === person.email;
+
+    if ((matchesProfileKey || matchesLinkedIn || matchesEmail) && !matchedIds.has(row.id)) {
+      matchedIds.add(row.id);
+      matches.push(row);
+    }
+  });
+
+  return matches;
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const inputPath = args._[0];
@@ -46,19 +69,47 @@ function main() {
 
   const prospect = validation.normalized;
   const importablePeople = prospect.people.filter((person) => importable(person, includeLow));
-  const importableProfileKeys = Array.from(
-    new Set(importablePeople.map((person) => person.profile_key).filter(Boolean))
-  );
-  const existingPeopleByKey = new Map();
-
+  const importableProfileKeys = unique(importablePeople.map((person) => person.profile_key));
+  const importableProfileUrls = unique(importablePeople.map((person) => person.linkedin_profile_url));
+  const importableEmails = unique(importablePeople.map((person) => person.email));
+  const personClauses = [];
   if (importableProfileKeys.length > 0) {
-    runSqliteJson(
-      dbPath,
-      `SELECT id, profile_key
-       FROM people
-       WHERE profile_key IN (${sqlInList(importableProfileKeys)});`
-    ).forEach((row) => existingPeopleByKey.set(row.profile_key, row));
+    personClauses.push(`profile_key IN (${sqlInList(importableProfileKeys)})`);
   }
+  if (importableProfileUrls.length > 0) {
+    personClauses.push(`linkedin_profile_url IN (${sqlInList(importableProfileUrls)})`);
+  }
+  if (importableEmails.length > 0) {
+    personClauses.push(`email IN (${sqlInList(importableEmails)})`);
+  }
+
+  const existingPeople = personClauses.length > 0
+    ? runSqliteJson(
+      dbPath,
+      `SELECT id, profile_key, linkedin_profile_url, email, phone_number
+       FROM people
+       WHERE ${personClauses.join(" OR ")};`
+    )
+    : [];
+  const existingPeopleByInputKey = new Map();
+
+  importablePeople.forEach((person) => {
+    const matches = matchingPeopleForInput(person, existingPeople);
+    if (matches.length > 1) {
+      throw new Error(`${person.name} matches multiple existing people: ${matches.map((row) => row.id).join(", ")}`);
+    }
+    if (matches.length === 1) {
+      const [match] = matches;
+      if (
+        person.linkedin_profile_url &&
+        match.linkedin_profile_url &&
+        match.linkedin_profile_url !== person.linkedin_profile_url
+      ) {
+        throw new Error(`${person.name} matches existing person ${match.id} by email, but LinkedIn URLs differ`);
+      }
+      existingPeopleByInputKey.set(person.profile_key, matches[0]);
+    }
+  });
 
   const summary = {
     company: "skipped",
@@ -109,7 +160,12 @@ function main() {
     summary.company = "inserted";
   }
 
-  sql += `CREATE TEMP TABLE IF NOT EXISTS _prospect_ids (kind TEXT, key TEXT, id INTEGER);\n`;
+  sql += `CREATE TEMP TABLE IF NOT EXISTS _prospect_ids (
+    kind TEXT,
+    key TEXT,
+    id INTEGER,
+    PRIMARY KEY (kind, key)
+  );\n`;
   sql += `DELETE FROM _prospect_ids;\n`;
   sql += `INSERT INTO _prospect_ids (kind, key, id)
     SELECT 'company', ${sqlString(prospect.company.domain)}, id
@@ -124,28 +180,45 @@ function main() {
       return;
     }
 
-    sql += `INSERT INTO people
-      (profile_key, linkedin_profile_url, name, email, status, qualified, notes)
-      VALUES (
-        ${sqlString(person.profile_key)},
-        ${sqlString(person.linkedin_profile_url)},
-        ${sqlString(person.name)},
-        ${sqlString(person.email)},
-        ${sqlString(person.status || "New")},
-        ${sqlBoolean(person.qualified)},
-        ${sqlString(person.notes)}
-      )
-      ON CONFLICT(profile_key) DO UPDATE SET
-        linkedin_profile_url = COALESCE(excluded.linkedin_profile_url, people.linkedin_profile_url),
-        name = COALESCE(excluded.name, people.name),
-        email = COALESCE(excluded.email, people.email),
-        qualified = MAX(people.qualified, excluded.qualified),
-        notes = COALESCE(excluded.notes, people.notes);\n`;
-    sql += `INSERT OR IGNORE INTO _prospect_ids (kind, key, id)
-      SELECT 'person', ${sqlString(person.profile_key)}, id
-      FROM people
-      WHERE profile_key = ${sqlString(person.profile_key)}
-      LIMIT 1;\n`;
+    const existingPerson = existingPeopleByInputKey.get(person.profile_key);
+
+    if (existingPerson) {
+      sql += `UPDATE people
+        SET linkedin_profile_url = COALESCE(linkedin_profile_url, ${sqlString(person.linkedin_profile_url)}),
+            name = COALESCE(${sqlString(person.name)}, name),
+            email = COALESCE(email, ${sqlString(person.email)}),
+            phone_number = COALESCE(phone_number, ${sqlString(person.phone_number)}),
+            qualified = MAX(qualified, ${sqlBoolean(person.qualified)}),
+            notes = COALESCE(${sqlString(person.notes)}, notes)
+        WHERE id = ${existingPerson.id};\n`;
+      sql += `INSERT OR REPLACE INTO _prospect_ids (kind, key, id)
+        VALUES ('person', ${sqlString(person.profile_key)}, ${existingPerson.id});\n`;
+    } else {
+      sql += `INSERT INTO people
+        (profile_key, linkedin_profile_url, name, email, phone_number, status, qualified, notes)
+        VALUES (
+          ${sqlString(person.profile_key)},
+          ${sqlString(person.linkedin_profile_url)},
+          ${sqlString(person.name)},
+          ${sqlString(person.email)},
+          ${sqlString(person.phone_number)},
+          ${sqlString(person.status || "New")},
+          ${sqlBoolean(person.qualified)},
+          ${sqlString(person.notes)}
+        )
+        ON CONFLICT(profile_key) DO UPDATE SET
+          linkedin_profile_url = COALESCE(people.linkedin_profile_url, excluded.linkedin_profile_url),
+          name = COALESCE(excluded.name, people.name),
+          email = COALESCE(people.email, excluded.email),
+          phone_number = COALESCE(people.phone_number, excluded.phone_number),
+          qualified = MAX(people.qualified, excluded.qualified),
+          notes = COALESCE(excluded.notes, people.notes);\n`;
+      sql += `INSERT OR REPLACE INTO _prospect_ids (kind, key, id)
+        SELECT 'person', ${sqlString(person.profile_key)}, id
+        FROM people
+        WHERE profile_key = ${sqlString(person.profile_key)}
+        LIMIT 1;\n`;
+    }
     summary.people_inserted_or_updated += 1;
 
     person.positions.forEach((position) => {
@@ -165,7 +238,9 @@ function main() {
                ${sqlBoolean(position.is_current)},
                ${sqlString(position.notes)}
         FROM companies c
-        JOIN people p ON p.profile_key = ${sqlString(person.profile_key)}
+        JOIN _prospect_ids pp ON pp.kind = 'person'
+          AND pp.key = ${sqlString(person.profile_key)}
+        JOIN people p ON p.id = pp.id
         WHERE lower(c.domain) = lower(${sqlString(position.company_domain || prospect.company.domain)})
         LIMIT 1;\n`;
       summary.positions_inserted_or_existing += 1;
@@ -176,27 +251,53 @@ function main() {
   runSqliteExec(dbPath, sql);
 
   let affectedPeople = [];
+  const existingPersonIds = unique(
+    importablePeople.map((person) => existingPeopleByInputKey.get(person.profile_key)?.id)
+  );
+  const affectedWhere = [];
   if (importableProfileKeys.length > 0) {
-    const sortIndex = new Map(importableProfileKeys.map((key, index) => [key, index]));
+    affectedWhere.push(`profile_key IN (${sqlInList(importableProfileKeys)})`);
+  }
+  if (existingPersonIds.length > 0) {
+    affectedWhere.push(`id IN (${existingPersonIds.join(", ")})`);
+  }
+
+  if (affectedWhere.length > 0) {
+    const affectedInputs = importablePeople.map((person, index) => ({
+      index,
+      person,
+      existingPerson: existingPeopleByInputKey.get(person.profile_key) || null
+    }));
     affectedPeople = runSqliteJson(
       dbPath,
-      `SELECT id, profile_key, linkedin_profile_url, name, email, status, qualified
+       `SELECT id, profile_key, linkedin_profile_url, name, email, phone_number, status, qualified
        FROM people
-       WHERE profile_key IN (${sqlInList(importableProfileKeys)});`
+       WHERE ${affectedWhere.join(" OR ")};`
     )
       .map((row) => ({
+        input: affectedInputs.find((entry) => (
+          entry.existingPerson?.id === row.id ||
+          (!entry.existingPerson && entry.person.profile_key === row.profile_key)
+        )),
+        row
+      }))
+      .filter((entry) => entry.input)
+      .map(({ input, row }) => ({
         id: row.id,
         profile_key: row.profile_key,
         linkedin_profile_url: row.linkedin_profile_url,
         name: row.name,
         email: row.email,
+        phone_number: row.phone_number,
         status: row.status,
         qualified: Boolean(row.qualified),
-        action: existingPeopleByKey.has(row.profile_key) ? "updated" : "inserted",
+        action: input.existingPerson ? "updated" : "inserted",
         email_status: row.email ? "present" : "missing",
-        needs_email_lookup: !row.email
+        needs_email_lookup: !row.email,
+        _sort_index: input.index
       }))
-      .sort((a, b) => sortIndex.get(a.profile_key) - sortIndex.get(b.profile_key));
+      .sort((a, b) => a._sort_index - b._sort_index)
+      .map(({ _sort_index, ...row }) => row);
   }
 
   process.stdout.write(`${JSON.stringify({ ok: true, db: dbPath, summary, affected_people: affectedPeople }, null, 2)}\n`);

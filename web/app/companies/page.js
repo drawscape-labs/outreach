@@ -1,4 +1,5 @@
 import {
+  classNames,
   DataTable,
   EmptyValue,
   ExternalAnchor,
@@ -30,6 +31,13 @@ export const runtime = "nodejs";
 const companiesPerPage = 25;
 const contactFilters = ["with_people", "without_people"];
 const legacyIndustryParam = "category";
+
+const createdDateFormatter = new Intl.DateTimeFormat("en-US", {
+  day: "numeric",
+  month: "short",
+  timeZone: "UTC",
+  year: "numeric"
+});
 
 function CountPill({ label, tone = "gray", value }) {
   const count = Number(value || 0);
@@ -86,6 +94,38 @@ function formatHeadcount(company) {
   return company.employeeCountRange || "";
 }
 
+function formatCreatedAt(value) {
+  if (!value) {
+    return "";
+  }
+
+  const trimmedValue = String(value).trim();
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  const sqliteTimestampMatch = trimmedValue.match(
+    /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2}):(\d{2}))?/
+  );
+  const date = sqliteTimestampMatch
+    ? new Date(Date.UTC(
+      Number(sqliteTimestampMatch[1]),
+      Number(sqliteTimestampMatch[2]) - 1,
+      Number(sqliteTimestampMatch[3]),
+      Number(sqliteTimestampMatch[4] || 0),
+      Number(sqliteTimestampMatch[5] || 0),
+      Number(sqliteTimestampMatch[6] || 0)
+    ))
+    : new Date(trimmedValue);
+
+  if (Number.isNaN(date.getTime())) {
+    return trimmedValue;
+  }
+
+  return createdDateFormatter.format(date);
+}
+
 function firstSearchParam(searchParams, key) {
   const value = searchParams?.[key];
 
@@ -104,6 +144,19 @@ function positiveIntegerSearchParam(searchParams, key, fallback = 1) {
   }
 
   return parsed;
+}
+
+function getSort(searchParams) {
+  const sort = firstSearchParam(searchParams, "sort");
+  const direction = firstSearchParam(searchParams, "direction").toLowerCase() === "asc"
+    ? "asc"
+    : "desc";
+
+  if (sort === "created_at") {
+    return { direction, sort };
+  }
+
+  return { direction: "asc", sort: "name" };
 }
 
 function getUniqueValues(items, key) {
@@ -142,9 +195,7 @@ function companyMatchesFilters(company, filters) {
   return true;
 }
 
-function pageHref(filters, page) {
-  const params = new URLSearchParams();
-
+function addFiltersToParams(params, filters) {
   if (filters.industry) {
     params.set("industry", filters.industry);
   }
@@ -152,6 +203,22 @@ function pageHref(filters, page) {
   if (filters.contacts) {
     params.set("contacts", filters.contacts);
   }
+}
+
+function addSortToParams(params, sort) {
+  if (sort.sort !== "created_at") {
+    return;
+  }
+
+  params.set("sort", "created_at");
+  params.set("direction", sort.direction);
+}
+
+function pageHref(filters, sort, page) {
+  const params = new URLSearchParams();
+
+  addFiltersToParams(params, filters);
+  addSortToParams(params, sort);
 
   if (page > 1) {
     params.set("page", String(page));
@@ -160,6 +227,52 @@ function pageHref(filters, page) {
   const queryString = params.toString();
 
   return queryString ? `/companies?${queryString}` : "/companies";
+}
+
+function createdSortHref(filters, sort) {
+  const params = new URLSearchParams();
+  const nextDirection = sort.sort === "created_at" && sort.direction === "desc"
+    ? "asc"
+    : "desc";
+
+  addFiltersToParams(params, filters);
+  params.set("sort", "created_at");
+  params.set("direction", nextDirection);
+
+  return `/companies?${params.toString()}`;
+}
+
+function CreatedSortIndicator({ direction }) {
+  return (
+    <span className="inline-flex h-3 w-3 items-center justify-center" aria-hidden="true">
+      <span
+        className={classNames(
+          "h-0 w-0 border-x-[4px] border-x-transparent",
+          direction === "asc"
+            ? "border-b-[5px] border-b-zinc-500"
+            : "border-t-[5px] border-t-zinc-500"
+        )}
+      />
+    </span>
+  );
+}
+
+function CreatedHeader({ filters, sort }) {
+  const isSorted = sort.sort === "created_at";
+  const nextDirection = isSorted && sort.direction === "desc"
+    ? "ascending"
+    : "descending";
+
+  return (
+    <Link
+      aria-label={`Sort by created ${nextDirection}`}
+      className="inline-flex items-center gap-1.5 text-zinc-700 hover:text-teal-700"
+      href={createdSortHref(filters, sort)}
+    >
+      <span>Created</span>
+      {isSorted ? <CreatedSortIndicator direction={sort.direction} /> : null}
+    </Link>
+  );
 }
 
 function paginationPages(currentPage, totalPages) {
@@ -194,6 +307,7 @@ function CompaniesPagination({
   currentPage,
   filters,
   pageSize,
+  sort,
   totalCount,
   totalPages
 }) {
@@ -218,7 +332,7 @@ function CompaniesPagination({
       {totalPages > 1 ? (
         <Pagination className="w-full sm:w-auto">
           <PaginationPrevious
-            href={currentPage > 1 ? pageHref(filters, currentPage - 1) : null}
+            href={currentPage > 1 ? pageHref(filters, sort, currentPage - 1) : null}
           />
           <PaginationList>
             {pages.map((page, index) =>
@@ -227,7 +341,7 @@ function CompaniesPagination({
               ) : (
                 <PaginationPage
                   key={page}
-                  href={pageHref(filters, page)}
+                  href={pageHref(filters, sort, page)}
                   current={page === currentPage}
                 >
                   {page}
@@ -236,7 +350,7 @@ function CompaniesPagination({
             )}
           </PaginationList>
           <PaginationNext
-            href={currentPage < totalPages ? pageHref(filters, currentPage + 1) : null}
+            href={currentPage < totalPages ? pageHref(filters, sort, currentPage + 1) : null}
           />
         </Pagination>
       ) : null}
@@ -246,7 +360,8 @@ function CompaniesPagination({
 
 export default async function CompaniesPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
-  const allCompanies = getCompanies();
+  const sort = getSort(resolvedSearchParams);
+  const allCompanies = getCompanies(sort);
   const options = {
     industries: getUniqueValues(allCompanies, "industry")
   };
@@ -284,6 +399,19 @@ export default async function CompaniesPage({ searchParams }) {
                 <TableHeader scope="col" className="hidden 2xl:table-cell">
                   Location
                 </TableHeader>
+                <TableHeader
+                  scope="col"
+                  className="hidden xl:table-cell"
+                  aria-sort={
+                    sort.sort === "created_at"
+                      ? sort.direction === "asc"
+                        ? "ascending"
+                        : "descending"
+                      : undefined
+                  }
+                >
+                  <CreatedHeader filters={filters} sort={sort} />
+                </TableHeader>
                 <TableHeader scope="col" className="hidden text-right sm:table-cell">
                   Links
                 </TableHeader>
@@ -291,72 +419,86 @@ export default async function CompaniesPage({ searchParams }) {
             </TableHead>
             <TableBody>
               {paginatedCompanies.length === 0 ? (
-                <TableEmpty colSpan={6}>No companies match these filters.</TableEmpty>
+                <TableEmpty colSpan={7}>No companies match these filters.</TableEmpty>
               ) : (
-                paginatedCompanies.map((company) => (
-                  <TableRow key={company.id}>
-                    <TableCell className="w-full max-w-0 font-medium text-zinc-950 sm:w-auto sm:max-w-none">
-                      <div className="min-w-0">
-                        <Link
-                          className="text-gray-900 hover:text-teal-700"
-                          href={`/companies/${company.id}`}
-                        >
-                          {company.name}
-                        </Link>
-                        <div className="mt-1 truncate text-sm font-normal text-gray-500">
-                          {company.domain ? (
-                            <ExternalAnchor href={company.websiteUrl || `https://${company.domain}`}>
-                              {company.domain}
-                            </ExternalAnchor>
-                          ) : (
-                            "No domain"
-                          )}
+                paginatedCompanies.map((company) => {
+                  const formattedCreatedAt = formatCreatedAt(company.createdAt);
+
+                  return (
+                    <TableRow key={company.id}>
+                      <TableCell className="w-full max-w-0 font-medium text-zinc-950 sm:w-auto sm:max-w-none">
+                        <div className="min-w-0">
+                          <Link
+                            className="text-gray-900 hover:text-teal-700"
+                            href={`/companies/${company.id}`}
+                          >
+                            {company.name}
+                          </Link>
+                          <div className="mt-1 truncate text-sm font-normal text-gray-500">
+                            {company.domain ? (
+                              <ExternalAnchor href={company.websiteUrl || `https://${company.domain}`}>
+                                {company.domain}
+                              </ExternalAnchor>
+                            ) : (
+                              "No domain"
+                            )}
+                          </div>
                         </div>
-                      </div>
-                      <dl className="font-normal lg:hidden">
-                        <dt className="sr-only">Industry</dt>
-                        <dd className="mt-1 truncate text-gray-400">
-                          {company.industry || "Industry missing"}
-                        </dd>
-                        <dt className="sr-only">Headcount</dt>
-                        <dd className="mt-1 truncate text-gray-400">
-                          {formatHeadcount(company)}
-                        </dd>
-                        <dt className="sr-only">Links</dt>
-                        <dd className="mt-2 flex gap-x-3 sm:hidden">
+                        <dl className="font-normal lg:hidden">
+                          <dt className="sr-only">Industry</dt>
+                          <dd className="mt-1 truncate text-gray-400">
+                            {company.industry || "Industry missing"}
+                          </dd>
+                          <dt className="sr-only">Headcount</dt>
+                          <dd className="mt-1 truncate text-gray-400">
+                            {formatHeadcount(company)}
+                          </dd>
+                          <dt className="sr-only">Created</dt>
+                          <dd className="mt-1 truncate text-gray-400">
+                            {formattedCreatedAt || "Created date missing"}
+                          </dd>
+                          <dt className="sr-only">Links</dt>
+                          <dd className="mt-2 flex gap-x-3 sm:hidden">
+                            <ExternalAnchor href={company.linkedinCompanyUrl}>
+                              LinkedIn
+                            </ExternalAnchor>
+                            <ExternalAnchor href={company.websiteUrl} missingLabel="No site">
+                              Website
+                            </ExternalAnchor>
+                          </dd>
+                        </dl>
+                      </TableCell>
+                      <TableCell className="text-zinc-500">
+                        <PeoplePills company={company} />
+                      </TableCell>
+                      <TableCell className="hidden text-zinc-500 lg:table-cell">
+                        {company.industry || <EmptyValue />}
+                      </TableCell>
+                      <TableCell className="hidden text-zinc-500 2xl:table-cell">
+                        {formatHeadcount(company)}
+                      </TableCell>
+                      <TableCell className="hidden text-zinc-500 2xl:table-cell">
+                        {company.location || <EmptyValue />}
+                      </TableCell>
+                      <TableCell
+                        className="hidden text-zinc-500 xl:table-cell"
+                        title={company.createdAt || undefined}
+                      >
+                        {formattedCreatedAt || <EmptyValue />}
+                      </TableCell>
+                      <TableCell className="hidden text-right font-medium sm:table-cell">
+                        <div className="flex justify-end gap-x-4">
                           <ExternalAnchor href={company.linkedinCompanyUrl}>
                             LinkedIn
                           </ExternalAnchor>
                           <ExternalAnchor href={company.websiteUrl} missingLabel="No site">
                             Website
                           </ExternalAnchor>
-                        </dd>
-                      </dl>
-                    </TableCell>
-                    <TableCell className="text-zinc-500">
-                      <PeoplePills company={company} />
-                    </TableCell>
-                    <TableCell className="hidden text-zinc-500 lg:table-cell">
-                      {company.industry || <EmptyValue />}
-                    </TableCell>
-                    <TableCell className="hidden text-zinc-500 2xl:table-cell">
-                      {formatHeadcount(company)}
-                    </TableCell>
-                    <TableCell className="hidden text-zinc-500 2xl:table-cell">
-                      {company.location || <EmptyValue />}
-                    </TableCell>
-                    <TableCell className="hidden text-right font-medium sm:table-cell">
-                      <div className="flex justify-end gap-x-4">
-                        <ExternalAnchor href={company.linkedinCompanyUrl}>
-                          LinkedIn
-                        </ExternalAnchor>
-                        <ExternalAnchor href={company.websiteUrl} missingLabel="No site">
-                          Website
-                        </ExternalAnchor>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </DataTable>
@@ -364,6 +506,7 @@ export default async function CompaniesPage({ searchParams }) {
             currentPage={currentPage}
             filters={filters}
             pageSize={companiesPerPage}
+            sort={sort}
             totalCount={companies.length}
             totalPages={totalPages}
           />

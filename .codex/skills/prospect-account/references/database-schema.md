@@ -40,26 +40,29 @@ Rules:
 Required fields:
 
 - `profile_key`
-- `linkedin_profile_url`
 - `name`
 
 Useful optional fields:
 
+- `linkedin_profile_url`
 - `email`
+- `phone_number`
 - `status`
 - `qualified`
 - `notes`
 
 Uniqueness:
 
-- `profile_key` is unique. For LinkedIn URLs, use `in/<slug>`.
-- `linkedin_profile_url` is unique.
+- `profile_key` is unique. For LinkedIn URLs, use `in/<slug>`. For website-confirmed email-only identities, use `email/<normalized-email>`.
+- `linkedin_profile_url` is unique when present.
 
 Rules:
 
 - Default `status` to `New`.
 - Set `qualified` to `1` only when the person appears sales/client-facing and relevant to the target vertical.
-- Do not insert people without stable identity unless the schema is extended to support unverified candidates.
+- Prefer LinkedIn profile URLs when available.
+- Insert email-only people only when a company website or other primary company-controlled source confirms the person's name, current position, and public work email together.
+- Do not insert people without either a canonical LinkedIn profile URL or a website-confirmed public work email.
 
 ## positions
 

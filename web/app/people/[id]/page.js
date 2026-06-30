@@ -274,6 +274,9 @@ export default async function PersonDetailPage({ params }) {
             <DetailItem label="Email">
               <FieldValue value={person.email} />
             </DetailItem>
+            <DetailItem label="Phone">
+              <FieldValue value={person.phoneNumber} />
+            </DetailItem>
             <DetailItem label="Profile key">
               <FieldValue value={person.profileKey} />
             </DetailItem>

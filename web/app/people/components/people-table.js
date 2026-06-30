@@ -1,4 +1,5 @@
 import {
+  classNames,
   DataTable,
   EmptyValue,
   ExternalAnchor,
@@ -102,6 +103,85 @@ function personLinkedInProfileUrl(person) {
   return person.linkedinProfileUrl;
 }
 
+function personCreatedAt(person) {
+  return person.createdAt || person.personCreatedAt;
+}
+
+const createdAtFormatter = new Intl.DateTimeFormat("en-US", {
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  month: "short",
+  timeZone: "UTC",
+  year: "numeric"
+});
+
+function formatCreatedAt(value) {
+  if (!value) {
+    return "";
+  }
+
+  const trimmedValue = String(value).trim();
+
+  if (!trimmedValue) {
+    return "";
+  }
+
+  const sqliteTimestampMatch = trimmedValue.match(
+    /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2}):(\d{2}))?/
+  );
+  const date = sqliteTimestampMatch
+    ? new Date(Date.UTC(
+      Number(sqliteTimestampMatch[1]),
+      Number(sqliteTimestampMatch[2]) - 1,
+      Number(sqliteTimestampMatch[3]),
+      Number(sqliteTimestampMatch[4] || 0),
+      Number(sqliteTimestampMatch[5] || 0),
+      Number(sqliteTimestampMatch[6] || 0)
+    ))
+    : new Date(trimmedValue);
+
+  if (Number.isNaN(date.getTime())) {
+    return trimmedValue;
+  }
+
+  return createdAtFormatter.format(date);
+}
+
+function CreatedAtSortIndicator({ direction }) {
+  return (
+    <span className="inline-flex h-3 w-3 items-center justify-center" aria-hidden="true">
+      <span
+        className={classNames(
+          "h-0 w-0 border-x-[4px] border-x-transparent",
+          direction === "asc"
+            ? "border-b-[5px] border-b-zinc-500"
+            : "border-t-[5px] border-t-zinc-500"
+        )}
+      />
+    </span>
+  );
+}
+
+function CreatedAtHeader({ sortDirection, sortHref }) {
+  if (!sortHref) {
+    return "Created at";
+  }
+
+  const nextDirection = sortDirection === "asc" ? "descending" : "ascending";
+
+  return (
+    <Link
+      aria-label={`Sort by created at ${nextDirection}`}
+      className="inline-flex items-center gap-1.5 text-zinc-700 hover:text-teal-700"
+      href={sortHref}
+    >
+      <span>Created at</span>
+      {sortDirection ? <CreatedAtSortIndicator direction={sortDirection} /> : null}
+    </Link>
+  );
+}
+
 function StatusCell({ editableStatuses, person }) {
   const id = personId(person);
 
@@ -132,7 +212,9 @@ export function PeopleTable({
   emptyMessage = "No people found.",
   label = "People table",
   nameHeader = "Name",
-  editableStatuses = true
+  editableStatuses = true,
+  createdAtSortDirection,
+  createdAtSortHref
 }) {
   return (
     <TableFrame label={label}>
@@ -154,8 +236,27 @@ export function PeopleTable({
             <TableHeader scope="col">
               Qualified
             </TableHeader>
+            <TableHeader
+              scope="col"
+              className="hidden xl:table-cell"
+              aria-sort={
+                createdAtSortDirection
+                  ? createdAtSortDirection === "asc"
+                    ? "ascending"
+                    : "descending"
+                  : undefined
+              }
+            >
+              <CreatedAtHeader
+                sortDirection={createdAtSortDirection}
+                sortHref={createdAtSortHref}
+              />
+            </TableHeader>
             <TableHeader scope="col" className="hidden 2xl:table-cell">
               Email
+            </TableHeader>
+            <TableHeader scope="col" className="hidden 2xl:table-cell">
+              Phone
             </TableHeader>
             <TableHeader scope="col" className="text-right">
               LinkedIn
@@ -167,7 +268,7 @@ export function PeopleTable({
         </TableHead>
         <TableBody>
           {people.length === 0 ? (
-            <TableEmpty colSpan={8}>{emptyMessage}</TableEmpty>
+            <TableEmpty colSpan={10}>{emptyMessage}</TableEmpty>
           ) : (
             people.map((person) => {
               const id = personId(person);
@@ -177,6 +278,8 @@ export function PeopleTable({
               const companies = companiesForPerson(person);
               const companyNames = companies.map((company) => company.name).join(", ");
               const position = positionText(person);
+              const createdAt = personCreatedAt(person);
+              const formattedCreatedAt = formatCreatedAt(createdAt);
 
               return (
                 <TableRow key={person.id || person.personId}>
@@ -219,8 +322,17 @@ export function PeopleTable({
                   <TableCell className="text-zinc-500">
                     <QualifiedCell editableStatuses={editableStatuses} person={person} />
                   </TableCell>
+                  <TableCell
+                    className="hidden text-zinc-500 xl:table-cell"
+                    title={createdAt || undefined}
+                  >
+                    {formattedCreatedAt || <EmptyValue />}
+                  </TableCell>
                   <TableCell className="hidden text-zinc-500 2xl:table-cell">
                     {person.email || null}
+                  </TableCell>
+                  <TableCell className="hidden text-zinc-500 2xl:table-cell">
+                    {person.phoneNumber || null}
                   </TableCell>
                   <TableCell className="text-right font-medium">
                     <ExternalAnchor href={linkedinProfileUrl}>Profile</ExternalAnchor>

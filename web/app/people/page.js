@@ -1,65 +1,126 @@
 import {
   PageHeader,
   PageShell,
-  PageStats,
   SectionHeader
 } from "../../components";
+import { isLeadStatus } from "../../lib/statuses";
 import { PeopleTable } from "./components/people-table";
-import { splitCompanies } from "./lib/people-table-data";
+import { PeopleFilters } from "./components/people-filters";
 import { getPeople } from "../../lib/prospects";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-export default function PeoplePage() {
-  const people = getPeople();
-  const companies = new Set(people.flatMap((person) => splitCompanies(person.companies)));
-  const totalPositions = people.reduce(
-    (sum, person) => sum + Number(person.positionCount || 0),
-    0
+function firstSearchParam(searchParams, key) {
+  const value = searchParams?.[key];
+
+  if (Array.isArray(value)) {
+    return value[0] || "";
+  }
+
+  return value || "";
+}
+
+function createdAtSort(searchParams) {
+  return {
+    direction: firstSearchParam(searchParams, "direction").toLowerCase() === "asc"
+      ? "asc"
+      : "desc",
+    sort: "created_at"
+  };
+}
+
+function getFilters(searchParams) {
+  const status = firstSearchParam(searchParams, "status");
+  const qualified = firstSearchParam(searchParams, "qualified");
+  const email = firstSearchParam(searchParams, "email");
+
+  return {
+    status: isLeadStatus(status) ? status : "",
+    qualified: ["yes", "no"].includes(qualified) ? qualified : "",
+    email: ["has", "missing"].includes(email) ? email : ""
+  };
+}
+
+function addFiltersToParams(params, filters) {
+  if (filters.status) {
+    params.set("status", filters.status);
+  }
+
+  if (filters.qualified) {
+    params.set("qualified", filters.qualified);
+  }
+
+  if (filters.email) {
+    params.set("email", filters.email);
+  }
+}
+
+function sortHref(sort, filters) {
+  const params = new URLSearchParams();
+  const nextDirection = sort.direction === "asc" ? "desc" : "asc";
+
+  addFiltersToParams(params, filters);
+  params.set("sort", "created_at");
+  params.set("direction", nextDirection);
+
+  return `/people?${params.toString()}`;
+}
+
+function hasEmail(person) {
+  return Boolean(String(person.email || "").trim());
+}
+
+function personMatchesFilters(person, filters) {
+  if (filters.status && person.status !== filters.status) {
+    return false;
+  }
+
+  if (filters.qualified === "yes" && !person.qualified) {
+    return false;
+  }
+
+  if (filters.qualified === "no" && person.qualified) {
+    return false;
+  }
+
+  if (filters.email === "has" && !hasEmail(person)) {
+    return false;
+  }
+
+  if (filters.email === "missing" && hasEmail(person)) {
+    return false;
+  }
+
+  return true;
+}
+
+export default async function PeoplePage({ searchParams }) {
+  const resolvedSearchParams = await searchParams;
+  const sort = createdAtSort(resolvedSearchParams);
+  const filters = getFilters(resolvedSearchParams);
+  const people = getPeople(sort).filter((person) =>
+    personMatchesFilters(person, filters)
   );
-  const emailCount = people.filter((person) => person.email).length;
-  const qualifiedCount = people.filter((person) => person.qualified).length;
 
   return (
-    <PageShell>
+    <PageShell fullWidth>
       <PageHeader
         eyebrow="Prospecting"
         title="People"
-        description="Contacts collected from target accounts, including profile keys, mapped companies, status, and direct links."
       />
 
-      <PageStats
-        stats={[
-          {
-            name: "People",
-            value: people.length,
-            caption: people.length === 1 ? "contact" : "contacts"
-          },
-          {
-            name: "Companies",
-            value: companies.size,
-            caption: "represented"
-          },
-          {
-            name: "Positions",
-            value: totalPositions,
-            caption: totalPositions === 1 ? "role" : "roles"
-          },
-          {
-            name: "Qualified",
-            value: qualifiedCount,
-            caption: "contacts"
-          }
-        ]}
-      />
-
-      <section className="mt-10">
-        <SectionHeader
-          title="Contact List"
-          description="Each contact stays connected to their source profile and the accounts where they have known roles."
+      <section className="mt-6">
+        <SectionHeader title="Contact List" />
+        <div className="mt-4">
+          <PeopleFilters filters={filters} />
+        </div>
+        <PeopleTable
+          people={people}
+          emptyMessage="No people found."
+          createdAtSortDirection={sort.direction}
+          createdAtSortHref={sortHref(sort, filters)}
         />
-        <PeopleTable people={people} emptyMessage="No people found." />
       </section>
     </PageShell>
   );

@@ -64,7 +64,7 @@ const MODELS = Object.freeze({
       },
       linkedinProfileUrl: {
         column: "linkedin_profile_url",
-        type: "requiredText",
+        type: "text",
         aliases: ["linkedin_profile_url"]
       },
       quickmailLeadId: {
@@ -74,6 +74,11 @@ const MODELS = Object.freeze({
       },
       name: { column: "name", type: "requiredText" },
       email: { column: "email", type: "text" },
+      phoneNumber: {
+        column: "phone_number",
+        type: "text",
+        aliases: ["phone_number"]
+      },
       status: { column: "status", type: "leadStatus" },
       qualified: { column: "qualified", type: "boolean" },
       notes: { column: "notes", type: "text" }

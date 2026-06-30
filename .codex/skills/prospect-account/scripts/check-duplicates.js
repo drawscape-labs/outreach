@@ -103,7 +103,7 @@ function main() {
   const personMatches = personClauses.length
     ? runSqliteJson(
         dbPath,
-        `SELECT id, profile_key, linkedin_profile_url, name, email, status, qualified
+        `SELECT id, profile_key, linkedin_profile_url, name, email, phone_number, status, qualified
          FROM people
          WHERE ${personClauses.join(" OR ")};`
       )
@@ -143,6 +143,11 @@ function main() {
     ].map((match) => match.id)).map((id) => personMatches.find((match) => match.id === id));
 
     const importable = ["high", "medium"].includes(person.confidence);
+    const conflictingLinkedInMatch = matches.find((match) => (
+      person.linkedin_profile_url &&
+      match.linkedin_profile_url &&
+      match.linkedin_profile_url !== person.linkedin_profile_url
+    ));
     const personReport = {
       input: person,
       matches,
@@ -157,6 +162,11 @@ function main() {
     } else if (matches.length === 0) {
       personReport.action = "insert";
       report.summary.people_insert += 1;
+    } else if (conflictingLinkedInMatch) {
+      personReport.action = "conflict";
+      personReport.conflicts.push("Email matches an existing person with a different LinkedIn URL.");
+      report.conflicts.push({ type: "person", person: person.name, matches });
+      report.summary.conflicts += 1;
     } else if (matches.length === 1) {
       personReport.action = "update";
       report.summary.people_update += 1;
@@ -171,8 +181,11 @@ function main() {
 
     person.positions.forEach((position) => {
       const positionImportable = importable && ["high", "medium"].includes(position.confidence) && matches.length <= 1;
+      const matchedPersonId = matches.length === 1 ? matches[0].id : null;
       const existing = existingPositions.filter((existingPosition) => (
-        existingPosition.profile_key === person.profile_key &&
+        (matchedPersonId
+          ? existingPosition.person_id === matchedPersonId
+          : existingPosition.profile_key === person.profile_key) &&
         existingPosition.company_domain === position.company_domain &&
         normalizeTitle(existingPosition.title) === position.normalized_title &&
         (existingPosition.start_date || null) === (position.start_date || null)

@@ -28,8 +28,15 @@ Order:
 Outcomes:
 
 - Exact profile match: update missing fields only; do not reset `status`.
+- Exact email-backed `profile_key` match (`email/<normalized-email>`): update missing fields only; do not reset `status`.
 - Email match with different LinkedIn URL: conflict unless there is strong evidence it is the same person.
 - Name match only: review, never auto-merge.
+
+Email-only identity:
+
+- Use email as the stable identity only when a primary company-controlled source confirms the same person's name, current position, and public work email.
+- Do not use pattern-only guesses or third-party email databases to create email-backed people.
+- If a later LinkedIn URL is found for an email-backed person, update the existing person rather than inserting a duplicate.
 
 ## Position Dedupe
 
