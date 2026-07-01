@@ -41,6 +41,7 @@ export const POSITION_DEFAULTS = {
 };
 
 export const POSITION_API_MESSAGES = {
+  duplicateRole: "A position for that company, person, title, and start date already exists.",
   emptyPatch: "Provide at least one position field.",
   foreignKey: "Related company or person was not found.",
   notFound: "Position not found."

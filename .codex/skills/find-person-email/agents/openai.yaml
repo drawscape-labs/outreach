@@ -1,4 +1,4 @@
 interface:
   display_name: "Find Person Email"
   short_description: "Find direct public B2B emails"
-  default_prompt: "Use $find-person-email to find a work email for this person in the Drawscape Outreach database."
+  default_prompt: "Use $find-person-email to find a work email for this person through the Drawscape Outreach web app API."

@@ -1,5 +1,4 @@
 const fs = require("fs");
-const { spawnSync } = require("child_process");
 
 const CONFIDENCE_VALUES = new Set(["high", "medium", "low", "unknown", "needs_review"]);
 const EMPLOYEE_COUNT_RANGES = new Set([
@@ -132,41 +131,6 @@ function normalizeEmployeeCountRange(value) {
   return EMPLOYEE_COUNT_RANGES.has(normalized) ? normalized : normalizeWhitespace(value);
 }
 
-function sqlString(value) {
-  if (value === null || value === undefined || value === "") return "NULL";
-  return `'${String(value).replace(/'/g, "''")}'`;
-}
-
-function sqlBoolean(value) {
-  return value ? 1 : 0;
-}
-
-function sqlIntegerValue(value) {
-  return Number.isInteger(value) ? String(value) : "NULL";
-}
-
-function runSqliteJson(dbPath, sql) {
-  const result = spawnSync("sqlite3", ["-readonly", "-json", dbPath, sql], {
-    encoding: "utf8"
-  });
-  if (result.status !== 0) {
-    throw new Error(result.stderr || result.stdout || `sqlite3 exited with ${result.status}`);
-  }
-  const output = result.stdout.trim();
-  return output ? JSON.parse(output) : [];
-}
-
-function runSqliteExec(dbPath, sql) {
-  const result = spawnSync("sqlite3", ["-bail", dbPath], {
-    input: sql,
-    encoding: "utf8"
-  });
-  if (result.status !== 0) {
-    throw new Error(result.stderr || result.stdout || `sqlite3 exited with ${result.status}`);
-  }
-  return result.stdout;
-}
-
 function normalizePosition(position, companyDomain) {
   const normalized = {
     company_domain: normalizeDomain(position.company_domain || companyDomain),
@@ -215,7 +179,7 @@ function normalizeProspect(prospect) {
   const domain = normalizeDomain(company.domain || input.domain);
   const normalized = {
     ...prospect,
-    mode: prospect.mode || "dry-run",
+    mode: prospect.mode || "apply",
     input: {
       ...input,
       company_name: normalizeWhitespace(input.company_name || company.name || null),
@@ -229,6 +193,7 @@ function normalizeProspect(prospect) {
       website_url: normalizeUrl(company.website_url || input.website_url || domain),
       linkedin_company_url: normalizeLinkedInUrl(company.linkedin_company_url || input.linkedin_company_url),
       description: normalizeWhitespace(company.description || null),
+      category: normalizeWhitespace(company.category || null),
       industry: normalizeWhitespace(company.industry || null),
       location: normalizeWhitespace(company.location || null),
       employee_count: normalizeEmployeeCount(company.employee_count ?? company.headcount ?? companyDetails.employee_count),
@@ -343,10 +308,5 @@ module.exports = {
   profileKeyFromEmail,
   profileKeyFromLinkedIn,
   readJson,
-  runSqliteExec,
-  runSqliteJson,
-  sqlBoolean,
-  sqlIntegerValue,
-  sqlString,
   validateProspect
 };

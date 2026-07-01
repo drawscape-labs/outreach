@@ -12,7 +12,7 @@ We are creating a basic SQLite database to track companies/people/positions with
   /app
     layout.js - main layout
     page.js - main page
-    /feature - name of the core feature (companies, people, etc)
+    /[feature] - name of the core feature (companies, people, etc)
       /[id] - detail page for and individual record
       /components - reusable compoentns that are related to this feature, like tables, labels, etc.
       /lib - no react disaply compoent code, helper function and pure js/typscript functions

@@ -176,3 +176,228 @@ export function readNonNegativeInteger(payload, names, label) {
 
   return parsed;
 }
+
+function readModelField(payload, field, { partial }) {
+  const required = !partial && field.requiredOnCreate;
+  const type = field.type || "text";
+
+  if (type === "text") {
+    return readText(payload, field.names, field.label, {
+      nullAsUndefined: !partial && field.nullAsUndefinedOnCreate === true,
+      required
+    });
+  }
+
+  const value = payloadValue(payload, field.names);
+
+  if (value === undefined) {
+    if (required) {
+      throw new ApiError(`${field.label} is required.`);
+    }
+
+    return undefined;
+  }
+
+  if (type === "boolean") {
+    return readBoolean(value, field.label);
+  }
+
+  if (type === "nonNegativeInteger") {
+    if (value === null || value === "") {
+      return null;
+    }
+
+    const parsed = Number(value);
+
+    if (!Number.isInteger(parsed) || parsed < 0) {
+      throw new ApiError(`${field.label} must be zero or a positive integer.`);
+    }
+
+    return parsed;
+  }
+
+  if (type === "positiveInteger") {
+    return readPositiveInteger(value, field.label);
+  }
+
+  throw new ApiError(`Unsupported field type for ${field.label}.`, 500);
+}
+
+export function buildModelData(
+  payload,
+  { emptyPatchMessage, fields, partial = false }
+) {
+  assertPayloadObject(payload);
+
+  const data = {};
+
+  for (const field of fields) {
+    const value = readModelField(payload, field, { partial });
+
+    if (value === undefined) {
+      continue;
+    }
+
+    const normalizedValue = field.normalize
+      ? field.normalize(value, { field, partial, payload })
+      : value;
+
+    if (
+      normalizedValue !== null &&
+      field.allowedValues &&
+      !field.allowedValues.includes(normalizedValue)
+    ) {
+      throw new ApiError(field.invalidMessage || `Invalid ${field.label}.`);
+    }
+
+    if (field.validate) {
+      field.validate(normalizedValue, { field, partial, payload });
+    }
+
+    data[field.column] = normalizedValue;
+  }
+
+  if (partial && Object.keys(data).length === 0) {
+    throw new ApiError(emptyPatchMessage);
+  }
+
+  return data;
+}
+
+export function normalizeWhitespace(value) {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  return String(value).trim().replace(/\s+/g, " ");
+}
+
+export function normalizeLowercaseText(value) {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  return String(value).trim().toLowerCase();
+}
+
+export function normalizeDomain(value) {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  let input = String(value).trim();
+
+  if (!input) {
+    return null;
+  }
+
+  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(input)) {
+    input = `https://${input}`;
+  }
+
+  try {
+    const url = new URL(input);
+    const hostname = url.hostname.toLowerCase().replace(/\.$/, "").replace(/^www\./, "");
+
+    return hostname || null;
+  } catch {
+    return String(value)
+      .trim()
+      .toLowerCase()
+      .replace(/^https?:\/\//, "")
+      .replace(/^www\./, "")
+      .split("/")[0]
+      .split(":")[0]
+      .replace(/\.$/, "") || null;
+  }
+}
+
+export function normalizeUrl(value, message = "URL must be valid.") {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  let input = String(value).trim();
+
+  if (!input) {
+    return null;
+  }
+
+  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(input)) {
+    input = `https://${input}`;
+  }
+
+  try {
+    const url = new URL(input);
+
+    if (!["http:", "https:"].includes(url.protocol)) {
+      throw new Error("Invalid protocol.");
+    }
+
+    url.hash = "";
+    url.search = "";
+    url.pathname = url.pathname.replace(/\/+$/, "");
+
+    return url.toString().replace(/\/$/, "");
+  } catch {
+    throw new ApiError(message);
+  }
+}
+
+export function normalizeLinkedInCompanyUrl(value, message) {
+  const normalizedUrl = normalizeUrl(value, message);
+
+  if (normalizedUrl === null || normalizedUrl === undefined) {
+    return normalizedUrl;
+  }
+
+  try {
+    const url = new URL(normalizedUrl);
+    const hostname = url.hostname.toLowerCase().replace(/^www\./, "");
+    const segments = url.pathname.split("/").filter(Boolean);
+
+    if (
+      hostname !== "linkedin.com" ||
+      segments[0]?.toLowerCase() !== "company" ||
+      !segments[1]
+    ) {
+      throw new Error("Invalid LinkedIn company URL.");
+    }
+
+    return `https://www.linkedin.com/company/${segments[1]}`;
+  } catch {
+    throw new ApiError(message);
+  }
+}
+
+export function normalizeLinkedInProfileUrl(value, message) {
+  const normalizedUrl = normalizeUrl(value, message);
+
+  if (normalizedUrl === null || normalizedUrl === undefined) {
+    return normalizedUrl;
+  }
+
+  try {
+    const url = new URL(normalizedUrl);
+    const hostname = url.hostname.toLowerCase();
+    const segments = url.pathname.split("/").filter(Boolean);
+    const profileType = segments[0]?.toLowerCase();
+    const handle = segments[1];
+
+    if (
+      (hostname !== "linkedin.com" && !hostname.endsWith(".linkedin.com")) ||
+      !["in", "pub"].includes(profileType) ||
+      !handle ||
+      /\s/.test(handle) ||
+      handle.includes("/") ||
+      handle.includes("?") ||
+      handle.includes("#")
+    ) {
+      throw new Error("Invalid LinkedIn profile URL.");
+    }
+
+    return `https://www.linkedin.com/${profileType}/${handle}`;
+  } catch {
+    throw new ApiError(message);
+  }
+}

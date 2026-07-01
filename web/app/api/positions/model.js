@@ -3,12 +3,10 @@ import prisma from "../../../lib/prisma";
 import { toJsonDate } from "../../../lib/date-json";
 import {
   ApiError,
-  assertPayloadObject,
-  payloadValue,
-  readBoolean,
+  buildModelData,
+  normalizeWhitespace,
   readBooleanFilter,
-  readPositiveInteger,
-  readText
+  readPositiveInteger
 } from "../lib/model-helpers";
 import {
   POSITION_API_MESSAGES,
@@ -38,13 +36,15 @@ const positionIdFields = [
     column: POSITION_FIELDS.companyId,
     label: "companyId",
     names: POSITION_FIELD_ALIASES.companyId,
-    requiredOnCreate: true
+    requiredOnCreate: true,
+    type: "positiveInteger"
   },
   {
     column: POSITION_FIELDS.personId,
     label: "personId",
     names: POSITION_FIELD_ALIASES.personId,
-    requiredOnCreate: true
+    requiredOnCreate: true,
+    type: "positiveInteger"
   }
 ];
 
@@ -52,32 +52,38 @@ const positionTextFields = [
   {
     column: POSITION_FIELDS.title,
     label: "title",
-    names: POSITION_FIELD_ALIASES.title
+    names: POSITION_FIELD_ALIASES.title,
+    normalize: normalizeWhitespace
   },
   {
     column: POSITION_FIELDS.department,
     label: "department",
-    names: POSITION_FIELD_ALIASES.department
+    names: POSITION_FIELD_ALIASES.department,
+    normalize: normalizeWhitespace
   },
   {
     column: POSITION_FIELDS.seniority,
     label: "seniority",
-    names: POSITION_FIELD_ALIASES.seniority
+    names: POSITION_FIELD_ALIASES.seniority,
+    normalize: normalizeWhitespace
   },
   {
     column: POSITION_FIELDS.startDate,
     label: "startDate",
-    names: POSITION_FIELD_ALIASES.startDate
+    names: POSITION_FIELD_ALIASES.startDate,
+    normalize: normalizeWhitespace
   },
   {
     column: POSITION_FIELDS.endDate,
     label: "endDate",
-    names: POSITION_FIELD_ALIASES.endDate
+    names: POSITION_FIELD_ALIASES.endDate,
+    normalize: normalizeWhitespace
   },
   {
     column: POSITION_FIELDS.notes,
     label: "notes",
-    names: POSITION_FIELD_ALIASES.notes
+    names: POSITION_FIELD_ALIASES.notes,
+    normalize: normalizeWhitespace
   }
 ];
 
@@ -85,46 +91,63 @@ const positionBooleanFields = [
   {
     column: POSITION_FIELDS.isCurrent,
     label: "isCurrent",
-    names: POSITION_FIELD_ALIASES.isCurrent
+    names: POSITION_FIELD_ALIASES.isCurrent,
+    type: "boolean"
   }
 ];
 
 function positionData(payload, { partial = false } = {}) {
-  assertPayloadObject(payload);
+  return buildModelData(payload, {
+    emptyPatchMessage: POSITION_API_MESSAGES.emptyPatch,
+    fields: [...positionIdFields, ...positionTextFields, ...positionBooleanFields],
+    partial
+  });
+}
 
-  const data = {};
-
-  for (const field of positionIdFields) {
-    const value = payloadValue(payload, field.names);
-
-    if (value !== undefined) {
-      data[field.column] = readPositiveInteger(value, field.label);
-    } else if (!partial && field.requiredOnCreate) {
-      throw new ApiError(`${field.label} is required.`);
-    }
+function emptyOrExactTextFilter(field, value) {
+  if (value) {
+    return { [field]: value };
   }
 
-  for (const field of positionTextFields) {
-    const value = readText(payload, field.names, field.label);
+  return {
+    OR: [
+      { [field]: null },
+      { [field]: "" }
+    ]
+  };
+}
 
-    if (value !== undefined) {
-      data[field.column] = value;
-    }
+async function assertPositionWriteAllowed(position, { excludeId } = {}) {
+  const [company, person, duplicate] = await Promise.all([
+    prisma.company.findUnique({
+      where: { id: position.companyId },
+      select: { id: true }
+    }),
+    prisma.person.findUnique({
+      where: { id: position.personId },
+      select: { id: true }
+    }),
+    prisma.position.findFirst({
+      where: {
+        companyId: position.companyId,
+        personId: position.personId,
+        ...(excludeId ? { NOT: { id: excludeId } } : {}),
+        AND: [
+          emptyOrExactTextFilter("title", position.title),
+          emptyOrExactTextFilter("startDate", position.startDate)
+        ]
+      },
+      select: { id: true }
+    })
+  ]);
+
+  if (!company || !person) {
+    throw new ApiError(POSITION_API_MESSAGES.foreignKey);
   }
 
-  for (const field of positionBooleanFields) {
-    const value = readBoolean(payloadValue(payload, field.names), field.label);
-
-    if (value !== undefined) {
-      data[field.column] = value;
-    }
+  if (duplicate) {
+    throw new ApiError(POSITION_API_MESSAGES.duplicateRole, 409);
   }
-
-  if (partial && Object.keys(data).length === 0) {
-    throw new ApiError(POSITION_API_MESSAGES.emptyPatch);
-  }
-
-  return data;
 }
 
 export function positionJson(position) {
@@ -200,9 +223,13 @@ export function listPositions(searchParams) {
   });
 }
 
-export function createPosition(payload) {
+export async function createPosition(payload) {
+  const data = positionData(payload);
+
+  await assertPositionWriteAllowed(data);
+
   return prisma.position.create({
-    data: positionData(payload),
+    data,
     select: positionSelect
   });
 }
@@ -215,15 +242,24 @@ export function getPosition(id) {
 }
 
 export async function updatePosition(id, payload) {
+  const data = positionData(payload, { partial: true });
   const previousPosition = await getPosition(id);
 
   if (!previousPosition) {
     return null;
   }
 
+  await assertPositionWriteAllowed(
+    {
+      ...previousPosition,
+      ...data
+    },
+    { excludeId: id }
+  );
+
   await prisma.position.update({
     where: { id },
-    data: positionData(payload, { partial: true }),
+    data,
     select: { id: true }
   });
 

@@ -28,13 +28,16 @@ import {
   companyListSelect,
   companyTableRow
 } from "../api/companies/model";
+import {
+  COMPANY_CATEGORIES,
+  COMPANY_CATEGORY_LABELS
+} from "../api/companies/schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const companiesPerPage = 25;
 const contactFilters = ["with_people", "without_people"];
-const legacyIndustryParam = "category";
 
 const createdDateFormatter = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
@@ -96,6 +99,10 @@ function formatHeadcount(company) {
   }
 
   return company.employeeCountRange || "";
+}
+
+function formatCategory(category) {
+  return COMPANY_CATEGORY_LABELS[category] || category;
 }
 
 function formatCreatedAt(value) {
@@ -186,12 +193,14 @@ function getUniqueValues(items, key) {
 }
 
 function getFilters(searchParams, options) {
-  const industry =
-    firstSearchParam(searchParams, "industry") ||
-    firstSearchParam(searchParams, legacyIndustryParam);
+  const category = firstSearchParam(searchParams, "category");
+  const industry = firstSearchParam(searchParams, "industry");
   const contacts = firstSearchParam(searchParams, "contacts");
 
   return {
+    category: options.categories.some((option) => option.value === category)
+      ? category
+      : "",
     industry: options.industries.includes(industry) ? industry : "",
     contacts: contactFilters.includes(contacts) ? contacts : ""
   };
@@ -199,6 +208,10 @@ function getFilters(searchParams, options) {
 
 function companyMatchesFilters(company, filters) {
   const peopleCount = Number(company.peopleCount || 0);
+
+  if (filters.category && company.category !== filters.category) {
+    return false;
+  }
 
   if (filters.industry && company.industry !== filters.industry) {
     return false;
@@ -216,6 +229,10 @@ function companyMatchesFilters(company, filters) {
 }
 
 function addFiltersToParams(params, filters) {
+  if (filters.category) {
+    params.set("category", filters.category);
+  }
+
   if (filters.industry) {
     params.set("industry", filters.industry);
   }
@@ -383,6 +400,10 @@ export default async function CompaniesPage({ searchParams }) {
   const sort = getSort(resolvedSearchParams);
   const allCompanies = await getCompanies(sort);
   const options = {
+    categories: COMPANY_CATEGORIES.map((category) => ({
+      label: formatCategory(category),
+      value: category
+    })),
     industries: getUniqueValues(allCompanies, "industry")
   };
   const filters = getFilters(resolvedSearchParams, options);
@@ -411,6 +432,9 @@ export default async function CompaniesPage({ searchParams }) {
                   People
                 </TableHeader>
                 <TableHeader scope="col" className="hidden lg:table-cell">
+                  Category
+                </TableHeader>
+                <TableHeader scope="col" className="hidden xl:table-cell">
                   Industry
                 </TableHeader>
                 <TableHeader scope="col" className="hidden 2xl:table-cell">
@@ -439,7 +463,7 @@ export default async function CompaniesPage({ searchParams }) {
             </TableHead>
             <TableBody>
               {paginatedCompanies.length === 0 ? (
-                <TableEmpty colSpan={7}>No companies match these filters.</TableEmpty>
+                <TableEmpty colSpan={8}>No companies match these filters.</TableEmpty>
               ) : (
                 paginatedCompanies.map((company) => {
                   const formattedCreatedAt = formatCreatedAt(company.createdAt);
@@ -465,6 +489,10 @@ export default async function CompaniesPage({ searchParams }) {
                           </div>
                         </div>
                         <dl className="font-normal lg:hidden">
+                          <dt className="sr-only">Category</dt>
+                          <dd className="mt-1 truncate text-gray-400 dark:text-zinc-500">
+                            {company.category ? formatCategory(company.category) : "Category missing"}
+                          </dd>
                           <dt className="sr-only">Industry</dt>
                           <dd className="mt-1 truncate text-gray-400 dark:text-zinc-500">
                             {company.industry || "Industry missing"}
@@ -492,6 +520,9 @@ export default async function CompaniesPage({ searchParams }) {
                         <PeoplePills company={company} />
                       </TableCell>
                       <TableCell className="hidden text-zinc-500 dark:text-zinc-400 lg:table-cell">
+                        {company.category ? formatCategory(company.category) : <EmptyValue />}
+                      </TableCell>
+                      <TableCell className="hidden text-zinc-500 dark:text-zinc-400 xl:table-cell">
                         {company.industry || <EmptyValue />}
                       </TableCell>
                       <TableCell className="hidden text-zinc-500 dark:text-zinc-400 2xl:table-cell">

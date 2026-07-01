@@ -1,6 +1,16 @@
 # Database Schema
 
-The Drawscape Outreach database lives at `data/outreach.sqlite`. Inspect `db/schema.sql` and the live database before writing because local migrations may differ from the checked-in schema.
+The Drawscape Outreach database lives at `data/outreach.sqlite`. Inspect `web/prisma/schema.prisma`, `web/prisma/migrations/`, and the live database before changing import behavior because local migrations may differ from older checked-in notes.
+
+## API Write Path
+
+Prospect imports must write through the web app API so route/model validation runs:
+
+- `POST /api/companies` and `PATCH /api/companies/:id`
+- `POST /api/people` and `PATCH /api/people/:id`
+- `POST /api/positions` for new role rows
+
+Use `node .codex/skills/prospect-account/scripts/upsert-prospects.js <prospect.json> --api-base http://localhost:4200 --apply`. The script uses API reads for duplicate planning, then performs all creates/updates through the API. Start the app with `npm run dev -- --port 4200` when `http://localhost:4200` is unavailable.
 
 ## companies
 
@@ -14,6 +24,7 @@ Useful optional fields:
 
 - `website_url`
 - `description`
+- `category`
 - `industry`
 - `location`
 - `employee_count`
@@ -30,6 +41,7 @@ Rules:
 
 - Normalize `domain` to lowercase host without `www.`.
 - Normalize `linkedin_company_url` to `https://www.linkedin.com/company/<slug>`.
+- Use `category` values `aircraft`, `automotive`, or `yacht`.
 - Use a single-sentence display description.
 - Use `employee_count` only for exact total employee counts and `employee_count_range` when only a range is available.
 - Use `date_enriched` as a nullable text date/timestamp for when company enrichment data was last gathered.

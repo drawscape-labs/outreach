@@ -3,13 +3,17 @@ import prisma from "../../../lib/prisma";
 import { toJsonDate } from "../../../lib/date-json";
 import {
   ApiError,
-  assertPayloadObject,
-  readNonNegativeInteger,
-  readText
+  buildModelData,
+  normalizeDomain,
+  normalizeLinkedInCompanyUrl,
+  normalizeLowercaseText,
+  normalizeUrl,
+  normalizeWhitespace
 } from "../lib/model-helpers";
 import { PERSON_STATUS_BUCKETS } from "../people/schema";
 import {
   COMPANY_API_MESSAGES,
+  COMPANY_CATEGORIES,
   COMPANY_FIELD_ALIASES,
   COMPANY_FIELDS,
   COMPANY_FILTER_PARAMS,
@@ -23,6 +27,7 @@ const companySelect = {
   linkedinCompanyUrl: true,
   websiteUrl: true,
   description: true,
+  category: true,
   industry: true,
   location: true,
   employeeCount: true,
@@ -40,6 +45,7 @@ export const companyListSelect = {
   linkedinCompanyUrl: true,
   websiteUrl: true,
   description: true,
+  category: true,
   industry: true,
   location: true,
   employeeCount: true,
@@ -70,6 +76,7 @@ export const companyDetailSelect = {
   linkedinCompanyUrl: true,
   websiteUrl: true,
   description: true,
+  category: true,
   industry: true,
   location: true,
   employeeCount: true,
@@ -116,54 +123,98 @@ const companyTextFields = [
     column: COMPANY_FIELDS.name,
     label: "name",
     names: COMPANY_FIELD_ALIASES.name,
+    normalize: normalizeWhitespace,
+    nullAsUndefinedOnCreate: true,
     requiredOnCreate: true
   },
   {
     column: COMPANY_FIELDS.domain,
     label: "domain",
     names: COMPANY_FIELD_ALIASES.domain,
+    normalize(value) {
+      const domain = normalizeDomain(value);
+
+      if (!domain) {
+        throw new ApiError(COMPANY_API_MESSAGES.invalidDomain);
+      }
+
+      return domain;
+    },
+    nullAsUndefinedOnCreate: true,
     requiredOnCreate: true
   },
   {
     column: COMPANY_FIELDS.linkedinCompanyUrl,
     label: "linkedinCompanyUrl",
     names: COMPANY_FIELD_ALIASES.linkedinCompanyUrl,
+    normalize(value) {
+      return normalizeLinkedInCompanyUrl(
+        value,
+        COMPANY_API_MESSAGES.invalidLinkedinCompanyUrl
+      );
+    },
+    nullAsUndefinedOnCreate: true,
     requiredOnCreate: true
   },
   {
     column: COMPANY_FIELDS.websiteUrl,
     label: "websiteUrl",
-    names: COMPANY_FIELD_ALIASES.websiteUrl
+    names: COMPANY_FIELD_ALIASES.websiteUrl,
+    normalize(value) {
+      return normalizeUrl(value, COMPANY_API_MESSAGES.invalidWebsiteUrl);
+    },
+    nullAsUndefinedOnCreate: true
   },
   {
     column: COMPANY_FIELDS.description,
     label: "description",
-    names: COMPANY_FIELD_ALIASES.description
+    names: COMPANY_FIELD_ALIASES.description,
+    normalize: normalizeWhitespace,
+    nullAsUndefinedOnCreate: true
+  },
+  {
+    allowedValues: COMPANY_CATEGORIES,
+    column: COMPANY_FIELDS.category,
+    invalidMessage: COMPANY_API_MESSAGES.invalidCategory,
+    label: "category",
+    names: COMPANY_FIELD_ALIASES.category,
+    normalize: normalizeLowercaseText,
+    nullAsUndefinedOnCreate: true
   },
   {
     column: COMPANY_FIELDS.industry,
     label: "industry",
-    names: COMPANY_FIELD_ALIASES.industry
+    names: COMPANY_FIELD_ALIASES.industry,
+    normalize: normalizeWhitespace,
+    nullAsUndefinedOnCreate: true
   },
   {
     column: COMPANY_FIELDS.location,
     label: "location",
-    names: COMPANY_FIELD_ALIASES.location
+    names: COMPANY_FIELD_ALIASES.location,
+    normalize: normalizeWhitespace,
+    nullAsUndefinedOnCreate: true
   },
   {
     column: COMPANY_FIELDS.employeeCountRange,
     label: "employeeCountRange",
-    names: COMPANY_FIELD_ALIASES.employeeCountRange
+    names: COMPANY_FIELD_ALIASES.employeeCountRange,
+    normalize: normalizeWhitespace,
+    nullAsUndefinedOnCreate: true
   },
   {
     column: COMPANY_FIELDS.dateEnriched,
     label: "dateEnriched",
-    names: COMPANY_FIELD_ALIASES.dateEnriched
+    names: COMPANY_FIELD_ALIASES.dateEnriched,
+    normalize: normalizeWhitespace,
+    nullAsUndefinedOnCreate: true
   },
   {
     column: COMPANY_FIELDS.notes,
     label: "notes",
-    names: COMPANY_FIELD_ALIASES.notes
+    names: COMPANY_FIELD_ALIASES.notes,
+    normalize: normalizeWhitespace,
+    nullAsUndefinedOnCreate: true
   }
 ];
 
@@ -171,39 +222,17 @@ const companyNumberFields = [
   {
     column: COMPANY_FIELDS.employeeCount,
     label: "employeeCount",
-    names: COMPANY_FIELD_ALIASES.employeeCount
+    names: COMPANY_FIELD_ALIASES.employeeCount,
+    type: "nonNegativeInteger"
   }
 ];
 
 function companyData(payload, { partial = false } = {}) {
-  assertPayloadObject(payload);
-
-  const data = {};
-
-  for (const field of companyTextFields) {
-    const value = readText(payload, field.names, field.label, {
-      nullAsUndefined: !partial,
-      required: !partial && field.requiredOnCreate
-    });
-
-    if (value !== undefined) {
-      data[field.column] = value;
-    }
-  }
-
-  for (const field of companyNumberFields) {
-    const value = readNonNegativeInteger(payload, field.names, field.label);
-
-    if (value !== undefined) {
-      data[field.column] = value;
-    }
-  }
-
-  if (partial && Object.keys(data).length === 0) {
-    throw new ApiError(COMPANY_API_MESSAGES.emptyPatch);
-  }
-
-  return data;
+  return buildModelData(payload, {
+    emptyPatchMessage: COMPANY_API_MESSAGES.emptyPatch,
+    fields: [...companyTextFields, ...companyNumberFields],
+    partial
+  });
 }
 
 export function companyJson(company) {
@@ -214,6 +243,7 @@ export function companyJson(company) {
     linkedinCompanyUrl: company.linkedinCompanyUrl,
     websiteUrl: company.websiteUrl,
     description: company.description,
+    category: company.category,
     industry: company.industry,
     location: company.location,
     employeeCount: company.employeeCount,
@@ -248,6 +278,7 @@ export function companyTableRow(company) {
     linkedinCompanyUrl: company.linkedinCompanyUrl,
     websiteUrl: company.websiteUrl,
     description: company.description,
+    category: company.category,
     industry: company.industry,
     location: company.location,
     employeeCount: company.employeeCount,
@@ -276,10 +307,44 @@ export function revalidateCompany(company) {
 }
 
 export function listCompanies(searchParams) {
+  const category = searchParams.get(COMPANY_FILTER_PARAMS.category[0])?.trim();
+  const domain = searchParams.get(COMPANY_FILTER_PARAMS.domain[0])?.trim();
   const industry = searchParams.get(COMPANY_FILTER_PARAMS.industry[0])?.trim();
+  const linkedinCompanyUrl =
+    searchParams.get(COMPANY_FILTER_PARAMS.linkedinCompanyUrl[0])?.trim() ||
+    searchParams.get(COMPANY_FILTER_PARAMS.linkedinCompanyUrl[1])?.trim();
+  const where = {};
+  const identityFilters = [];
+
+  if (category) {
+    where.category = category;
+  }
+
+  if (domain) {
+    identityFilters.push({ domain: normalizeDomain(domain) });
+  }
+
+  if (industry) {
+    where.industry = industry;
+  }
+
+  if (linkedinCompanyUrl) {
+    identityFilters.push({
+      linkedinCompanyUrl: normalizeLinkedInCompanyUrl(
+        linkedinCompanyUrl,
+        COMPANY_API_MESSAGES.invalidLinkedinCompanyUrl
+      )
+    });
+  }
+
+  if (identityFilters.length === 1) {
+    Object.assign(where, identityFilters[0]);
+  } else if (identityFilters.length > 1) {
+    where.OR = identityFilters;
+  }
 
   return prisma.company.findMany({
-    where: industry ? { industry } : {},
+    where,
     orderBy: [{ name: "asc" }, { id: "asc" }],
     select: companySelect
   });

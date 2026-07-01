@@ -14,6 +14,7 @@ model Company {
   linkedinCompanyUrl String     @unique(map: "sqlite_autoindex_companies_2") @map("linkedin_company_url")
   websiteUrl         String?    @map("website_url")
   description        String?
+  category           String?
   industry           String?
   location           String?
   employeeCount      Int?       @map("employee_count")

@@ -77,8 +77,12 @@ export const PERSON_FILTER_PARAMS = {
   companyId: ["companyId", "company_id"],
   companyIndustry: ["industry", "companyIndustry", "company_industry"],
   email: ["email"],
+  emailAddress: ["emailAddress", "email_address", "exactEmail", "exact_email"],
   linkedin: ["linkedin", "linkedinProfile", "linkedin_profile"],
+  linkedinProfileUrl: ["linkedinProfileUrl", "linkedin_profile_url"],
+  profileKey: ["profileKey", "profile_key"],
   qualified: ["qualified"],
+  quickmailLeadId: ["quickmailLeadId", "quickmail_lead_id", "leadId", "lead_id"],
   status: ["status"]
 };
 
@@ -90,8 +94,13 @@ export const PERSON_LINKEDIN_FILTER_VALUES = ["has", "missing"];
 
 export const PERSON_API_MESSAGES = {
   emptyPatch: "Provide at least one person field.",
+  invalidEmail: "email must be a valid email address.",
   invalidEmailFilter: "Invalid email filter.",
   invalidLinkedinFilter: "Invalid LinkedIn filter.",
+  invalidLinkedinProfileUrl: "linkedinProfileUrl must be a valid LinkedIn profile URL.",
+  invalidPhoneNumber: "phoneNumber must be a valid phone number.",
+  invalidProfileKey: "profileKey must be in/handle, pub/handle, or email/address.",
+  invalidQuickmailLeadId: "quickmailLeadId must be a valid QuickMail lead id.",
   invalidStatus: "Invalid status.",
   notFound: "Person not found."
 };

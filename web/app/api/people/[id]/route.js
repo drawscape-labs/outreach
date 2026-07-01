@@ -6,7 +6,9 @@ import {
 } from "../../lib/model-helpers";
 import {
   deletePerson,
+  getPersonDetail,
   getPerson,
+  personDetailJson,
   personJson,
   revalidatePerson,
   updatePerson
@@ -27,7 +29,9 @@ export async function GET(_request, context) {
       return jsonError(notFoundMessage, 404);
     }
 
-    return Response.json({ person: personJson(person) });
+    const personDetail = await getPersonDetail(id);
+
+    return Response.json({ person: personDetailJson(personDetail) });
   } catch (error) {
     return handleApiError(error, { notFoundMessage });
   }

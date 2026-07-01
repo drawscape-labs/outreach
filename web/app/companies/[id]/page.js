@@ -14,6 +14,7 @@ import {
   companyDetail,
   companyDetailSelect
 } from "../../api/companies/model";
+import { COMPANY_CATEGORY_LABELS } from "../../api/companies/schema";
 import { personFromCompanyPosition } from "../../api/people/model";
 
 export const dynamic = "force-dynamic";
@@ -64,6 +65,10 @@ function formatHeadcount(company) {
   }
 
   return company.employeeCountRange || "";
+}
+
+function formatCategory(category) {
+  return COMPANY_CATEGORY_LABELS[category] || category;
 }
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -193,6 +198,9 @@ export default async function CompanyDetailPage({ params, searchParams }) {
           </CompanyDetailColumn>
 
           <CompanyDetailColumn>
+            <CompanyDetailItem label="Category">
+              <FieldValue value={company.category ? formatCategory(company.category) : ""} />
+            </CompanyDetailItem>
             <CompanyDetailItem label="Industry">
               <FieldValue value={company.industry} />
             </CompanyDetailItem>

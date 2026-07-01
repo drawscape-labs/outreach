@@ -5,6 +5,7 @@ export const COMPANY_FIELDS = {
   linkedinCompanyUrl: "linkedinCompanyUrl",
   websiteUrl: "websiteUrl",
   description: "description",
+  category: "category",
   industry: "industry",
   location: "location",
   employeeCount: "employeeCount",
@@ -21,6 +22,7 @@ export const COMPANY_FIELD_ALIASES = {
   linkedinCompanyUrl: ["linkedinCompanyUrl", "linkedin_company_url"],
   websiteUrl: ["websiteUrl", "website_url"],
   description: ["description"],
+  category: ["category"],
   industry: ["industry"],
   location: ["location"],
   employeeCount: ["employeeCount", "employee_count"],
@@ -35,13 +37,27 @@ export const COMPANY_REQUIRED_CREATE_FIELDS = [
   COMPANY_FIELDS.linkedinCompanyUrl
 ];
 
+export const COMPANY_CATEGORIES = ["aircraft", "automotive", "yacht"];
+
+export const COMPANY_CATEGORY_LABELS = {
+  aircraft: "Aircraft",
+  automotive: "Automotive",
+  yacht: "Yacht"
+};
+
 export const COMPANY_FILTER_PARAMS = {
+  category: ["category"],
+  domain: ["domain"],
   industry: ["industry"],
-  legacyIndustry: ["category"]
+  linkedinCompanyUrl: ["linkedinCompanyUrl", "linkedin_company_url"]
 };
 
 export const COMPANY_API_MESSAGES = {
   emptyPatch: "Provide at least one company field.",
+  invalidCategory: "category must be aircraft, automotive, or yacht.",
+  invalidDomain: "domain must be a valid domain or URL.",
+  invalidLinkedinCompanyUrl: "linkedinCompanyUrl must be a valid LinkedIn company URL.",
+  invalidWebsiteUrl: "websiteUrl must be a valid URL.",
   notFound: "Company not found."
 };
 

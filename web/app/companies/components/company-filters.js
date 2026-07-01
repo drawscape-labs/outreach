@@ -42,11 +42,10 @@ export function CompanyFilters({ filters, options }) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const hasFilters = Boolean(filters.industry || filters.contacts);
+  const hasFilters = Boolean(filters.category || filters.industry || filters.contacts);
 
   function updateFilter(name, value) {
     const params = new URLSearchParams(searchParams.toString());
-    params.delete("category");
     params.delete("location");
     params.delete("page");
 
@@ -64,6 +63,14 @@ export function CompanyFilters({ filters, options }) {
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+      <FilterSelect
+        emptyLabel="All categories"
+        label="Category"
+        name="category"
+        onChange={updateFilter}
+        options={options.categories}
+        value={filters.category}
+      />
       <FilterSelect
         emptyLabel="All industries"
         label="Industry"

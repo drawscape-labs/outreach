@@ -3,12 +3,12 @@ import prisma from "../../../lib/prisma";
 import { toJsonDate } from "../../../lib/date-json";
 import {
   ApiError,
-  assertPayloadObject,
-  payloadValue,
-  readBoolean,
+  buildModelData,
+  normalizeLinkedInProfileUrl,
+  normalizeLowercaseText,
+  normalizeWhitespace,
   readBooleanFilter,
-  readPositiveInteger,
-  readText
+  readPositiveInteger
 } from "../lib/model-helpers";
 import {
   PERSON_API_MESSAGES,
@@ -18,6 +18,7 @@ import {
   PERSON_FILTER_PARAMS,
   PERSON_LINKEDIN_FILTER_VALUES,
   PERSON_REVALIDATION_PATHS,
+  PERSON_STATUS,
   PERSON_STATUSES
 } from "./schema";
 
@@ -100,86 +101,201 @@ export const personDetailSelect = {
   }
 };
 
-const personTextFields = [
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const LINKEDIN_PROFILE_TYPES = new Set(["in", "pub"]);
+const PHONE_ALLOWED_PATTERN = /^[0-9+().\-\s#ext]+$/i;
+const QUICKMAIL_LEAD_ID_PATTERN = /^lead_[A-Za-z0-9]+$/;
+
+function assertEmail(value, message = PERSON_API_MESSAGES.invalidEmail) {
+  if (value === null || value === undefined) {
+    return;
+  }
+
+  if (value.length > 254 || !EMAIL_PATTERN.test(value)) {
+    throw new ApiError(message);
+  }
+}
+
+function assertLinkedInHandle(value, message) {
+  if (
+    !value ||
+    /\s/.test(value) ||
+    value.includes("/") ||
+    value.includes("?") ||
+    value.includes("#")
+  ) {
+    throw new ApiError(message);
+  }
+}
+
+function assertProfileKey(value) {
+  if (value === null || value === undefined) {
+    return;
+  }
+
+  const separatorIndex = value.indexOf("/");
+
+  if (separatorIndex < 1 || separatorIndex === value.length - 1) {
+    throw new ApiError(PERSON_API_MESSAGES.invalidProfileKey);
+  }
+
+  const type = value.slice(0, separatorIndex).toLowerCase();
+  const identifier = value.slice(separatorIndex + 1);
+
+  if (LINKEDIN_PROFILE_TYPES.has(type)) {
+    assertLinkedInHandle(identifier, PERSON_API_MESSAGES.invalidProfileKey);
+    return;
+  }
+
+  if (type === "email") {
+    assertEmail(identifier, PERSON_API_MESSAGES.invalidProfileKey);
+    return;
+  }
+
+  throw new ApiError(PERSON_API_MESSAGES.invalidProfileKey);
+}
+
+function normalizeProfileKey(value) {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  assertProfileKey(value);
+
+  const separatorIndex = value.indexOf("/");
+  const type = value.slice(0, separatorIndex).toLowerCase();
+  const identifier = value.slice(separatorIndex + 1);
+
+  return type === "email" ? `${type}/${identifier.toLowerCase()}` : `${type}/${identifier}`;
+}
+
+function normalizeEmail(value) {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  const email = normalizeLowercaseText(value);
+
+  assertEmail(email);
+
+  return email;
+}
+
+function assertPhoneNumber(value) {
+  if (value === null || value === undefined) {
+    return;
+  }
+
+  const digitCount = value.replace(/\D/g, "").length;
+
+  if (
+    digitCount < 7 ||
+    digitCount > 20 ||
+    !PHONE_ALLOWED_PATTERN.test(value)
+  ) {
+    throw new ApiError(PERSON_API_MESSAGES.invalidPhoneNumber);
+  }
+}
+
+function normalizeQuickmailLeadId(value) {
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  const leadId = normalizeWhitespace(value);
+
+  if (!QUICKMAIL_LEAD_ID_PATTERN.test(leadId)) {
+    throw new ApiError(PERSON_API_MESSAGES.invalidQuickmailLeadId);
+  }
+
+  return leadId;
+}
+
+function validateStatus(value) {
+  if (!PERSON_STATUSES.includes(value)) {
+    throw new ApiError(PERSON_API_MESSAGES.invalidStatus);
+  }
+}
+
+const personFields = [
   {
     column: PERSON_FIELDS.profileKey,
     label: "profileKey",
     names: PERSON_FIELD_ALIASES.profileKey,
+    normalize: normalizeProfileKey,
+    nullAsUndefinedOnCreate: true,
     requiredOnCreate: true
   },
   {
     column: PERSON_FIELDS.linkedinProfileUrl,
     label: "linkedinProfileUrl",
-    names: PERSON_FIELD_ALIASES.linkedinProfileUrl
+    names: PERSON_FIELD_ALIASES.linkedinProfileUrl,
+    normalize(value) {
+      return normalizeLinkedInProfileUrl(
+        value,
+        PERSON_API_MESSAGES.invalidLinkedinProfileUrl
+      );
+    },
+    nullAsUndefinedOnCreate: true
   },
   {
     column: PERSON_FIELDS.quickmailLeadId,
     label: "quickmailLeadId",
-    names: PERSON_FIELD_ALIASES.quickmailLeadId
+    names: PERSON_FIELD_ALIASES.quickmailLeadId,
+    normalize: normalizeQuickmailLeadId,
+    nullAsUndefinedOnCreate: true
   },
   {
     column: PERSON_FIELDS.name,
     label: "name",
     names: PERSON_FIELD_ALIASES.name,
+    normalize: normalizeWhitespace,
+    nullAsUndefinedOnCreate: true,
     requiredOnCreate: true
   },
   {
     column: PERSON_FIELDS.email,
     label: "email",
-    names: PERSON_FIELD_ALIASES.email
+    names: PERSON_FIELD_ALIASES.email,
+    normalize: normalizeEmail,
+    nullAsUndefinedOnCreate: true
   },
   {
     column: PERSON_FIELDS.phoneNumber,
     label: "phoneNumber",
-    names: PERSON_FIELD_ALIASES.phoneNumber
+    names: PERSON_FIELD_ALIASES.phoneNumber,
+    normalize: normalizeWhitespace,
+    nullAsUndefinedOnCreate: true,
+    validate: assertPhoneNumber
   },
   {
     column: PERSON_FIELDS.notes,
     label: "notes",
-    names: PERSON_FIELD_ALIASES.notes
+    names: PERSON_FIELD_ALIASES.notes,
+    normalize: normalizeWhitespace,
+    nullAsUndefinedOnCreate: true
+  },
+  {
+    column: PERSON_FIELDS.status,
+    label: "status",
+    names: PERSON_FIELD_ALIASES.status,
+    normalize: normalizeWhitespace,
+    validate: validateStatus
+  },
+  {
+    column: PERSON_FIELDS.qualified,
+    label: "qualified",
+    names: PERSON_FIELD_ALIASES.qualified,
+    type: "boolean"
   }
 ];
 
 function personData(payload, { partial = false } = {}) {
-  assertPayloadObject(payload);
-
-  const data = {};
-
-  for (const field of personTextFields) {
-    const value = readText(payload, field.names, field.label, {
-      nullAsUndefined: !partial,
-      required: !partial && field.requiredOnCreate
-    });
-
-    if (value !== undefined) {
-      data[field.column] = value;
-    }
-  }
-
-  const status = payloadValue(payload, PERSON_FIELD_ALIASES.status);
-
-  if (status !== undefined) {
-    if (!PERSON_STATUSES.includes(status)) {
-      throw new ApiError(PERSON_API_MESSAGES.invalidStatus);
-    }
-
-    data.status = status;
-  }
-
-  const qualified = readBoolean(
-    payloadValue(payload, PERSON_FIELD_ALIASES.qualified),
-    "qualified"
-  );
-
-  if (qualified !== undefined) {
-    data.qualified = qualified;
-  }
-
-  if (partial && Object.keys(data).length === 0) {
-    throw new ApiError(PERSON_API_MESSAGES.emptyPatch);
-  }
-
-  return data;
+  return buildModelData(payload, {
+    emptyPatchMessage: PERSON_API_MESSAGES.emptyPatch,
+    fields: personFields,
+    partial
+  });
 }
 
 export function personJson(person) {
@@ -196,6 +312,13 @@ export function personJson(person) {
     notes: person.notes,
     createdAt: toJsonDate(person.createdAt),
     updatedAt: toJsonDate(person.updatedAt)
+  };
+}
+
+export function personDetailJson(person) {
+  return {
+    ...personJson(person),
+    positions: (person.positions || []).map(positionCompany)
   };
 }
 
@@ -327,7 +450,20 @@ function peopleWhere(searchParams, { currentPositionsOnly = false } = {}) {
   const positionFilter = {};
   const status = searchParamValue(searchParams, PERSON_FILTER_PARAMS.status);
   const email = searchParamValue(searchParams, PERSON_FILTER_PARAMS.email);
+  const emailAddress = searchParamValue(
+    searchParams,
+    PERSON_FILTER_PARAMS.emailAddress
+  );
   const linkedin = searchParamValue(searchParams, PERSON_FILTER_PARAMS.linkedin);
+  const linkedinProfileUrl = searchParamValue(
+    searchParams,
+    PERSON_FILTER_PARAMS.linkedinProfileUrl
+  );
+  const profileKey = searchParamValue(searchParams, PERSON_FILTER_PARAMS.profileKey);
+  const quickmailLeadId = searchParamValue(
+    searchParams,
+    PERSON_FILTER_PARAMS.quickmailLeadId
+  );
   const companyIndustry = searchParamValue(
     searchParams,
     PERSON_FILTER_PARAMS.companyIndustry
@@ -351,6 +487,25 @@ function peopleWhere(searchParams, { currentPositionsOnly = false } = {}) {
 
   if (qualified !== undefined) {
     where.qualified = qualified;
+  }
+
+  if (profileKey) {
+    where.profileKey = normalizeProfileKey(profileKey);
+  }
+
+  if (emailAddress) {
+    where.email = normalizeLowercaseText(emailAddress);
+  }
+
+  if (quickmailLeadId) {
+    where.quickmailLeadId = normalizeQuickmailLeadId(quickmailLeadId);
+  }
+
+  if (linkedinProfileUrl) {
+    where.linkedinProfileUrl = normalizeLinkedInProfileUrl(
+      linkedinProfileUrl,
+      PERSON_API_MESSAGES.invalidLinkedinProfileUrl
+    );
   }
 
   if (email) {
@@ -486,6 +641,13 @@ export function getPerson(id) {
   });
 }
 
+export function getPersonDetail(id) {
+  return prisma.person.findUnique({
+    where: { id },
+    select: personDetailSelect
+  });
+}
+
 export async function updatePerson(id, payload) {
   const result = await prisma.person.updateMany({
     where: { id },
@@ -497,6 +659,73 @@ export async function updatePerson(id, payload) {
   }
 
   return getPerson(id);
+}
+
+export async function syncPersonQuickmailState({
+  markContacted = false,
+  personId,
+  quickmailLeadId
+}) {
+  const id = readPositiveInteger(personId, "personId");
+  const payload = {};
+  const leadId =
+    typeof quickmailLeadId === "string" && quickmailLeadId.trim()
+      ? quickmailLeadId.trim()
+      : "";
+
+  if (leadId) {
+    payload.quickmailLeadId = leadId;
+  }
+
+  if (markContacted) {
+    payload.status = PERSON_STATUS.contacted;
+  }
+
+  if (Object.keys(payload).length === 0) {
+    return getPerson(id);
+  }
+
+  const data = personData(payload, { partial: true });
+
+  return prisma.$transaction(async (tx) => {
+    const existingPerson = await tx.person.findUnique({
+      where: { id },
+      select: { id: true }
+    });
+
+    if (!existingPerson) {
+      return null;
+    }
+
+    const updateData = { ...data };
+
+    if (updateData.quickmailLeadId) {
+      const existingLeadOwner = await tx.person.findFirst({
+        where: {
+          quickmailLeadId: updateData.quickmailLeadId,
+          NOT: { id }
+        },
+        select: { id: true }
+      });
+
+      if (existingLeadOwner) {
+        delete updateData.quickmailLeadId;
+      }
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await tx.person.update({
+        where: { id },
+        data: updateData,
+        select: { id: true }
+      });
+    }
+
+    return tx.person.findUnique({
+      where: { id },
+      select: personSelect
+    });
+  });
 }
 
 export async function deletePerson(id) {

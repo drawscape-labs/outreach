@@ -1,15 +1,16 @@
 ---
 name: find-person-email
-description: Find and verify work email addresses for existing Drawscape Outreach people in data/outreach.sqlite. Use when the user asks to find a person's email address, fill a missing people.email field, verify or update a business email, research a public contact email for a database person, or prepare a confidence/evidence report before QuickMail outreach.
+description: Find and verify work email addresses for existing Drawscape Outreach people through the web app API. Use when the user asks to find a person's email address, fill a missing people.email field, verify or update a business email, research a public contact email for a database person, or prepare a confidence/evidence report before QuickMail outreach.
 ---
 
 # Find Person Email
 
-Find a public, professional email address for a person already tracked in the Drawscape Outreach SQLite database.
+Find a public, professional email address for a person already tracked in Drawscape Outreach.
 
 ## Defaults
 
-- Default to research-only. Do not write to `data/outreach.sqlite` unless the user explicitly asks to update/save/apply the email.
+- Default to research-only. Do not write through the API unless the user explicitly asks to update/save/apply the email.
+- Interface with the database through the web app API. Do not read or write `data/outreach.sqlite` directly from this skill; add or extend an API endpoint first if a needed database operation is missing.
 - Find work emails only. Do not search for or store personal email addresses.
 - Use current public sources. Staff pages, email formats, and roles change often.
 - Always check the company's own website before broader web search or secondary sources.
@@ -23,7 +24,7 @@ Find a public, professional email address for a person already tracked in the Dr
 ## Workflow
 
 1. Check the company website first:
-   - Query the live database, not only `db/schema.sql`, to resolve the person, current company, domain, and `website_url`.
+   - Query the web app API to resolve the person, current company, domain, and `website_url`.
    - Resolve by `people.id` when possible; otherwise match by name plus company/position context.
    - Go directly to the company's public website before using general web search.
    - Check team, staff, sales, broker, leadership, contact, location, About Us, Meet Our Team, news, press, and profile pages for the person's exact email.
@@ -32,13 +33,7 @@ Find a public, professional email address for a person already tracked in the Dr
    - If the person's exact work email appears on the company site, report it as `high` confidence and skip broader research unless the user asked for extra verification.
 
    ```bash
-   sqlite3 -header -column data/outreach.sqlite "
-   SELECT p.id, p.name, p.email, p.linkedin_profile_url,
-          pos.title, c.name AS company, c.domain, c.website_url
-   FROM people p
-   LEFT JOIN positions pos ON pos.person_id = p.id AND pos.is_current = 1
-   LEFT JOIN companies c ON c.id = pos.company_id
-   WHERE p.id = PERSON_ID;"
+   curl -sS http://localhost:4200/api/people/PERSON_ID
    ```
 
 2. Stop early when appropriate:
@@ -70,14 +65,14 @@ Find a public, professional email address for a person already tracked in the Dr
    - Keep evidence in the response or a separate artifact. Do not store source URLs or research notes in `people.notes` unless the user explicitly asks for that schema usage.
 
 7. Update only after explicit approval:
-   - Use `scripts/update-person-email.js` to write `people.email` only for exact directly observed emails.
+   - Use `scripts/update-person-email.js` to write `people.email` through `PATCH /api/people/:id` only for exact directly observed emails.
    - Pattern-only findings must not be saved to `people.email`.
    - Run without `--apply` first for a dry run.
    - Use `--overwrite` only when replacing a different existing email is intentional.
 
    ```bash
-   node .codex/skills/find-person-email/scripts/update-person-email.js PERSON_ID email@example.com --db data/outreach.sqlite --evidence direct --source SOURCE_URL
-   node .codex/skills/find-person-email/scripts/update-person-email.js PERSON_ID email@example.com --db data/outreach.sqlite --evidence direct --source SOURCE_URL --apply
+   node .codex/skills/find-person-email/scripts/update-person-email.js PERSON_ID email@example.com --api-base http://localhost:4200 --evidence direct --source SOURCE_URL
+   node .codex/skills/find-person-email/scripts/update-person-email.js PERSON_ID email@example.com --api-base http://localhost:4200 --evidence direct --source SOURCE_URL --apply
    ```
 
 ## Output Shape

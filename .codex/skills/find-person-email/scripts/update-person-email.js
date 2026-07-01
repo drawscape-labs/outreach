@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-const { spawnSync } = require("node:child_process");
-
 const CONFIDENCE_VALUES = new Set(["high", "medium", "low", "needs_review", "unknown"]);
 const EVIDENCE_VALUES = new Set(["direct", "pattern", "unknown"]);
 
@@ -29,11 +27,6 @@ function fail(message, code = 1) {
   process.exit(code);
 }
 
-function sqlString(value) {
-  if (value === null || value === undefined || value === "") return "NULL";
-  return `'${String(value).replace(/'/g, "''")}'`;
-}
-
 function normalizeEmail(value) {
   const email = String(value || "").trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -42,41 +35,75 @@ function normalizeEmail(value) {
   return email;
 }
 
-function runSqliteJson(dbPath, sql) {
-  const result = spawnSync("sqlite3", ["-readonly", "-json", dbPath, sql], {
-    encoding: "utf8"
-  });
-  if (result.status !== 0) {
-    fail(result.stderr.trim() || result.stdout.trim() || `sqlite3 exited with ${result.status}`);
-  }
-  return result.stdout.trim() ? JSON.parse(result.stdout) : [];
+function apiBaseUrl(value) {
+  return String(value || "http://localhost:4200").replace(/\/+$/, "");
 }
 
-function runSqliteExec(dbPath, sql) {
-  const result = spawnSync("sqlite3", ["-bail", dbPath], {
-    input: sql,
-    encoding: "utf8"
-  });
-  if (result.status !== 0) {
-    fail(result.stderr.trim() || result.stdout.trim() || `sqlite3 exited with ${result.status}`);
+async function apiJson(apiBase, path, { method = "GET", body } = {}) {
+  const url = `${apiBase}${path}`;
+  const init = { method };
+
+  if (body !== undefined) {
+    init.headers = { "content-type": "application/json" };
+    init.body = JSON.stringify(body);
   }
+
+  let response;
+  try {
+    response = await fetch(url, init);
+  } catch (error) {
+    throw new Error(
+      `Could not reach ${url}. Start the web app with \`npm run dev -- --port 4200\`, or pass --api-base. ${error.message}`
+    );
+  }
+
+  const text = await response.text();
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = {};
+  }
+
+  if (!response.ok) {
+    throw new Error(`${method} ${path} failed (${response.status}): ${data.error || text}`);
+  }
+
+  return data;
 }
 
 function usage() {
   return [
     "Usage:",
-    "  node update-person-email.js <person-id> <email> --db data/outreach.sqlite --evidence direct --source <url> [--apply] [--overwrite] [--confidence high|medium|low|needs_review|unknown]",
+    "  node update-person-email.js <person-id> <email> --evidence direct --source <url> [--api-base http://localhost:4200] [--apply] [--overwrite] [--confidence high|medium|low|needs_review|unknown]",
     "",
     "Without --apply, the script prints a dry-run summary and does not write.",
     "With --apply, --evidence direct and --source are required. Pattern-inferred emails are not saved."
   ].join("\n");
 }
 
-function main() {
+function personSummary(person) {
+  const positions = person.positions || [];
+  const companies = Array.from(new Set(positions.map((position) => position.companyName).filter(Boolean)));
+  const domains = Array.from(new Set(positions.map((position) => position.domain).filter(Boolean)));
+  const websiteUrls = Array.from(new Set(positions.map((position) => position.websiteUrl).filter(Boolean)));
+
+  return {
+    id: person.id,
+    name: person.name,
+    current_email: person.email || null,
+    companies: companies.length ? companies.join(", ") : null,
+    domains: domains.length ? domains.join(", ") : null,
+    website_urls: websiteUrls.length ? websiteUrls.join(", ") : null,
+    linkedin_profile_url: person.linkedinProfileUrl || null
+  };
+}
+
+async function main() {
   const args = parseArgs(process.argv.slice(2));
   const personId = Number(args._[0]);
   const email = normalizeEmail(args._[1]);
-  const dbPath = args.db || "data/outreach.sqlite";
+  const apiBase = apiBaseUrl(args["api-base"] || process.env.FIND_PERSON_EMAIL_API_BASE || process.env.DRAWSCAPE_API_BASE);
   const confidence = args.confidence ? String(args.confidence).toLowerCase() : null;
   const evidence = args.evidence ? String(args.evidence).toLowerCase() : null;
 
@@ -96,26 +123,7 @@ function main() {
     fail("Refusing to save: --apply requires --source for the public page where the exact email was observed.", 2);
   }
 
-  const people = runSqliteJson(
-    dbPath,
-    `SELECT p.id,
-            p.name,
-            p.email,
-            p.linkedin_profile_url,
-            group_concat(DISTINCT c.name) AS companies,
-            group_concat(DISTINCT c.domain) AS domains
-     FROM people p
-     LEFT JOIN positions pos ON pos.person_id = p.id AND pos.is_current = 1
-     LEFT JOIN companies c ON c.id = pos.company_id
-     WHERE p.id = ${personId}
-     GROUP BY p.id;`
-  );
-
-  if (people.length !== 1) {
-    fail(`Expected one person for id ${personId}, found ${people.length}.`, 1);
-  }
-
-  const person = people[0];
+  const { person } = await apiJson(apiBase, `/api/people/${personId}`);
   const existingEmail = normalizeEmail(person.email);
   const sameEmail = existingEmail === email;
   if (existingEmail && !sameEmail && !args.overwrite) {
@@ -125,18 +133,20 @@ function main() {
     );
   }
 
+  let updatedPerson = person;
+  if (args.apply && !sameEmail) {
+    const response = await apiJson(apiBase, `/api/people/${personId}`, {
+      method: "PATCH",
+      body: { email }
+    });
+    updatedPerson = response.person;
+  }
+
   const summary = {
     ok: true,
     mode: args.apply ? "applied" : "dry-run",
-    db: dbPath,
-    person: {
-      id: person.id,
-      name: person.name,
-      current_email: person.email || null,
-      companies: person.companies || null,
-      domains: person.domains || null,
-      linkedin_profile_url: person.linkedin_profile_url || null
-    },
+    api_base: apiBase,
+    person: personSummary(updatedPerson),
     proposed_email: email,
     confidence,
     evidence,
@@ -145,18 +155,10 @@ function main() {
     changed: !sameEmail
   };
 
-  if (args.apply && !sameEmail) {
-    runSqliteExec(
-      dbPath,
-      `BEGIN;
-       UPDATE people
-       SET email = ${sqlString(email)}
-       WHERE id = ${personId};
-       COMMIT;`
-    );
-  }
-
   process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`);
 }
 
-main();
+main().catch((error) => {
+  process.stdout.write(`${JSON.stringify({ ok: false, error: error.message }, null, 2)}\n`);
+  process.exit(1);
+});

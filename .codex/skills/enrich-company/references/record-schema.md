@@ -4,6 +4,7 @@ Use the active project schema when available. When no schema is available, use t
 
 For Drawscape Outreach, the active schema intentionally omits source/evidence columns. Do not persist source URLs, evidence arrays, or source-only prose into the database or `notes` unless the user explicitly asks for that data.
 Drawscape Outreach uses `companies.date_enriched` for the company enrichment date when writing enriched company records.
+Drawscape Outreach company writes must go through the web app API, not direct SQLite. Use `scripts/upsert-company-api.js` from this skill; add API functionality before falling back to database access.
 
 ## Canonical JSON
 
@@ -136,6 +137,7 @@ Leave fields null or empty when not supported by evidence. Do not substitute pro
 
 For database writes:
 
+- Use the web app API for lookup and writes: `GET /api/companies?domain=...`, `GET /api/companies?linkedin_company_url=...`, `POST /api/companies`, and `PATCH /api/companies/:id`.
 - Use normalized `domain` as the primary match key.
 - Use normalized `linkedin_company_url` as the secondary unique match key.
 - Update an existing row when either key matches the same company.

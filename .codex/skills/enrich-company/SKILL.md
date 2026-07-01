@@ -1,6 +1,6 @@
 ---
 name: enrich-company
-description: Enrich a company input into a complete database-ready company record, including employee headcount when available. Use when the user provides a company name, website/domain, LinkedIn company profile, or partial company data and wants a normalized company record, CRM/account record, prospecting row, headcount or employee-count research, lead enrichment output, or database-ready JSON/CSV/SQL insert.
+description: Enrich a company input into a complete Drawscape Outreach company record, including employee headcount when available. Use when the user provides a company name, website/domain, LinkedIn company profile, or partial company data and wants a normalized company record, CRM/account record, prospecting row, headcount or employee-count research, lead enrichment output, or API-backed company create/update.
 ---
 
 # Enrich Company
@@ -47,6 +47,10 @@ If the active repo already has a company/account schema, inspect it first and ma
 When the user wants the record written into a codebase or database:
 
 - Inspect migrations, models, seed files, import scripts, and API contracts with `rg`.
+- For Drawscape Outreach, interface with the database through the web app API. Do not read or write `data/outreach.sqlite` directly from this skill; add or extend an API endpoint first if a needed database operation is missing.
+- Ensure the web app is reachable at `http://localhost:4200`; start it with `npm run dev -- --port 4200` if needed.
+- Use `node .codex/skills/enrich-company/scripts/upsert-company-api.js <company.json> --api-base http://localhost:4200 --apply` for company writes. Run the same command without `--apply` to preview the API payload and insert/update plan.
+- The helper looks up existing companies through `GET /api/companies?domain=...` and `GET /api/companies?linkedin_company_url=...`, then writes through `POST /api/companies` or `PATCH /api/companies/:id`.
 - Respect existing column names, enum values, nullable fields, casing, and relationship tables.
 - Treat the company `domain` as the logical primary key for company records. It must be normalized, non-null, and unique.
 - Treat `linkedin_company_url` as a required unique company identifier when the target schema has that column.
@@ -56,7 +60,7 @@ When the user wants the record written into a codebase or database:
 - Use deterministic IDs only if the project already has a convention for them.
 - Do not invent schema fields. Put useful extra data in a notes/metadata field only if one exists.
 - For Drawscape Outreach, do not store source URLs, evidence links, or source-only text in `notes`; the schema intentionally does not track source information yet.
-- For Drawscape Outreach, treat `companies.date_enriched` as the enrichment completion marker. When a company enrichment is successfully applied to `data/outreach.sqlite` through SQL, API, or import, set `date_enriched` to the current date in ISO `YYYY-MM-DD` format in the same write, or in a follow-up update before reporting success.
+- For Drawscape Outreach, treat `companies.date_enriched` as the enrichment completion marker. When a company enrichment is successfully applied through the API, set `date_enriched` to the current date in ISO `YYYY-MM-DD` format in the same write, or in a follow-up API update before reporting success.
 - Apply the `date_enriched` stamp on both new company inserts and updates to existing companies. Do not stamp it for dry runs, blocked or conflicted enrichments, or records that are researched but not written.
 - Before reporting a database enrichment complete, read back the row or affected payload and confirm `date_enriched` is non-empty.
 - Avoid writing to production systems unless the user explicitly asks and confirms the target.

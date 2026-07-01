@@ -6,6 +6,7 @@ Prospecting workspace for finding companies and people to reach out to.
 
 - Company records use `domain` as the primary key.
 - Company LinkedIn pages live in `linkedin_company_url`.
+- Company `category` values are currently `aircraft`, `automotive`, or `yacht`.
 - Company `description` values should be a single sentence suitable for display.
 - Person records use generated `id` values as the primary key.
 - Person `profile_key` values are unique identity keys, usually LinkedIn path keys like `in/lewis-nisbet-097071137`; website-confirmed email-only identities use `email/name@example.com`.
