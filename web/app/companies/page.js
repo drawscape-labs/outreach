@@ -15,7 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "../../components";
+} from "@/components";
 import {
   Pagination,
   PaginationGap,
@@ -23,36 +23,28 @@ import {
   PaginationNext,
   PaginationPage,
   PaginationPrevious
-} from "../../components/ui/pagination";
-import prisma from "../../lib/prisma";
+} from "@/components/ui/pagination";
+import { formatDate } from "@/lib/format-date";
+import {
+  firstSearchParam,
+  positiveIntegerSearchParam
+} from "@/lib/search-params";
 import { CompanyFilters } from "./components/company-filters";
 import {
-  companyListSelect,
-  companyTableRow
-} from "../api/companies/model";
+  listCompanyIndustries,
+  listCompanyTablePage
+} from "@/app/api/companies/model";
 import {
   COMPANY_CATEGORIES,
   COMPANY_CATEGORY_LABELS,
   COMPANY_PRIORITIES
-} from "../api/companies/schema";
+} from "@/app/api/companies/schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const companiesPerPage = 25;
 const contactFilters = ["with_people", "without_people"];
-const prioritySortOrder = {
-  high: 0,
-  medium: 1,
-  low: 2
-};
-
-const createdDateFormatter = new Intl.DateTimeFormat("en-US", {
-  day: "numeric",
-  month: "short",
-  timeZone: "UTC",
-  year: "numeric"
-});
 
 function CountPill({ label, tone = "gray", value }) {
   const count = Number(value || 0);
@@ -113,58 +105,6 @@ function formatCategory(category) {
   return COMPANY_CATEGORY_LABELS[category] || category;
 }
 
-function formatCreatedAt(value) {
-  if (!value) {
-    return "";
-  }
-
-  const trimmedValue = String(value).trim();
-
-  if (!trimmedValue) {
-    return "";
-  }
-
-  const sqliteTimestampMatch = trimmedValue.match(
-    /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2}):(\d{2}))?/
-  );
-  const date = sqliteTimestampMatch
-    ? new Date(Date.UTC(
-      Number(sqliteTimestampMatch[1]),
-      Number(sqliteTimestampMatch[2]) - 1,
-      Number(sqliteTimestampMatch[3]),
-      Number(sqliteTimestampMatch[4] || 0),
-      Number(sqliteTimestampMatch[5] || 0),
-      Number(sqliteTimestampMatch[6] || 0)
-    ))
-    : new Date(trimmedValue);
-
-  if (Number.isNaN(date.getTime())) {
-    return trimmedValue;
-  }
-
-  return createdDateFormatter.format(date);
-}
-
-function firstSearchParam(searchParams, key) {
-  const value = searchParams?.[key];
-
-  if (Array.isArray(value)) {
-    return value[0] || "";
-  }
-
-  return value || "";
-}
-
-function positiveIntegerSearchParam(searchParams, key, fallback = 1) {
-  const parsed = Number.parseInt(firstSearchParam(searchParams, key), 10);
-
-  if (!Number.isSafeInteger(parsed) || parsed < 1) {
-    return fallback;
-  }
-
-  return parsed;
-}
-
 function getSort(searchParams) {
   const sort = firstSearchParam(searchParams, "sort");
   const direction = firstSearchParam(searchParams, "direction").toLowerCase() === "asc"
@@ -176,46 +116,6 @@ function getSort(searchParams) {
   }
 
   return { direction: "asc", sort: "name" };
-}
-
-async function getCompanies(sort) {
-  const orderBy = sort.sort === "created_at"
-    ? [
-        { createdAt: sort.direction },
-        { id: sort.direction },
-        { name: "asc" }
-      ]
-    : [{ name: "asc" }, { id: "asc" }];
-  const companies = await prisma.company.findMany({
-    orderBy,
-    select: companyListSelect
-  });
-
-  return companies.map(companyTableRow);
-}
-
-function sortCompanies(companies, sort) {
-  if (sort.sort !== "priority") {
-    return companies;
-  }
-
-  return [...companies].sort((first, second) => {
-    const firstPriority = prioritySortOrder[first.priority] ?? Number.MAX_SAFE_INTEGER;
-    const secondPriority = prioritySortOrder[second.priority] ?? Number.MAX_SAFE_INTEGER;
-    const priorityComparison = firstPriority - secondPriority;
-
-    if (priorityComparison !== 0) {
-      return sort.direction === "desc" ? priorityComparison : -priorityComparison;
-    }
-
-    return first.name.localeCompare(second.name) || first.id - second.id;
-  });
-}
-
-function getUniqueValues(items, key) {
-  return Array.from(
-    new Set(items.map((item) => item[key]).filter(Boolean))
-  ).sort((first, second) => first.localeCompare(second));
 }
 
 function getFilters(searchParams, options) {
@@ -234,32 +134,6 @@ function getFilters(searchParams, options) {
       : "",
     contacts: contactFilters.includes(contacts) ? contacts : ""
   };
-}
-
-function companyMatchesFilters(company, filters) {
-  const peopleCount = Number(company.peopleCount || 0);
-
-  if (filters.category && company.category !== filters.category) {
-    return false;
-  }
-
-  if (filters.industry && company.industry !== filters.industry) {
-    return false;
-  }
-
-  if (filters.priority && company.priority !== filters.priority) {
-    return false;
-  }
-
-  if (filters.contacts === "with_people" && peopleCount === 0) {
-    return false;
-  }
-
-  if (filters.contacts === "without_people" && peopleCount > 0) {
-    return false;
-  }
-
-  return true;
 }
 
 function addFiltersToParams(params, filters) {
@@ -467,7 +341,6 @@ function CompaniesPagination({
 export default async function CompaniesPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const sort = getSort(resolvedSearchParams);
-  const allCompanies = await getCompanies(sort);
   const options = {
     categories: COMPANY_CATEGORIES.map((category) => ({
       label: formatCategory(category),
@@ -477,18 +350,18 @@ export default async function CompaniesPage({ searchParams }) {
       label: formatPriorityLevel(priority),
       value: priority
     })),
-    industries: getUniqueValues(allCompanies, "industry")
+    industries: await listCompanyIndustries()
   };
   const filters = getFilters(resolvedSearchParams, options);
-  const companies = sortCompanies(
-    allCompanies.filter((company) => companyMatchesFilters(company, filters)),
-    sort
-  );
-  const totalPages = Math.max(1, Math.ceil(companies.length / companiesPerPage));
-  const requestedPage = positiveIntegerSearchParam(resolvedSearchParams, "page");
-  const currentPage = Math.min(requestedPage, totalPages);
-  const pageStart = (currentPage - 1) * companiesPerPage;
-  const paginatedCompanies = companies.slice(pageStart, pageStart + companiesPerPage);
+  const {
+    companies,
+    currentPage,
+    totalCount,
+    totalPages
+  } = await listCompanyTablePage(filters, sort, {
+    page: positiveIntegerSearchParam(resolvedSearchParams, "page"),
+    pageSize: companiesPerPage
+  });
 
   return (
     <PageShell fullWidth>
@@ -549,11 +422,11 @@ export default async function CompaniesPage({ searchParams }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginatedCompanies.length === 0 ? (
+              {companies.length === 0 ? (
                 <TableEmpty colSpan={9}>No companies match these filters.</TableEmpty>
               ) : (
-                paginatedCompanies.map((company) => {
-                  const formattedCreatedAt = formatCreatedAt(company.createdAt);
+                companies.map((company) => {
+                  const formattedCreatedAt = formatDate(company.createdAt);
 
                   return (
                     <TableRow key={company.id}>
@@ -640,7 +513,7 @@ export default async function CompaniesPage({ searchParams }) {
             filters={filters}
             pageSize={companiesPerPage}
             sort={sort}
-            totalCount={companies.length}
+            totalCount={totalCount}
             totalPages={totalPages}
           />
         </TableFrame>

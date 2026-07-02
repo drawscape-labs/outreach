@@ -1,8 +1,8 @@
 import "./styles.css";
 import Script from "next/script";
-import { Link } from "../components";
-import { QueryProvider } from "../components/query-provider";
-import { ThemeToggle } from "../components/theme-toggle";
+import { Link } from "@/components";
+import { QueryProvider } from "@/components/query-provider";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export const metadata = {
   title: "Drawscape Outreach",

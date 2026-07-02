@@ -1,10 +1,10 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Button } from "../../../components/ui/button";
-import { Field, Label } from "../../../components/ui/fieldset";
-import { Select } from "../../../components/ui/select";
-import { LEAD_STATUSES } from "../../../lib/statuses";
+import { Button } from "@/components/ui/button";
+import { Field, Label } from "@/components/ui/fieldset";
+import { Select } from "@/components/ui/select";
+import { LEAD_STATUSES } from "@/lib/statuses";
 
 function FilterSelect({
   emptyLabel,

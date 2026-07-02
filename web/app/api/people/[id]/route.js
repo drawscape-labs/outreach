@@ -3,7 +3,7 @@ import {
   jsonError,
   readId,
   readPayload
-} from "../../lib/model-helpers";
+} from "@/app/api/lib/model-helpers";
 import {
   deletePerson,
   getPersonDetail,
@@ -12,8 +12,8 @@ import {
   personJson,
   revalidatePerson,
   updatePerson
-} from "../model";
-import { PERSON_API_MESSAGES } from "../schema";
+} from "@/app/api/people/model";
+import { PERSON_API_MESSAGES } from "@/app/api/people/schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

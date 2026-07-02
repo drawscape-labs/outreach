@@ -3,15 +3,15 @@ import {
   jsonError,
   readId,
   readPayload
-} from "../../lib/model-helpers";
+} from "@/app/api/lib/model-helpers";
 import {
   deletePosition,
   getPosition,
   positionJson,
   revalidatePosition,
   updatePosition
-} from "../model";
-import { POSITION_API_MESSAGES } from "../schema";
+} from "@/app/api/positions/model";
+import { POSITION_API_MESSAGES } from "@/app/api/positions/schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { peopleApi } from "../lib/api";
+import { peopleApi } from "@/lib/api";
 import { EditableFieldMenu } from "./editable-field-menu";
 import { QualifiedStatus } from "./qualified-status";
 

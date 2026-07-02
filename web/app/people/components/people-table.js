@@ -13,16 +13,17 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "../../../components";
+} from "@/components";
 import {
   splitCompanies,
   splitCompanyRefs,
   splitList
-} from "../lib/people-table-data";
+} from "@/app/people/lib/people-table-data";
+import { formatDateTime } from "@/lib/format-date";
 import {
   EditableLeadStatus,
   EditableQualifiedStatus
-} from "../../../components/lead-field-controls";
+} from "@/components/lead-field-controls";
 import { PersonActions } from "./person-actions";
 
 function companiesForPerson(person) {
@@ -259,47 +260,6 @@ function personCreatedAt(person) {
   return person.createdAt || person.personCreatedAt;
 }
 
-const createdAtFormatter = new Intl.DateTimeFormat("en-US", {
-  day: "numeric",
-  hour: "numeric",
-  minute: "2-digit",
-  month: "short",
-  timeZone: "UTC",
-  year: "numeric"
-});
-
-function formatCreatedAt(value) {
-  if (!value) {
-    return "";
-  }
-
-  const trimmedValue = String(value).trim();
-
-  if (!trimmedValue) {
-    return "";
-  }
-
-  const sqliteTimestampMatch = trimmedValue.match(
-    /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2}):(\d{2}))?/
-  );
-  const date = sqliteTimestampMatch
-    ? new Date(Date.UTC(
-      Number(sqliteTimestampMatch[1]),
-      Number(sqliteTimestampMatch[2]) - 1,
-      Number(sqliteTimestampMatch[3]),
-      Number(sqliteTimestampMatch[4] || 0),
-      Number(sqliteTimestampMatch[5] || 0),
-      Number(sqliteTimestampMatch[6] || 0)
-    ))
-    : new Date(trimmedValue);
-
-  if (Number.isNaN(date.getTime())) {
-    return trimmedValue;
-  }
-
-  return createdAtFormatter.format(date);
-}
-
 function CreatedAtSortIndicator({ direction }) {
   return (
     <span className="inline-flex h-3 w-3 items-center justify-center" aria-hidden="true">
@@ -427,7 +387,7 @@ export function PeopleTable({
               const companies = companiesForPerson(person);
               const position = positionText(person);
               const createdAt = personCreatedAt(person);
-              const formattedCreatedAt = formatCreatedAt(createdAt);
+              const formattedCreatedAt = formatDateTime(createdAt);
 
               return (
                 <TableRow key={person.id || person.personId}>

@@ -2,15 +2,15 @@ import {
   PageHeader,
   PageShell,
   PageStats
-} from "../../../components";
-import prisma from "../../../lib/prisma";
-import { isLeadStatus } from "../../../lib/statuses";
+} from "@/components";
+import prisma from "@/lib/prisma";
+import { isLeadStatus } from "@/lib/statuses";
 import { PeopleTable } from "./people-table";
-import { splitCompanies } from "../lib/people-table-data";
+import { splitCompanies } from "@/app/people/lib/people-table-data";
 import {
   personTableRow,
   personTableSelect
-} from "../../api/people/model";
+} from "@/app/api/people/model";
 
 async function getPeopleByStatuses(statuses) {
   const leadStatuses = statuses.filter((status) => isLeadStatus(status));

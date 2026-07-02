@@ -7,18 +7,20 @@ import {
   PageShell,
   PriorityLevel,
   SectionHeader
-} from "../../../components";
-import { PeopleTable } from "../../people/components/people-table";
-import prisma from "../../../lib/prisma";
-import { CompanyActions } from "../components/company-actions";
+} from "@/components";
+import { PeopleTable } from "@/app/people/components/people-table";
+import { formatDate } from "@/lib/format-date";
+import prisma from "@/lib/prisma";
+import { firstSearchParam } from "@/lib/search-params";
+import { CompanyActions } from "@/app/companies/components/company-actions";
 import {
   companyDetail,
   companyDetailSelect
-} from "../../api/companies/model";
+} from "@/app/api/companies/model";
 import {
   COMPANY_CATEGORY_LABELS
-} from "../../api/companies/schema";
-import { personFromCompanyPosition } from "../../api/people/model";
+} from "@/app/api/companies/schema";
+import { personFromCompanyPosition } from "@/app/api/people/model";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -72,50 +74,6 @@ function formatHeadcount(company) {
 
 function formatCategory(category) {
   return COMPANY_CATEGORY_LABELS[category] || category;
-}
-
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  day: "numeric",
-  month: "short",
-  timeZone: "UTC",
-  year: "numeric"
-});
-
-function formatDate(value) {
-  if (!value) {
-    return "";
-  }
-
-  const trimmedValue = String(value).trim();
-
-  if (!trimmedValue) {
-    return "";
-  }
-
-  const dateOnlyMatch = trimmedValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  const date = dateOnlyMatch
-    ? new Date(Date.UTC(
-      Number(dateOnlyMatch[1]),
-      Number(dateOnlyMatch[2]) - 1,
-      Number(dateOnlyMatch[3])
-    ))
-    : new Date(trimmedValue);
-
-  if (Number.isNaN(date.getTime())) {
-    return trimmedValue;
-  }
-
-  return dateFormatter.format(date);
-}
-
-function firstSearchParam(searchParams, key) {
-  const value = searchParams?.[key];
-
-  if (Array.isArray(value)) {
-    return value[0] || "";
-  }
-
-  return value || "";
 }
 
 function getCodexLaunchStatus(searchParams) {

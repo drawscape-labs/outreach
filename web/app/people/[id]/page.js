@@ -16,19 +16,19 @@ import {
   TableHead,
   TableHeader,
   TableRow
-} from "../../../components";
+} from "@/components";
 import {
   EditableLeadStatus,
   EditableQualifiedStatus
-} from "../../../components/lead-field-controls";
-import { PersonActions } from "../components/person-actions";
-import { findQuickmailLead, getQuickmailLead, QuickmailError } from "../../../lib/quickmail";
-import prisma from "../../../lib/prisma";
+} from "@/components/lead-field-controls";
+import { PersonActions } from "@/app/people/components/person-actions";
+import { findQuickmailLead, getQuickmailLead, QuickmailError } from "@/lib/quickmail";
+import prisma from "@/lib/prisma";
 import {
   personDetailSelect,
   personJson,
   positionCompany
-} from "../../api/people/model";
+} from "@/app/api/people/model";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

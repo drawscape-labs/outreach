@@ -1,6 +1,6 @@
 // Date normalization helpers for API responses and table payloads.
 // Add conversions here when server values need JSON-safe ISO strings across the app.
-function parseSqliteTimestamp(value) {
+export function parseSqliteTimestamp(value) {
   const match = String(value).trim().match(
     /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2}):(\d{2})(?:\.\d+)?)?$/
   );

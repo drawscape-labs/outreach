@@ -1,4 +1,4 @@
-import { listQuickmailCampaigns, QuickmailError } from "../../../../lib/quickmail";
+import { listQuickmailCampaigns, QuickmailError } from "@/lib/quickmail";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

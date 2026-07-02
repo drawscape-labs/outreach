@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
-import prisma from "../../../lib/prisma";
-import { toJsonDate } from "../../../lib/date-json";
+import prisma from "@/lib/prisma";
+import { toJsonDate } from "@/lib/date-json";
 import {
   ApiError,
   buildModelData,
@@ -9,12 +9,12 @@ import {
   normalizeWhitespace,
   readBooleanFilter,
   readPositiveInteger
-} from "../lib/model-helpers";
+} from "@/app/api/lib/model-helpers";
 import {
   COMPANY_API_MESSAGES,
   COMPANY_CATEGORIES,
   COMPANY_PRIORITIES
-} from "../companies/schema";
+} from "@/app/api/companies/schema";
 import {
   PERSON_API_MESSAGES,
   PERSON_EMAIL_FILTER_VALUES,

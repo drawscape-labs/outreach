@@ -3,7 +3,7 @@ import {
   PageHeader,
   PageShell,
   SectionHeader
-} from "../../components";
+} from "@/components";
 import {
   Pagination,
   PaginationGap,
@@ -11,49 +11,33 @@ import {
   PaginationNext,
   PaginationPage,
   PaginationPrevious
-} from "../../components/ui/pagination";
-import { isLeadStatus } from "../../lib/statuses";
+} from "@/components/ui/pagination";
+import {
+  firstSearchParam,
+  positiveIntegerSearchParam
+} from "@/lib/search-params";
+import { isLeadStatus } from "@/lib/statuses";
 import { PeopleTable } from "./components/people-table";
 import { PeopleFilters } from "./components/people-filters";
 import {
   listPeopleTablePage
-} from "../api/people/model";
+} from "@/app/api/people/model";
 import {
   COMPANY_CATEGORIES,
   COMPANY_CATEGORY_LABELS,
   COMPANY_PRIORITIES
-} from "../api/companies/schema";
+} from "@/app/api/companies/schema";
 import {
   PERSON_EMAIL_FILTER_VALUES,
   PERSON_FILTER_PARAMS,
   PERSON_LINKEDIN_FILTER_VALUES,
   PERSON_QUALIFIED_FILTER_VALUES
-} from "../api/people/schema";
+} from "@/app/api/people/schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const peoplePerPage = 100;
-
-function firstSearchParam(searchParams, key) {
-  const value = searchParams?.[key];
-
-  if (Array.isArray(value)) {
-    return value[0] || "";
-  }
-
-  return value || "";
-}
-
-function positiveIntegerSearchParam(searchParams, key, fallback = 1) {
-  const parsed = Number.parseInt(firstSearchParam(searchParams, key), 10);
-
-  if (!Number.isSafeInteger(parsed) || parsed < 1) {
-    return fallback;
-  }
-
-  return parsed;
-}
 
 function createdAtSort(searchParams) {
   return {

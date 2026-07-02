@@ -1,4 +1,4 @@
-import { LEAD_STATUS_TONES } from "../lib/statuses";
+import { LEAD_STATUS_TONES } from "@/lib/statuses";
 import { EmptyValue } from "./empty-value";
 import { StatusPill } from "./status-pill";
 

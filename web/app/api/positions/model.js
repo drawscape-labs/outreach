@@ -1,13 +1,13 @@
 import { revalidatePath } from "next/cache";
-import prisma from "../../../lib/prisma";
-import { toJsonDate } from "../../../lib/date-json";
+import prisma from "@/lib/prisma";
+import { toJsonDate } from "@/lib/date-json";
 import {
   ApiError,
   buildModelData,
   normalizeWhitespace,
   readBooleanFilter,
   readPositiveInteger
-} from "../lib/model-helpers";
+} from "@/app/api/lib/model-helpers";
 import {
   POSITION_API_MESSAGES,
   POSITION_FIELD_ALIASES,

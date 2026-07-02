@@ -3,15 +3,15 @@ import {
   jsonError,
   readId,
   readPayload
-} from "../../lib/model-helpers";
+} from "@/app/api/lib/model-helpers";
 import {
   companyJson,
   deleteCompany,
   getCompany,
   revalidateCompany,
   updateCompany
-} from "../model";
-import { COMPANY_API_MESSAGES } from "../schema";
+} from "@/app/api/companies/model";
+import { COMPANY_API_MESSAGES } from "@/app/api/companies/schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

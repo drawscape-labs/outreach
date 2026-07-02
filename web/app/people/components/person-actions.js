@@ -1,25 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { Button } from "../../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogActions,
   DialogBody,
   DialogTitle
-} from "../../../components/ui/dialog";
+} from "@/components/ui/dialog";
 import {
   Dropdown,
   DropdownButton,
   DropdownItem,
   DropdownMenu
-} from "../../../components/ui/dropdown";
-import { Field, Label } from "../../../components/ui/fieldset";
-import { Select } from "../../../components/ui/select";
-import { quickmailApi } from "../../../lib/api";
-import { buildQuickmailPlaceholderEmail } from "../../../lib/placeholder-email";
+} from "@/components/ui/dropdown";
+import { Field, Label } from "@/components/ui/fieldset";
+import { Select } from "@/components/ui/select";
+import { quickmailApi } from "@/lib/api";
+import { buildQuickmailPlaceholderEmail } from "@/lib/placeholder-email";
 
 const quickmailCampaignsQueryKey = ["quickmail", "campaigns"];
 const lastCampaignStorageKey = "drawscape.quickmail.lastCampaignId";
@@ -69,20 +69,6 @@ function CampaignModal({
   });
   const campaigns = campaignsQuery.data || [];
 
-  useEffect(() => {
-    if (
-      campaigns.length &&
-      !campaigns.some((campaign) => campaign.id === selectedCampaignId)
-    ) {
-      const lastCampaignId = readLastCampaignId();
-      const rememberedCampaign = campaigns.find(
-        (campaign) => campaign.id === lastCampaignId
-      );
-
-      setSelectedCampaignId(rememberedCampaign?.id || campaigns[0].id);
-    }
-  }, [campaigns, selectedCampaignId]);
-
   const addToCampaignMutation = useMutation({
     mutationFn: ({ selectedCampaign }) =>
       quickmailApi.addLeadToCampaign(
@@ -104,9 +90,12 @@ function CampaignModal({
     }
   });
 
-  const selectedCampaign = campaigns.find(
-    (campaign) => campaign.id === selectedCampaignId
-  );
+  // The selection state only holds an explicit user choice; until then the
+  // remembered campaign (or the first one) is the effective selection.
+  const selectedCampaign =
+    campaigns.find((campaign) => campaign.id === selectedCampaignId) ||
+    campaigns.find((campaign) => campaign.id === readLastCampaignId()) ||
+    campaigns[0];
   const quickmailEmail =
     email ||
     buildQuickmailPlaceholderEmail({
@@ -167,7 +156,7 @@ function CampaignModal({
             <Label htmlFor={`campaign-${personId}`}>Campaign</Label>
             <Select
               id={`campaign-${personId}`}
-              value={selectedCampaignId}
+              value={selectedCampaign?.id || ""}
               disabled={isLoading || isSaving || campaigns.length === 0}
               onChange={handleCampaignChange}
             >

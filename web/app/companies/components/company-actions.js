@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../../../components/ui/button";
-import { codexApi } from "../../../lib/api";
+import { Button } from "@/components/ui/button";
+import { codexApi } from "@/lib/api";
 
 function valueLine(label, value) {
   if (value === null || value === undefined || String(value).trim() === "") {

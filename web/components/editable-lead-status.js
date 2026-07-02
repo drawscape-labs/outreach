@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LEAD_STATUSES } from "../lib/statuses";
-import { peopleApi } from "../lib/api";
+import { LEAD_STATUSES } from "@/lib/statuses";
+import { peopleApi } from "@/lib/api";
 import { EditableFieldMenu } from "./editable-field-menu";
 import { LeadStatus } from "./lead-status";
 

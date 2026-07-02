@@ -3,17 +3,17 @@ import {
   createOrReuseQuickmailLead,
   getQuickmailEnv,
   QuickmailError
-} from "../../../../../../lib/quickmail";
-import { buildQuickmailPlaceholderEmail } from "../../../../../../lib/placeholder-email";
-import prisma from "../../../../../../lib/prisma";
-import { ApiError } from "../../../../lib/model-helpers";
+} from "@/lib/quickmail";
+import { buildQuickmailPlaceholderEmail } from "@/lib/placeholder-email";
+import prisma from "@/lib/prisma";
+import { ApiError } from "@/app/api/lib/model-helpers";
 import {
   revalidatePerson,
   syncPersonQuickmailState
-} from "../../../../people/model";
+} from "@/app/api/people/model";
 import {
   PERSON_API_MESSAGES
-} from "../../../../people/schema";
+} from "@/app/api/people/schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

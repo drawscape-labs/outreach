@@ -3,7 +3,7 @@
 import {
   PERSON_STATUSES,
   PERSON_STATUS_TONES
-} from "../app/api/people/schema";
+} from "@/app/api/people/schema";
 
 export const LEAD_STATUSES = PERSON_STATUSES;
 

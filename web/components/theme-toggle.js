@@ -36,8 +36,12 @@ export function ThemeToggle({ className, showLabel = false }) {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     applyTheme(initialTheme);
+    // Theme lives in localStorage/matchMedia, which the server can't read, so
+    // the state has to sync once after hydration.
+    /* eslint-disable react-hooks/set-state-in-effect */
     setIsDark(initialTheme);
     setIsReady(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     function handleSystemThemeChange(event) {
       if (window.localStorage.getItem("theme")) {
