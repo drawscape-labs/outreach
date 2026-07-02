@@ -19,6 +19,12 @@ import {
   listPeopleTablePage
 } from "../api/people/model";
 import {
+  COMPANY_CATEGORIES,
+  COMPANY_CATEGORY_LABELS,
+  COMPANY_PRIORITIES,
+  COMPANY_PRIORITY_LABELS
+} from "../api/companies/schema";
+import {
   PERSON_EMAIL_FILTER_VALUES,
   PERSON_FILTER_PARAMS,
   PERSON_LINKEDIN_FILTER_VALUES,
@@ -91,9 +97,17 @@ function getFilters(searchParams, options) {
     searchParams,
     PERSON_FILTER_PARAMS.linkedin
   );
+  const category = getFirstSearchParam(
+    searchParams,
+    PERSON_FILTER_PARAMS.companyCategory
+  );
   const industry = getFirstSearchParam(
     searchParams,
     PERSON_FILTER_PARAMS.companyIndustry
+  );
+  const priority = getFirstSearchParam(
+    searchParams,
+    PERSON_FILTER_PARAMS.companyPriority
   );
 
   return {
@@ -101,7 +115,13 @@ function getFilters(searchParams, options) {
     qualified: PERSON_QUALIFIED_FILTER_VALUES.includes(qualified) ? qualified : "",
     email: PERSON_EMAIL_FILTER_VALUES.includes(email) ? email : "",
     linkedin: PERSON_LINKEDIN_FILTER_VALUES.includes(linkedin) ? linkedin : "",
-    industry: options.industries.includes(industry) ? industry : ""
+    category: options.categories.some((option) => option.value === category)
+      ? category
+      : "",
+    industry: options.industries.includes(industry) ? industry : "",
+    priority: options.priorities.some((option) => option.value === priority)
+      ? priority
+      : ""
   };
 }
 
@@ -122,8 +142,16 @@ function addFiltersToParams(params, filters) {
     params.set("linkedin", filters.linkedin);
   }
 
+  if (filters.category) {
+    params.set("category", filters.category);
+  }
+
   if (filters.industry) {
     params.set("industry", filters.industry);
+  }
+
+  if (filters.priority) {
+    params.set("priority", filters.priority);
   }
 }
 
@@ -257,6 +285,14 @@ export default async function PeoplePage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const sort = createdAtSort(resolvedSearchParams);
   const options = {
+    categories: COMPANY_CATEGORIES.map((category) => ({
+      label: COMPANY_CATEGORY_LABELS[category] || category,
+      value: category
+    })),
+    priorities: COMPANY_PRIORITIES.map((priority) => ({
+      label: COMPANY_PRIORITY_LABELS[priority] || priority,
+      value: priority
+    })),
     industries: await listPeopleCompanyIndustries()
   };
   const filters = getFilters(resolvedSearchParams, options);

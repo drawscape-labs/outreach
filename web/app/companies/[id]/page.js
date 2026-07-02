@@ -14,7 +14,10 @@ import {
   companyDetail,
   companyDetailSelect
 } from "../../api/companies/model";
-import { COMPANY_CATEGORY_LABELS } from "../../api/companies/schema";
+import {
+  COMPANY_CATEGORY_LABELS,
+  COMPANY_PRIORITY_LABELS
+} from "../../api/companies/schema";
 import { personFromCompanyPosition } from "../../api/people/model";
 
 export const dynamic = "force-dynamic";
@@ -69,6 +72,10 @@ function formatHeadcount(company) {
 
 function formatCategory(category) {
   return COMPANY_CATEGORY_LABELS[category] || category;
+}
+
+function formatPriority(priority) {
+  return COMPANY_PRIORITY_LABELS[priority] || priority;
 }
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -201,6 +208,9 @@ export default async function CompanyDetailPage({ params, searchParams }) {
           <CompanyDetailColumn>
             <CompanyDetailItem label="Category">
               <FieldValue value={company.category ? formatCategory(company.category) : ""} />
+            </CompanyDetailItem>
+            <CompanyDetailItem label="Priority">
+              <FieldValue value={company.priority ? formatPriority(company.priority) : ""} />
             </CompanyDetailItem>
             <CompanyDetailItem label="Industry">
               <FieldValue value={company.industry} />

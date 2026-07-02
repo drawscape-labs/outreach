@@ -30,7 +30,9 @@ import {
 } from "../api/companies/model";
 import {
   COMPANY_CATEGORIES,
-  COMPANY_CATEGORY_LABELS
+  COMPANY_CATEGORY_LABELS,
+  COMPANY_PRIORITIES,
+  COMPANY_PRIORITY_LABELS
 } from "../api/companies/schema";
 
 export const dynamic = "force-dynamic";
@@ -103,6 +105,10 @@ function formatHeadcount(company) {
 
 function formatCategory(category) {
   return COMPANY_CATEGORY_LABELS[category] || category;
+}
+
+function formatPriority(priority) {
+  return COMPANY_PRIORITY_LABELS[priority] || priority;
 }
 
 function formatCreatedAt(value) {
@@ -195,6 +201,7 @@ function getUniqueValues(items, key) {
 function getFilters(searchParams, options) {
   const category = firstSearchParam(searchParams, "category");
   const industry = firstSearchParam(searchParams, "industry");
+  const priority = firstSearchParam(searchParams, "priority");
   const contacts = firstSearchParam(searchParams, "contacts");
 
   return {
@@ -202,6 +209,9 @@ function getFilters(searchParams, options) {
       ? category
       : "",
     industry: options.industries.includes(industry) ? industry : "",
+    priority: options.priorities.some((option) => option.value === priority)
+      ? priority
+      : "",
     contacts: contactFilters.includes(contacts) ? contacts : ""
   };
 }
@@ -214,6 +224,10 @@ function companyMatchesFilters(company, filters) {
   }
 
   if (filters.industry && company.industry !== filters.industry) {
+    return false;
+  }
+
+  if (filters.priority && company.priority !== filters.priority) {
     return false;
   }
 
@@ -235,6 +249,10 @@ function addFiltersToParams(params, filters) {
 
   if (filters.industry) {
     params.set("industry", filters.industry);
+  }
+
+  if (filters.priority) {
+    params.set("priority", filters.priority);
   }
 
   if (filters.contacts) {
@@ -403,6 +421,10 @@ export default async function CompaniesPage({ searchParams }) {
     categories: COMPANY_CATEGORIES.map((category) => ({
       label: formatCategory(category),
       value: category
+    })),
+    priorities: COMPANY_PRIORITIES.map((priority) => ({
+      label: formatPriority(priority),
+      value: priority
     })),
     industries: getUniqueValues(allCompanies, "industry")
   };

@@ -75,7 +75,9 @@ export const PERSON_REQUIRED_CREATE_FIELDS = [
 
 export const PERSON_FILTER_PARAMS = {
   companyId: ["companyId", "company_id"],
+  companyCategory: ["category", "companyCategory", "company_category"],
   companyIndustry: ["industry", "companyIndustry", "company_industry"],
+  companyPriority: ["priority", "companyPriority", "company_priority"],
   email: ["email"],
   emailAddress: ["emailAddress", "email_address", "exactEmail", "exact_email"],
   linkedin: ["linkedin", "linkedinProfile", "linkedin_profile"],

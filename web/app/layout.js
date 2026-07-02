@@ -1,4 +1,5 @@
 import "./styles.css";
+import Script from "next/script";
 import { Link } from "../components";
 import { QueryProvider } from "../components/query-provider";
 import { ThemeToggle } from "../components/theme-toggle";
@@ -34,10 +35,13 @@ const themeScript = `
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
+      <head />
       <body className="min-h-screen bg-gray-50 text-gray-900 antialiased dark:bg-zinc-950 dark:text-zinc-100">
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeScript }}
+        />
         <header className="sticky top-0 z-10 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur dark:border-white/10 dark:bg-zinc-950/90 dark:shadow-none">
           <div className="mx-auto max-w-7xl px-4 sm:flex sm:h-16 sm:items-center sm:justify-between sm:gap-x-6 sm:px-6 lg:px-8">
             <div className="flex h-16 items-center justify-between gap-x-4">

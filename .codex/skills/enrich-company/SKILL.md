@@ -1,6 +1,6 @@
 ---
 name: enrich-company
-description: Enrich a company input into a complete Drawscape Outreach company record, including employee headcount when available. Use when the user provides a company name, website/domain, LinkedIn company profile, or partial company data and wants a normalized company record, CRM/account record, prospecting row, headcount or employee-count research, lead enrichment output, or API-backed company create/update.
+description: Enrich a company input into a complete Drawscape Outreach company record, including employee headcount and company priority when available. Use when the user provides a company name, website/domain, LinkedIn company profile, or partial company data and wants a normalized company record, CRM/account record, prospecting row, headcount or employee-count research, priority scoring, lead enrichment output, or API-backed company create/update.
 ---
 
 # Enrich Company
@@ -40,13 +40,19 @@ If the active repo already has a company/account schema, inspect it first and ma
    - Look for current official counts first, then filings/registries, LinkedIn company size, reputable company profiles, and news/directories.
    - Do not use the Hunter API or Hunter-derived company metrics for company enrichment.
    - Distinguish local branch/dealership/location headcount from parent-company headcount; do not substitute the parent count unless the parent is the target company.
-6. Normalize values into the target database schema:
+6. Set company priority when the target schema supports it:
+   - Use `high`, `medium`, or `low` for Drawscape Outreach.
+   - For yacht brokers, check whether they sell or broker sailboats/sailing yachts separately from generic yacht or superyacht language.
+   - Set yacht broker priority to `high` when current evidence shows sailboat, sailing yacht, sail catamaran, or sail-focused brokerage/listing presence.
+   - Set yacht broker priority to `low` only when current evidence shows the company is strictly a superyacht broker and does not sell or broker sailboats, sailing yachts, powerboats, motor yachts, or other non-superyacht boats.
+   - Use `medium` when the company has yacht/powerboat/motor-yacht presence but no verified sailboat presence, or when the evidence is too generic to prove the high or low rule.
+7. Normalize values into the target database schema:
    - Store `name` as the casual display brand, not the longest legal/SEO name.
    - Drop filler legal suffixes and generic service descriptors when the remaining brand is clear.
    - Example: `Altivation Aircraft Sales & Acquisitions` -> `Altivation`.
    - Preserve the fuller name as `legal_name`, an alias, or evidence when the output schema supports it.
-7. Attach field-level sources and confidence.
-8. Return the record plus a short enrichment note listing major assumptions, conflicts, and unknown high-value fields.
+8. Attach field-level sources and confidence.
+9. Return the record plus a short enrichment note listing major assumptions, conflicts, and unknown high-value fields.
 
 ## Database Integration
 
@@ -57,6 +63,7 @@ When the user wants the record written into a codebase or database:
 - Ensure the web app is reachable at `http://localhost:4200`; start it with `npm run dev -- --port 4200` if needed.
 - Use `node .codex/skills/enrich-company/scripts/upsert-company-api.js <company.json> --api-base http://localhost:4200 --apply` for company writes. Run the same command without `--apply` to preview the API payload and insert/update plan.
 - The helper looks up existing companies through `GET /api/companies?domain=...` and `GET /api/companies?linkedin_company_url=...`, then writes through `POST /api/companies` or `PATCH /api/companies/:id`.
+- The helper maps `priority` to `companies.priority` when supplied. Use only `high`, `medium`, or `low`; omit it only when the target schema does not support priority or evidence is insufficient.
 - Respect existing column names, enum values, nullable fields, casing, and relationship tables.
 - Treat the company `domain` as the logical primary key for company records. It must be normalized, non-null, and unique.
 - Treat `linkedin_company_url` as a required unique company identifier when the target schema has that column.
@@ -78,6 +85,7 @@ When the user wants the record written into a codebase or database:
 - Keep original user-supplied input in an `input` or `source_input` field when the schema allows it.
 - Use ISO country codes, normalized URLs, and stable enum slugs when possible.
 - Treat employee count/headcount as a core field. Record `employee_count` only when a source reports a concrete integer; record `employee_count_range` when only a range is supported. Do not convert ranges into midpoint guesses.
+- Treat company priority as a core Drawscape Outreach fit field. For yacht brokers, use the yacht priority rules in this skill instead of defaulting every yacht-related company to the same priority.
 - Treat revenue, funding, and traffic estimates as ranges unless a primary source gives exact values.
 - Include the current date in `date_enriched` or `last_enriched_at` when the target schema has such a field; for database writes, follow the completion-marker rules above.
 - Mark inaccessible LinkedIn data as unavailable instead of trying to bypass login, scraping controls, or paywalls.

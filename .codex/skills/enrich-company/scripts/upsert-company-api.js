@@ -117,9 +117,25 @@ function categoryFrom(value) {
     ) {
       return "automotive";
     }
-    if (normalized === "yacht" || normalized === "yachts" || normalized === "boat" || normalized === "boats") return "yacht";
+    if (
+      normalized === "yacht" ||
+      normalized === "yachts" ||
+      normalized === "boat" ||
+      normalized === "boats" ||
+      normalized.includes("sailboat") ||
+      normalized.includes("sailing yacht") ||
+      normalized.includes("yacht brokerage")
+    ) {
+      return "yacht";
+    }
   }
   return null;
+}
+
+function normalizePriority(value) {
+  if (!value) return null;
+  const normalized = String(value).trim().toLowerCase();
+  return normalized || null;
 }
 
 function headquartersText(location) {
@@ -160,6 +176,7 @@ function normalizeCompany(input) {
     website_url: websiteUrl,
     description: normalizeWhitespace(firstValue(company.description, identity.description)),
     category: normalizeWhitespace(firstValue(company.category, categoryFrom(classification.categories), categoryFrom(industry))),
+    priority: normalizePriority(firstValue(company.priority, input.priority, classification.priority, metadata.priority)),
     industry,
     location: normalizeWhitespace(locationText),
     employee_count: normalizeInteger(firstValue(company.employee_count, company.employeeCount, details.employee_count)),
@@ -176,6 +193,9 @@ function validateCompany(company) {
   if (!company.linkedin_company_url) errors.push("linkedin_company_url is required");
   if (company.category && !["aircraft", "automotive", "yacht"].includes(company.category)) {
     errors.push("category must be aircraft, automotive, or yacht");
+  }
+  if (company.priority && !["high", "medium", "low"].includes(company.priority)) {
+    errors.push("priority must be high, medium, or low");
   }
   return errors;
 }
@@ -205,6 +225,7 @@ function apiPayload(company, { forCreate, stampDate }) {
   addValue(payload, "website_url", company.website_url);
   addValue(payload, "description", company.description);
   addValue(payload, "category", company.category);
+  addValue(payload, "priority", company.priority);
   addValue(payload, "industry", company.industry);
   addValue(payload, "location", company.location);
   addInteger(payload, "employee_count", company.employee_count);

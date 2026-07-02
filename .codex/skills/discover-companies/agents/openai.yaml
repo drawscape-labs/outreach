@@ -1,0 +1,4 @@
+interface:
+  display_name: "Discover Companies"
+  short_description: "Find and import target company accounts"
+  default_prompt: "Use $discover-companies to find and import companies matching this audience: Porsche dealerships similar to my best accounts."

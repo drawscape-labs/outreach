@@ -42,7 +42,12 @@ export function CompanyFilters({ filters, options }) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const hasFilters = Boolean(filters.category || filters.industry || filters.contacts);
+  const hasFilters = Boolean(
+    filters.category ||
+      filters.industry ||
+      filters.priority ||
+      filters.contacts
+  );
 
   function updateFilter(name, value) {
     const params = new URLSearchParams(searchParams.toString());
@@ -82,6 +87,14 @@ export function CompanyFilters({ filters, options }) {
         }))}
         value={filters.industry}
         widthClass="sm:w-96"
+      />
+      <FilterSelect
+        emptyLabel="All priorities"
+        label="Priority"
+        name="priority"
+        onChange={updateFilter}
+        options={options.priorities}
+        value={filters.priority}
       />
       <FilterSelect
         emptyLabel="All contacts"

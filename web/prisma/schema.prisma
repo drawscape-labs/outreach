@@ -15,6 +15,7 @@ model Company {
   websiteUrl         String?    @map("website_url")
   description        String?
   category           String?
+  priority           String     @default("medium")
   industry           String?
   location           String?
   employeeCount      Int?       @map("employee_count")

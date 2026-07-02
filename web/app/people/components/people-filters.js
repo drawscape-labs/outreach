@@ -48,7 +48,9 @@ export function PeopleFilters({ filters, options }) {
       filters.qualified ||
       filters.email ||
       filters.linkedin ||
-      filters.industry
+      filters.category ||
+      filters.industry ||
+      filters.priority
   );
 
   function replaceWithParams(params) {
@@ -67,6 +69,16 @@ export function PeopleFilters({ filters, options }) {
     if (name === "industry") {
       params.delete("companyIndustry");
       params.delete("company_industry");
+    }
+
+    if (name === "category") {
+      params.delete("companyCategory");
+      params.delete("company_category");
+    }
+
+    if (name === "priority") {
+      params.delete("companyPriority");
+      params.delete("company_priority");
     }
 
     if (name === "linkedin") {
@@ -92,9 +104,15 @@ export function PeopleFilters({ filters, options }) {
     params.delete("linkedin");
     params.delete("linkedinProfile");
     params.delete("linkedin_profile");
+    params.delete("category");
+    params.delete("companyCategory");
+    params.delete("company_category");
     params.delete("industry");
     params.delete("companyIndustry");
     params.delete("company_industry");
+    params.delete("priority");
+    params.delete("companyPriority");
+    params.delete("company_priority");
     params.delete("page");
 
     replaceWithParams(params);
@@ -147,6 +165,15 @@ export function PeopleFilters({ filters, options }) {
         value={filters.linkedin}
       />
       <FilterSelect
+        emptyLabel="All categories"
+        label="Company category"
+        name="category"
+        onChange={updateFilter}
+        options={options?.categories || []}
+        value={filters.category}
+        widthClass="sm:w-52"
+      />
+      <FilterSelect
         emptyLabel="All industries"
         label="Company industry"
         name="industry"
@@ -157,6 +184,15 @@ export function PeopleFilters({ filters, options }) {
         }))}
         value={filters.industry}
         widthClass="sm:w-64"
+      />
+      <FilterSelect
+        emptyLabel="All priorities"
+        label="Company priority"
+        name="priority"
+        onChange={updateFilter}
+        options={options?.priorities || []}
+        value={filters.priority}
+        widthClass="sm:w-52"
       />
       {hasFilters ? (
         <Button

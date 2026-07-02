@@ -17,6 +17,7 @@ import {
   COMPANY_FIELD_ALIASES,
   COMPANY_FIELDS,
   COMPANY_FILTER_PARAMS,
+  COMPANY_PRIORITIES,
   COMPANY_REVALIDATION_PATHS
 } from "./schema";
 
@@ -28,6 +29,7 @@ const companySelect = {
   websiteUrl: true,
   description: true,
   category: true,
+  priority: true,
   industry: true,
   location: true,
   employeeCount: true,
@@ -46,6 +48,7 @@ export const companyListSelect = {
   websiteUrl: true,
   description: true,
   category: true,
+  priority: true,
   industry: true,
   location: true,
   employeeCount: true,
@@ -77,6 +80,7 @@ export const companyDetailSelect = {
   websiteUrl: true,
   description: true,
   category: true,
+  priority: true,
   industry: true,
   location: true,
   employeeCount: true,
@@ -182,6 +186,19 @@ const companyTextFields = [
     nullAsUndefinedOnCreate: true
   },
   {
+    allowedValues: COMPANY_PRIORITIES,
+    column: COMPANY_FIELDS.priority,
+    invalidMessage: COMPANY_API_MESSAGES.invalidPriority,
+    label: "priority",
+    names: COMPANY_FIELD_ALIASES.priority,
+    normalize: normalizeLowercaseText,
+    validate(value) {
+      if (value === null) {
+        throw new ApiError(COMPANY_API_MESSAGES.invalidPriority);
+      }
+    }
+  },
+  {
     column: COMPANY_FIELDS.industry,
     label: "industry",
     names: COMPANY_FIELD_ALIASES.industry,
@@ -244,6 +261,7 @@ export function companyJson(company) {
     websiteUrl: company.websiteUrl,
     description: company.description,
     category: company.category,
+    priority: company.priority,
     industry: company.industry,
     location: company.location,
     employeeCount: company.employeeCount,
@@ -279,6 +297,7 @@ export function companyTableRow(company) {
     websiteUrl: company.websiteUrl,
     description: company.description,
     category: company.category,
+    priority: company.priority,
     industry: company.industry,
     location: company.location,
     employeeCount: company.employeeCount,
@@ -310,6 +329,10 @@ export function listCompanies(searchParams) {
   const category = searchParams.get(COMPANY_FILTER_PARAMS.category[0])?.trim();
   const domain = searchParams.get(COMPANY_FILTER_PARAMS.domain[0])?.trim();
   const industry = searchParams.get(COMPANY_FILTER_PARAMS.industry[0])?.trim();
+  const priority = searchParams
+    .get(COMPANY_FILTER_PARAMS.priority[0])
+    ?.trim()
+    .toLowerCase();
   const linkedinCompanyUrl =
     searchParams.get(COMPANY_FILTER_PARAMS.linkedinCompanyUrl[0])?.trim() ||
     searchParams.get(COMPANY_FILTER_PARAMS.linkedinCompanyUrl[1])?.trim();
@@ -318,6 +341,14 @@ export function listCompanies(searchParams) {
 
   if (category) {
     where.category = category;
+  }
+
+  if (priority) {
+    if (!COMPANY_PRIORITIES.includes(priority)) {
+      throw new ApiError(COMPANY_API_MESSAGES.invalidPriority);
+    }
+
+    where.priority = priority;
   }
 
   if (domain) {

@@ -11,6 +11,11 @@ import {
   readPositiveInteger
 } from "../lib/model-helpers";
 import {
+  COMPANY_API_MESSAGES,
+  COMPANY_CATEGORIES,
+  COMPANY_PRIORITIES
+} from "../companies/schema";
+import {
   PERSON_API_MESSAGES,
   PERSON_EMAIL_FILTER_VALUES,
   PERSON_FIELD_ALIASES,
@@ -468,6 +473,14 @@ function peopleWhere(searchParams, { currentPositionsOnly = false } = {}) {
     searchParams,
     PERSON_FILTER_PARAMS.companyIndustry
   );
+  const companyCategory = searchParamValue(
+    searchParams,
+    PERSON_FILTER_PARAMS.companyCategory
+  );
+  const companyPriority = searchParamValue(
+    searchParams,
+    PERSON_FILTER_PARAMS.companyPriority
+  ).toLowerCase();
   const qualified = readBooleanFilter(
     searchParamValue(searchParams, PERSON_FILTER_PARAMS.qualified),
     "qualified"
@@ -534,10 +547,30 @@ function peopleWhere(searchParams, { currentPositionsOnly = false } = {}) {
     positionFilter.companyId = readPositiveInteger(companyId, "companyId");
   }
 
+  const companyFilter = {};
+
+  if (companyCategory) {
+    if (!COMPANY_CATEGORIES.includes(companyCategory)) {
+      throw new ApiError(COMPANY_API_MESSAGES.invalidCategory);
+    }
+
+    companyFilter.category = companyCategory;
+  }
+
   if (companyIndustry) {
-    positionFilter.company = {
-      industry: companyIndustry
-    };
+    companyFilter.industry = companyIndustry;
+  }
+
+  if (companyPriority) {
+    if (!COMPANY_PRIORITIES.includes(companyPriority)) {
+      throw new ApiError(COMPANY_API_MESSAGES.invalidPriority);
+    }
+
+    companyFilter.priority = companyPriority;
+  }
+
+  if (Object.keys(companyFilter).length > 0) {
+    positionFilter.company = companyFilter;
   }
 
   if (Object.keys(positionFilter).length > 0) {

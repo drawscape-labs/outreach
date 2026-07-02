@@ -33,7 +33,8 @@ Drawscape Outreach company writes must go through the web app API, not direct SQ
     "industries": [],
     "categories": [],
     "tags": [],
-    "business_model": "b2b|b2c|b2b2c|marketplace|nonprofit|government|unknown"
+    "business_model": "b2b|b2c|b2b2c|marketplace|nonprofit|government|unknown",
+    "priority": "high|medium|low|unknown"
   },
   "location": {
     "headquarters": {
@@ -104,6 +105,7 @@ Use one evidence entry per source or per field when the target schema supports i
 - `linkedin_url`: normalized LinkedIn company page URL, not a personal profile. In the Drawscape Outreach `companies` table this maps to `linkedin_company_url`, which must be unique.
 - `social_urls`: array of objects with `platform` and `url` if the schema allows objects; otherwise array of URLs.
 - `industries`, `categories`, `tags`: lowercase slugs unless the project uses title-cased labels.
+- `priority`: for Drawscape Outreach, map top-level `priority` or `classification.priority` to `companies.priority`. Use only `high`, `medium`, or `low`; omit unknown priority rather than writing a placeholder value.
 - `country_code`: ISO 3166-1 alpha-2.
 - `founded_year`: integer year only.
 - `employee_count`: concrete integer total headcount only when a source reports one. Use evidence confidence to distinguish official counts from secondary/platform estimates.
@@ -132,6 +134,16 @@ Aim to fill these high-value fields when evidence exists:
 - evidence and confidence
 
 Leave fields null or empty when not supported by evidence. Do not substitute prose like "not available" inside data fields unless the project schema requires strings.
+
+## Drawscape Outreach Priority Rules
+
+For Drawscape Outreach, company `priority` is a fit score with values `high`, `medium`, or `low`.
+
+- Use `high` for yacht brokers with current evidence of sailboat, sailing yacht, sail catamaran, or sail-focused brokerage/listing presence.
+- Use `low` for yacht brokers only when evidence shows they are strictly a superyacht broker and do not sell or broker sailboats, sailing yachts, powerboats, motor yachts, or other non-superyacht boats.
+- Use `medium` for yacht brokers that sell or broker powerboats/motor yachts but have no verified sailboat presence.
+- Use `medium` when a yacht broker is described only generically and the evidence does not prove the sailboat/high-priority or strict-superyacht/low-priority case.
+- Preserve a user-provided priority unless current evidence clearly contradicts it; note the reason when changing priority during enrichment.
 
 ## Company Upsert Rules
 

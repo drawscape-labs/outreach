@@ -83,3 +83,11 @@ Stable fields still need evidence, but may be accepted from older sources:
 - Infer B2B/B2C from customers, pricing, product language, and sales motion.
 - Do not infer revenue, employee count/headcount, or funding from company size language such as "fast-growing."
 - Record inferred values with `medium` or `low` confidence unless backed by direct evidence.
+
+## Yacht Broker Priority Evidence
+
+- Verify yacht broker priority from current company-owned pages, listing inventory, brand/dealer pages, or authoritative directories.
+- Treat sailboat, sailing yacht, sail catamaran, yacht racing, or sailing brokerage inventory as evidence for `high` priority.
+- Treat powerboat, motor yacht, outboard/inboard boat, or general boat sales as evidence that the company is not a strict superyacht-only broker; use `medium` unless sailboat evidence supports `high`.
+- Set `low` only when evidence supports both parts of the rule: the company is strictly a superyacht broker and it lacks sailboat, sailing yacht, powerboat, motor-yacht, or general boat brokerage/sales presence.
+- If the available source language is generic, such as only "yacht brokerage" or "luxury yachts," keep priority `medium` and list priority as a review note when producing an enriched record.
