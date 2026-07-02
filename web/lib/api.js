@@ -81,6 +81,14 @@ export const peopleApi = {
   }
 };
 
+export const campaignsApi = {
+  sync() {
+    return apiRequest("/api/campaigns/sync", {
+      method: "POST"
+    });
+  }
+};
+
 export const quickmailApi = {
   async listCampaigns() {
     const payload = await apiRequest("/api/quickmail/campaigns");

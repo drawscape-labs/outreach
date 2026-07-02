@@ -11,6 +11,7 @@ let localEnvCache;
 
 const QUICKMAIL_OPERATION_NAMES = {
   getLead: "GetQuickmailLead",
+  listArchivedCampaigns: "ListArchivedQuickmailCampaigns",
   listCampaigns: "ListQuickmailCampaigns",
   searchLeads: "SearchQuickmailLeads"
 };
@@ -116,6 +117,7 @@ const QUICKMAIL_OPERATIONS = {
                 name
                 paused
                 appUrl
+                createdAt
                 leadStatus {
                   active
                   available
@@ -125,6 +127,24 @@ const QUICKMAIL_OPERATIONS = {
                 }
               }
             }
+          }
+        }
+      }
+    `,
+    variables() {
+      return { variables: {} };
+    }
+  },
+  [QUICKMAIL_OPERATION_NAMES.listArchivedCampaigns]: {
+    query: `
+      query ListArchivedQuickmailCampaigns {
+        campaigns(archived: true, first: 100) {
+          nodes {
+            id
+            name
+            paused
+            appUrl
+            createdAt
           }
         }
       }
@@ -546,6 +566,14 @@ export async function listQuickmailCampaigns({ text = "", first = 50, skip = 0 }
     : campaigns;
 
   return filteredCampaigns.slice(skip, skip + first);
+}
+
+export async function listArchivedQuickmailCampaigns() {
+  const data = await quickmailGraphql(
+    readQuickmailOperation(QUICKMAIL_OPERATION_NAMES.listArchivedCampaigns)
+  );
+
+  return data.campaigns.nodes;
 }
 
 export async function addQuickmailLeadsToCampaign({ campaignId, leadIds }) {

@@ -30,6 +30,24 @@ model Company {
   @@map("companies")
 }
 
+model Campaign {
+  id                  Int       @id @default(autoincrement())
+  quickmailCampaignId String    @unique(map: "campaigns_quickmail_campaign_id_idx") @map("quickmail_campaign_id")
+  name                String
+  workspaceId         String?   @map("workspace_id")
+  workspaceName       String?   @map("workspace_name")
+  paused              Boolean   @default(false)
+  archived            Boolean   @default(false)
+  appUrl              String?   @map("app_url")
+  quickmailCreatedAt  DateTime? @map("quickmail_created_at")
+  lastSyncedAt        DateTime? @map("last_synced_at")
+  notes               String?
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  @@map("campaigns")
+}
+
 model Person {
   id                 Int        @id @default(autoincrement())
   profileKey         String     @unique(map: "sqlite_autoindex_people_1") @map("profile_key")

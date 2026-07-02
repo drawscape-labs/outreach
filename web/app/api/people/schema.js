@@ -110,8 +110,5 @@ export const PERSON_API_MESSAGES = {
 export const PERSON_REVALIDATION_PATHS = [
   "/",
   "/people",
-  "/companies",
-  "/contacted",
-  "/replied",
-  "/converted"
+  "/companies"
 ];

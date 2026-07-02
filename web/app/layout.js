@@ -15,9 +15,7 @@ export const metadata = {
 const navigation = [
   { name: "Companies", href: "/companies" },
   { name: "People", href: "/people" },
-  { name: "Contacted", href: "/contacted" },
-  { name: "Replied", href: "/replied" },
-  { name: "Converted", href: "/converted" }
+  { name: "Campaigns", href: "/campaigns" }
 ];
 
 const themeScript = `

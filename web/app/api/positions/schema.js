@@ -50,8 +50,5 @@ export const POSITION_API_MESSAGES = {
 export const POSITION_REVALIDATION_PATHS = [
   "/",
   "/people",
-  "/companies",
-  "/contacted",
-  "/replied",
-  "/converted"
+  "/companies"
 ];
