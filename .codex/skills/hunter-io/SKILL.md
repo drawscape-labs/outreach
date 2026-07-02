@@ -1,6 +1,6 @@
 ---
 name: hunter-io
-description: Use the Hunter.io API for Drawscape Outreach prospecting. Use when the user asks to run Hunter domain search, find a likely work email, verify email deliverability, enrich a person/company/email, smoke test the Hunter key, or prepare Hunter-backed evidence before QuickMail outreach or SQLite email updates.
+description: Use the Hunter.io API for Drawscape Outreach prospecting. Use when the user asks to run Hunter domain search, find a likely work email, verify email deliverability, enrich a person/company/email, smoke test the Hunter key, or prepare Hunter-backed evidence before QuickMail outreach or API-backed email updates.
 ---
 
 # Hunter.io
@@ -11,11 +11,17 @@ Use Hunter.io as a secondary prospecting and verification source for Drawscape O
 
 - Load credentials from `HUNTER_API_KEY` in `.env` or the process environment.
 - Prefer `scripts/hunter-api.js` for API calls; it sends the key in the `X-API-KEY` header and does not print secrets.
-- Default to research-only. Do not write Hunter results into `data/outreach.sqlite` unless the user explicitly asks to save/update records.
+- Default to research-only. Do not write Hunter results into the app database/API unless the user explicitly asks to save/update records.
 - Work with professional emails only. Reject webmail, disposable, consumer, or role emails for person outreach unless the user explicitly asks for generic contact discovery.
 - Treat Hunter as secondary evidence. For database updates, preserve the `$find-person-email` rule: save only exact work emails after explicit approval, and prefer direct public source evidence when available.
 - Honor Hunter 451 `claimed_email` responses: do not process, store, or retry that person/email.
 - Do not scrape logged-in LinkedIn pages or use Hunter LinkedIn handles to bypass access controls.
+
+## Working Directory
+
+- Put generated Hunter files under `.codex/tmp/hunter-io/<domain-person-or-run>/`.
+- Use relevant subfolders such as `inputs/`, `outputs/`, `logs/`, `evidence/`, and `scratch/` for request payloads, raw API responses, summaries, verification reports, and saved evidence.
+- Do not write Hunter exports, API responses, evidence reports, or scratch files to `data/`, `/private/tmp`, or a root-level `tmp/` directory.
 
 ## Required References
 

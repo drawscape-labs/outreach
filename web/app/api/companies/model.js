@@ -321,7 +321,13 @@ export function listCompanies(searchParams) {
   }
 
   if (domain) {
-    identityFilters.push({ domain: normalizeDomain(domain) });
+    const normalizedDomain = normalizeDomain(domain);
+
+    if (!normalizedDomain) {
+      throw new ApiError(COMPANY_API_MESSAGES.invalidDomain);
+    }
+
+    identityFilters.push({ domain: normalizedDomain });
   }
 
   if (industry) {

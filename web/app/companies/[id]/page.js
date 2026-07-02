@@ -125,6 +125,7 @@ function getCodexLaunchStatus(searchParams) {
   return {
     state,
     pid: firstSearchParam(searchParams, "codexPid"),
+    skill: firstSearchParam(searchParams, "codexSkill"),
     message: firstSearchParam(searchParams, "codexMessage")
   };
 }

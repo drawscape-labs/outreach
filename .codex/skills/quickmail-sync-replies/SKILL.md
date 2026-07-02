@@ -1,6 +1,6 @@
 ---
 name: quickmail-sync-replies
-description: Sync replied QuickMail prospects into the Drawscape Outreach SQLite database. Use when the user asks to fetch, import, reconcile, or apply recent QuickMail reply events, QuickMail/Zapier reply exports, or webhook payloads so matching people rows in data/outreach.sqlite are marked Replied.
+description: Sync replied QuickMail prospects into the Drawscape Outreach database through the web app API. Use when the user asks to fetch, import, reconcile, or apply recent QuickMail reply events, QuickMail/Zapier reply exports, or webhook payloads so matching people rows are marked Replied.
 ---
 
 # QuickMail Sync Replies
@@ -9,22 +9,33 @@ Sync QuickMail reply events to `people.status = 'Replied'` in the Drawscape Outr
 
 ## Defaults
 
-- Default to dry-run. Do not write to `data/outreach.sqlite` unless the user explicitly asks to apply/save/update.
+- Default to dry-run. Do not write unless the user explicitly asks to apply/save/update; applies must go through the web app API so model validation and revalidation run.
 - Match by `people.quickmail_lead_id` first, then by exact normalized `people.email`.
 - Never infer a person from name, company, or fuzzy email. Report unmatched or ambiguous rows for review.
 - Only set status to `Replied`; do not change emails, qualification, notes, companies, or positions.
 - Preserve existing `Replied` rows and report them as already replied.
 - Current QuickMail v2 GraphQL docs/schema do not expose a historical per-lead reply feed. If a user asks to fetch directly from QuickMail, run the script without `--source` or with `--probe-api` to confirm capability, then use a reply export/webhook payload unless the API has added reply-level fields.
 
+## Working Directory
+
+- Put generated QuickMail sync files under `.codex/tmp/quickmail-sync-replies/<run-or-source>/`.
+- Use relevant subfolders such as `inputs/`, `outputs/`, `logs/`, `evidence/`, and `scratch/` for imported reply exports, normalized events, dry-run reports, apply reports, API probes, and troubleshooting logs.
+- Do not write QuickMail exports, sync reports, webhook captures, or scratch files to `data/`, `/private/tmp`, or a root-level `tmp/` directory.
+
 ## Quick Start
 
 Dry-run a reply event file:
 
 ```bash
+RUN_DIR=.codex/tmp/quickmail-sync-replies/replies-$(date -u +%Y%m%dT%H%M%SZ)
+mkdir -p "$RUN_DIR"/{inputs,outputs,logs,scratch}
+cp path/to/quickmail-replies.csv "$RUN_DIR/inputs/replies.csv"
+
 node .codex/skills/quickmail-sync-replies/scripts/sync-quickmail-replies.js \
   --days 14 \
-  --source path/to/quickmail-replies.csv \
-  --db data/outreach.sqlite
+  --source "$RUN_DIR/inputs/replies.csv" \
+  --api-base http://localhost:4200 \
+  > "$RUN_DIR/outputs/dry-run.json"
 ```
 
 Apply the same sync after reviewing the dry-run report:
@@ -32,15 +43,17 @@ Apply the same sync after reviewing the dry-run report:
 ```bash
 node .codex/skills/quickmail-sync-replies/scripts/sync-quickmail-replies.js \
   --days 14 \
-  --source path/to/quickmail-replies.csv \
-  --db data/outreach.sqlite \
-  --apply
+  --source "$RUN_DIR/inputs/replies.csv" \
+  --api-base http://localhost:4200 \
+  --apply \
+  > "$RUN_DIR/outputs/apply.json"
 ```
 
 Probe whether the live QuickMail API exposes historical reply fetch fields:
 
 ```bash
-node .codex/skills/quickmail-sync-replies/scripts/sync-quickmail-replies.js --probe-api
+node .codex/skills/quickmail-sync-replies/scripts/sync-quickmail-replies.js --probe-api \
+  > "$RUN_DIR/outputs/api-probe.json"
 ```
 
 ## Accepted Sources
@@ -58,14 +71,10 @@ Read `references/quickmail-reply-sources.md` when deciding what source to use or
 
 ## Workflow
 
-1. Inspect the live database when needed:
+1. Inspect the live API when needed:
 
    ```bash
-   sqlite3 -header -column data/outreach.sqlite "
-   SELECT id, name, email, quickmail_lead_id, status
-   FROM people
-   WHERE quickmail_lead_id IS NOT NULL OR email IS NOT NULL
-   ORDER BY status, name;"
+   curl -sS http://localhost:4200/api/people > "$RUN_DIR/outputs/people-api.json"
    ```
 
 2. If the user provided a file path, run the script in dry-run mode with the requested `--days`.
@@ -73,20 +82,16 @@ Read `references/quickmail-reply-sources.md` when deciding what source to use or
    - `matched` lists local people that would be or were marked `Replied`.
    - `unmatched` lists QuickMail replies that did not map to exactly one person.
    - `skipped` lists stale, non-reply, or undated events.
-4. Apply only after the user asks for a write:
+4. Apply only after the user asks for a write, with the web app running:
 
    ```bash
-   node .codex/skills/quickmail-sync-replies/scripts/sync-quickmail-replies.js --days DAYS --source SOURCE --db data/outreach.sqlite --apply
+   node .codex/skills/quickmail-sync-replies/scripts/sync-quickmail-replies.js --days DAYS --source "$RUN_DIR/inputs/replies.csv" --api-base http://localhost:4200 --apply > "$RUN_DIR/outputs/apply.json"
    ```
 
-5. After applying, confirm with SQLite:
+5. After applying, confirm through the API:
 
    ```bash
-   sqlite3 -header -column data/outreach.sqlite "
-   SELECT id, name, email, quickmail_lead_id, status, updated_at
-   FROM people
-   WHERE status = 'Replied'
-   ORDER BY updated_at DESC, name;"
+   curl -sS "http://localhost:4200/api/people?status=Replied" > "$RUN_DIR/outputs/replied-readback.json"
    ```
 
 ## Output

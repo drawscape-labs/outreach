@@ -3,7 +3,6 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 
-const DEFAULT_DB = "data/outreach.sqlite";
 const DEFAULT_DAYS = 7;
 const QUICKMAIL_GRAPHQL_ENDPOINT = "https://api.quickmail.com/v2/graphql";
 
@@ -88,13 +87,14 @@ function parseArgs(argv) {
 function usage() {
   return [
     "Usage:",
-    "  node sync-quickmail-replies.js --days 14 --source replies.csv --db data/outreach.sqlite [--apply]",
+    "  node sync-quickmail-replies.js --days 14 --source replies.csv [--api-base http://localhost:4200] [--apply]",
     "  node sync-quickmail-replies.js --probe-api",
     "",
     "Options:",
     "  --source <path>       JSON, NDJSON, or CSV reply events/export.",
     "  --days <n>            Keep replies from the last n days. Default: 7.",
-    "  --db <path>           SQLite database. Default: data/outreach.sqlite.",
+    "  --db <path>           Optional read-only SQLite fallback for matching. Default: use the web app API.",
+    "  --api-base <url>      Web app API base for writes. Default: http://localhost:4200.",
     "  --apply               Write people.status = 'Replied'. Dry-run without this flag.",
     "  --include-undated     Include events with no parseable date.",
     "  --first-time-only     Skip events whose first_time/firstTime field is false.",
@@ -312,15 +312,41 @@ function runSqliteJson(dbPath, sql) {
   return output ? JSON.parse(output) : [];
 }
 
-function runSqliteExec(dbPath, sql) {
-  const result = spawnSync("sqlite3", ["-bail", dbPath], {
-    input: sql,
-    encoding: "utf8"
-  });
+function apiBaseUrl(value) {
+  return String(value || "http://localhost:4200").replace(/\/+$/, "");
+}
 
-  if (result.status !== 0) {
-    fail(result.stderr.trim() || result.stdout.trim() || `sqlite3 exited with ${result.status}`);
+async function apiJson(apiBase, apiPath, { method = "GET", body } = {}) {
+  const url = `${apiBase}${apiPath}`;
+  const init = { method };
+
+  if (body !== undefined) {
+    init.headers = { "content-type": "application/json" };
+    init.body = JSON.stringify(body);
   }
+
+  let response;
+  try {
+    response = await fetch(url, init);
+  } catch (error) {
+    throw new Error(
+      `Could not reach ${url}. Start the web app with \`npm run dev -- --port 4200\`, or pass --api-base. ${error.message}`
+    );
+  }
+
+  const text = await response.text();
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = {};
+  }
+
+  if (!response.ok) {
+    throw new Error(`${method} ${apiPath} failed (${response.status}): ${data.error || text}`);
+  }
+
+  return data;
 }
 
 function groupBy(rows, getKey) {
@@ -358,20 +384,7 @@ function findPerson(event, peopleByLeadId, peopleByEmail) {
   return { method: event.quickmailLeadId ? "quickmail_lead_id" : "email", person: null };
 }
 
-function prepareSync({ dbPath, events, cutoff, includeUndated, firstTimeOnly }) {
-  const people = runSqliteJson(
-    dbPath,
-    `SELECT id,
-            name,
-            email,
-            lower(email) AS normalizedEmail,
-            quickmail_lead_id AS quickmailLeadId,
-            status
-     FROM people
-     WHERE quickmail_lead_id IS NOT NULL
-        OR (email IS NOT NULL AND email != '');`
-  );
-
+function prepareSync({ people, events, cutoff, includeUndated, firstTimeOnly }) {
   const peopleByLeadId = groupBy(people, (person) => person.quickmailLeadId);
   const peopleByEmail = groupBy(people, (person) => normalizeEmail(person.normalizedEmail || person.email));
   const skipped = [];
@@ -460,7 +473,7 @@ function prepareSync({ dbPath, events, cutoff, includeUndated, firstTimeOnly }) 
   return { people, matched, unmatched, skipped };
 }
 
-function applySync(dbPath, matched) {
+async function applySync(apiBase, matched) {
   const ids = Array.from(
     new Set(
       matched
@@ -471,17 +484,43 @@ function applySync(dbPath, matched) {
 
   if (!ids.length) return 0;
 
-  runSqliteExec(
-    dbPath,
-    `BEGIN;
-     UPDATE people
-     SET status = 'Replied'
-     WHERE id IN (${ids.join(", ")})
-       AND status != 'Replied';
-     COMMIT;`
-  );
+  for (const id of ids) {
+    await apiJson(apiBase, `/api/people/${id}`, {
+      method: "PATCH",
+      body: { status: "Replied" }
+    });
+  }
 
   return ids.length;
+}
+
+async function fetchPeopleFromApi(apiBase) {
+  const data = await apiJson(apiBase, "/api/people");
+  return (data.people || [])
+    .filter((person) => person.quickmailLeadId || person.email)
+    .map((person) => ({
+      id: person.id,
+      name: person.name,
+      email: person.email || null,
+      normalizedEmail: normalizeEmail(person.email),
+      quickmailLeadId: person.quickmailLeadId || null,
+      status: person.status
+    }));
+}
+
+function readPeopleFromSqlite(dbPath) {
+  return runSqliteJson(
+    dbPath,
+    `SELECT id,
+            name,
+            email,
+            lower(email) AS normalizedEmail,
+            quickmail_lead_id AS quickmailLeadId,
+            status
+     FROM people
+     WHERE quickmail_lead_id IS NOT NULL
+        OR (email IS NOT NULL AND email != '');`
+  );
 }
 
 function parseEnvValue(value) {
@@ -623,7 +662,8 @@ async function main() {
   }
 
   const sourcePath = args.source || args._[0] || "";
-  const dbPath = args.db || DEFAULT_DB;
+  const dbPath = args.db || "";
+  const apiBase = apiBaseUrl(args["api-base"] || process.env.QUICKMAIL_SYNC_API_BASE || process.env.DRAWSCAPE_API_BASE);
   const days = args.days === undefined ? DEFAULT_DAYS : Number(args.days);
   const now = args.now ? parseDate(args.now) : new Date();
 
@@ -665,28 +705,31 @@ async function main() {
     fail(`Source not found: ${sourcePath}`, 2);
   }
 
-  if (!fs.existsSync(dbPath)) {
+  if (dbPath && !fs.existsSync(dbPath)) {
     fail(`Database not found: ${dbPath}`, 2);
   }
 
   const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
   const rawEvents = parseSource(sourcePath);
   const events = rawEvents.map(normalizeEvent);
+  const people = dbPath ? readPeopleFromSqlite(dbPath) : await fetchPeopleFromApi(apiBase);
   const sync = prepareSync({
-    dbPath,
+    people,
     events,
     cutoff,
     includeUndated: Boolean(args["include-undated"]),
     firstTimeOnly: Boolean(args["first-time-only"])
   });
-  const changedCount = args.apply ? applySync(dbPath, sync.matched) : 0;
+  const changedCount = args.apply ? await applySync(apiBase, sync.matched) : 0;
   const markReplied = sync.matched.filter((item) => item.action === "mark_replied").length;
   const alreadyReplied = sync.matched.filter((item) => item.action === "already_replied").length;
 
   const report = {
     ok: true,
     mode: args.apply ? "applied" : "dry-run",
-    db: dbPath,
+    api_base: apiBase,
+    people_source: dbPath ? "sqlite" : "api",
+    db: dbPath || null,
     source: sourcePath,
     days,
     now: now.toISOString(),

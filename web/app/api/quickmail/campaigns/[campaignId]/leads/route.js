@@ -1,4 +1,3 @@
-import { revalidatePath } from "next/cache";
 import {
   addQuickmailLeadsToCampaign,
   createOrReuseQuickmailLead,
@@ -7,9 +6,13 @@ import {
 } from "../../../../../../lib/quickmail";
 import { buildQuickmailPlaceholderEmail } from "../../../../../../lib/placeholder-email";
 import prisma from "../../../../../../lib/prisma";
+import { ApiError } from "../../../../lib/model-helpers";
 import {
-  PERSON_API_MESSAGES,
-  PERSON_STATUS
+  revalidatePerson,
+  syncPersonQuickmailState
+} from "../../../../people/model";
+import {
+  PERSON_API_MESSAGES
 } from "../../../../people/schema";
 
 export const dynamic = "force-dynamic";
@@ -173,43 +176,15 @@ async function updatePersonAfterQuickmailSync({ personId, quickmailLeadId, markC
     return;
   }
 
-  await prisma.$transaction(async (tx) => {
-    const data = {};
-
-    if (leadId) {
-      const existingLeadOwner = await tx.person.findFirst({
-        where: {
-          quickmailLeadId: leadId,
-          NOT: {
-            id
-          }
-        },
-        select: {
-          id: true
-        }
-      });
-
-      if (!existingLeadOwner) {
-        data.quickmailLeadId = leadId;
-      }
-    }
-
-    if (markContacted) {
-      data.status = PERSON_STATUS.contacted;
-    }
-
-    if (Object.keys(data).length) {
-      await tx.person.update({
-        where: { id },
-        data,
-        select: { id: true }
-      });
-    }
+  const person = await syncPersonQuickmailState({
+    markContacted,
+    personId: id,
+    quickmailLeadId: leadId
   });
 
-  revalidatePath("/people");
-  revalidatePath("/contacted");
-  revalidatePath("/companies");
+  if (person) {
+    revalidatePerson(person);
+  }
 }
 
 async function readPayload(request) {
@@ -313,6 +288,10 @@ export async function POST(request, context) {
   } catch (error) {
     if (error instanceof QuickmailError) {
       return jsonError(error.message, error.status, error.details);
+    }
+
+    if (error instanceof ApiError) {
+      return jsonError(error.message, error.status);
     }
 
     return jsonError("Could not add lead to QuickMail campaign.", 500);

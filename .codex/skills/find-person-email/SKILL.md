@@ -10,7 +10,7 @@ Find a public, professional email address for a person already tracked in Drawsc
 ## Defaults
 
 - Default to research-only. Do not write through the API unless the user explicitly asks to update/save/apply the email.
-- Interface with the database through the web app API. Do not read or write `data/outreach.sqlite` directly from this skill; add or extend an API endpoint first if a needed database operation is missing.
+- Interface with the database through the web app API. Do not access the SQLite database directly from this skill; add or extend an API endpoint first if a needed database operation is missing.
 - Find work emails only. Do not search for or store personal email addresses.
 - Use current public sources. Staff pages, email formats, and roles change often.
 - Always check the company's own website before broader web search or secondary sources.
@@ -20,6 +20,12 @@ Find a public, professional email address for a person already tracked in Drawsc
 - Do not scrape logged-in LinkedIn pages, bypass access controls, solve CAPTCHAs, use leaked datasets, or collect paywalled/member-only information.
 - Do not send test emails or perform SMTP probing unless the user explicitly approves a compliant verification tool.
 - If evidence is weak or conflicting, return `needs_review` instead of guessing.
+
+## Working Directory
+
+- Put generated email-research files under `.codex/tmp/find-person-email/<person-or-run>/`.
+- Use relevant subfolders such as `inputs/`, `outputs/`, `logs/`, `evidence/`, and `scratch/` for API readbacks, evidence notes, dry-run output, apply output, and source snapshots.
+- Do not write generated artifacts, evidence reports, exports, or scratch files to `data/`, `/private/tmp`, or a root-level `tmp/` directory.
 
 ## Workflow
 

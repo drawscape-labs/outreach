@@ -16,6 +16,12 @@ Before producing a full enriched record, read:
 
 If the active repo already has a company/account schema, inspect it first and map the enriched data to that schema. Use the canonical schema only when no project-specific schema is available.
 
+## Working Directory
+
+- Put generated enrichment files under `.codex/tmp/enrich-company/<company-or-domain>/`.
+- Use relevant subfolders such as `inputs/`, `outputs/`, `logs/`, `evidence/`, and `scratch/` for normalized input, enriched JSON, source notes, API plan output, dry-run output, and apply output.
+- Do not write generated artifacts, exports, reports, or scratch files to `data/`, `/private/tmp`, or a root-level `tmp/` directory.
+
 ## Workflow
 
 1. Classify the input:
@@ -47,7 +53,7 @@ If the active repo already has a company/account schema, inspect it first and ma
 When the user wants the record written into a codebase or database:
 
 - Inspect migrations, models, seed files, import scripts, and API contracts with `rg`.
-- For Drawscape Outreach, interface with the database through the web app API. Do not read or write `data/outreach.sqlite` directly from this skill; add or extend an API endpoint first if a needed database operation is missing.
+- For Drawscape Outreach, interface with the database through the web app API. Do not read or write the SQLite database directly from this skill; add or extend an API endpoint first if a needed database operation is missing.
 - Ensure the web app is reachable at `http://localhost:4200`; start it with `npm run dev -- --port 4200` if needed.
 - Use `node .codex/skills/enrich-company/scripts/upsert-company-api.js <company.json> --api-base http://localhost:4200 --apply` for company writes. Run the same command without `--apply` to preview the API payload and insert/update plan.
 - The helper looks up existing companies through `GET /api/companies?domain=...` and `GET /api/companies?linkedin_company_url=...`, then writes through `POST /api/companies` or `PATCH /api/companies/:id`.
@@ -84,7 +90,7 @@ For conversational output, return:
 2. A compact evidence summary with links.
 3. A short list of unresolved fields worth human review.
 
-For file or database output, create or update the requested artifact and report what changed. Keep the record machine-readable; do not bury important fields in prose.
+For file or database output, create or update the requested artifact under `.codex/tmp/enrich-company/` and report what changed. Keep the record machine-readable; do not bury important fields in prose.
 
 ## Confidence
 

@@ -14,7 +14,8 @@ function valueLine(label, value) {
 
 function buildEnrichCompanyInput(company) {
   return [
-    "Enrich this existing Drawscape Outreach company and save the updated company record to data/outreach.sqlite.",
+    "Enrich this existing Drawscape Outreach company and save the updated company record through the web app API at http://localhost:4200.",
+    "Create a run directory under .codex/tmp/enrich-company/ and keep normalized input, source notes, enriched JSON, dry-run output, apply output, and logs there.",
     "Update the existing row by company ID, domain, or LinkedIn URL. Do not create a duplicate company.",
     "Set companies.date_enriched to today's ISO date when the update succeeds, then read back the row and report the changed fields.",
     "If enrichment is blocked by an identity conflict, do not write and report the conflict.",
@@ -45,11 +46,13 @@ function buildProspectInput({ company, people }) {
     .filter(Boolean);
 
   return [
-    "Prospect this existing Drawscape Outreach company and save importable results to data/outreach.sqlite.",
-    "This web-app action is explicit approval to import/upsert the company, people, positions, and verified emails that pass prospect-account validation.",
-    "Create the prospect JSON artifact under .codex/tmp/, validate it, check duplicates against data/outreach.sqlite, then run the prospect-account upsert script with --apply.",
+    "Prospect this existing Drawscape Outreach company and save importable results through the web app API at http://localhost:4200.",
+    "This web-app action is explicit approval to import/upsert the company, people, positions, and verified emails that pass prospect-account validation through the API.",
+    "Create a run directory under .codex/tmp/prospect-account/ with relevant subfolders and keep the prospect JSON, research notes, validation output, duplicate-check output, upsert output, and logs there.",
+    "Validate the prospect JSON, check duplicates through the API, then run `node .codex/skills/prospect-account/scripts/upsert-prospects.js <artifact> --api-base http://localhost:4200 --apply`.",
+    "Do not write generated files to data/. Do not access SQLite directly. If the API is unreachable or import is blocked, leave the database unchanged and report the failure.",
     "Do not create duplicate companies or people. If a duplicate or identity conflict is ambiguous, skip that record, do not write it, and report the conflict.",
-    "After import, read back the linked people for this company and report inserted, updated, skipped, and conflicted records.",
+    "After import, read back the linked people for this company through the API and report inserted, updated, skipped, and conflicted records.",
     "",
     valueLine("Company ID", company.id),
     valueLine("Company", company.name),
@@ -66,9 +69,15 @@ function buildProspectInput({ company, people }) {
 
 function initialLaunchState(status) {
   if (status?.state === "launched") {
+    const resultDirectory = status.skill
+      ? `.codex/tmp/${status.skill}/logs`
+      : ".codex/tmp";
+
     return {
       status: "success",
-      message: status.pid ? `Launched PID ${status.pid}` : "Launched"
+      message: status.pid
+        ? `Started background run PID ${status.pid}. Final result lands in ${resultDirectory}.`
+        : `Started background run. Final result lands in ${resultDirectory}.`
     };
   }
 
@@ -122,7 +131,7 @@ export function CompanyActions({ company, people = [], launchStatus }) {
       setLaunchState({
         status: "success",
         actionKey: action.key,
-        message: `${action.label} launched PID ${payload.pid}`
+        message: `${action.label} started PID ${payload.pid}. Final result lands in ${payload.logDir || `.codex/tmp/${action.skill}/logs`}.`
       });
     } catch (error) {
       setLaunchState({

@@ -1,6 +1,6 @@
 # Database Schema
 
-The Drawscape Outreach database lives at `data/outreach.sqlite`. Inspect `web/prisma/schema.prisma`, `web/prisma/migrations/`, and the live database before changing import behavior because local migrations may differ from older checked-in notes.
+Inspect `web/prisma/schema.prisma`, `web/prisma/migrations/`, and the live web app API before changing import behavior because local migrations may differ from older checked-in notes. Do not create generated files under `data/`.
 
 ## API Write Path
 

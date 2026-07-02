@@ -7,14 +7,14 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const REPO_ROOT = path.resolve(process.cwd(), "..");
-const LOG_DIR = path.join(REPO_ROOT, "data", "codex-runs");
+const LOG_ROOT = path.join(REPO_ROOT, ".codex", "tmp");
 const DEFAULT_CODEX_BIN = process.env.CODEX_BIN || "codex";
 const NO_SANDBOX_MODE = "none";
 const MAX_INPUT_LENGTH = 8000;
 
 const CODEX_SKILLS = new Map([
   ["enrich-company", { sandbox: NO_SANDBOX_MODE }],
-  ["prospect-account", { sandbox: "workspace-write" }]
+  ["prospect-account", { sandbox: NO_SANDBOX_MODE }]
 ]);
 
 function json(data, init) {
@@ -70,6 +70,10 @@ function safeName(value) {
   return value.replace(/[^a-z0-9-]/gi, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
 }
 
+function skillLogDir(skill) {
+  return path.join(LOG_ROOT, safeName(skill), "logs");
+}
+
 function checkCodex() {
   const result = spawnSync(DEFAULT_CODEX_BIN, ["--version"], {
     cwd: REPO_ROOT,
@@ -94,6 +98,9 @@ function checkCodex() {
 
 export async function GET() {
   const codex = checkCodex();
+  const logDirs = Object.fromEntries(
+    Array.from(CODEX_SKILLS.keys()).map((skill) => [skill, skillLogDir(skill)])
+  );
 
   return json({
     ok: codex.ok,
@@ -101,8 +108,11 @@ export async function GET() {
     codexVersion: codex.version,
     codexError: codex.error,
     cwd: REPO_ROOT,
-    logDir: LOG_DIR,
-    logDirExists: existsSync(LOG_DIR),
+    logRoot: LOG_ROOT,
+    logDirs,
+    logDirExists: Object.fromEntries(
+      Object.entries(logDirs).map(([skill, logDir]) => [skill, existsSync(logDir)])
+    ),
     skills: Array.from(CODEX_SKILLS.keys()),
     sandboxes: Object.fromEntries(
       Array.from(CODEX_SKILLS, ([skill, config]) => [skill, config.sandbox])
@@ -155,14 +165,15 @@ export async function POST(request) {
     return errorResponse(request, redirectTo, codex.error, 500);
   }
 
-  mkdirSync(LOG_DIR, { recursive: true });
+  const logDir = skillLogDir(skill);
+  mkdirSync(logDir, { recursive: true });
 
   const id = randomUUID();
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const name = safeName(`${timestamp}-${skill}-${id.slice(0, 8)}`);
-  const stdoutPath = path.join(LOG_DIR, `${name}.jsonl`);
-  const stderrPath = path.join(LOG_DIR, `${name}.stderr.log`);
-  const resultPath = path.join(LOG_DIR, `${name}.result.txt`);
+  const stdoutPath = path.join(logDir, `${name}.jsonl`);
+  const stderrPath = path.join(logDir, `${name}.stderr.log`);
+  const resultPath = path.join(logDir, `${name}.result.txt`);
   const prompt = buildPrompt(skill, input);
   const sandbox = skillConfig.sandbox;
 
@@ -215,7 +226,8 @@ export async function POST(request) {
   if (redirectTo) {
     return redirectWithStatus(request, redirectTo, {
       codexStatus: "launched",
-      codexPid: child.pid
+      codexPid: child.pid,
+      codexSkill: skill
     });
   }
 
@@ -229,6 +241,7 @@ export async function POST(request) {
       cwd: REPO_ROOT,
       codexBin: DEFAULT_CODEX_BIN,
       codexVersion: codex.version,
+      logDir,
       stdoutPath,
       stderrPath,
       resultPath

@@ -16,6 +16,12 @@ Use this skill to set up Gmail/Google Workspace DNS and default web redirects fo
 - For host values shown as "default value", `@`, or blank, use the zone apex, for example `drawscape.ink`.
 - Query existing records before writes, avoid exact duplicates, then verify through both Cloudflare API and public DNS.
 
+## Working Directory
+
+- Put generated setup files under `.codex/tmp/gmail-domain-cloudflare/<domain>/`.
+- Use relevant subfolders such as `inputs/`, `outputs/`, `logs/`, `evidence/`, and `scratch/` for Google-provided values, Cloudflare payloads, before/after DNS snapshots, dig output, curl output, and verification reports.
+- Do not write generated files to `data/`, `/private/tmp`, or a root-level `tmp/` directory.
+
 ## First DNS Action: Gmail MX
 
 For a new Gmail domain, the first required DNS action is to replace existing apex MX records with this Google Workspace MX record:

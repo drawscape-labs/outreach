@@ -16,6 +16,12 @@ Use this skill for Cloudflare DNS work in the Drawscape Outreach repo.
 - Prefer idempotent changes: query existing records first, skip exact duplicates, then create or update.
 - Always verify after a write by querying the exact `type`, `name`, and `content` or target.
 
+## Working Directory
+
+- Put any generated local files under `.codex/tmp/cloudflare-dns/<zone-or-run>/`.
+- Use relevant subfolders such as `inputs/`, `outputs/`, `logs/`, `evidence/`, and `scratch/` for payloads, before/after snapshots, DNS query output, curl logs, and verification reports.
+- Do not write generated files to `data/`, `/private/tmp`, or a root-level `tmp/` directory.
+
 ## Known Access
 
 As of 2026-06-23, the repo `.env` token under `CLOUDFLARE_API_KEY` could:
