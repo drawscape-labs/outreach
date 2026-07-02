@@ -49,7 +49,6 @@ export function PeopleFilters({ filters, options }) {
       filters.email ||
       filters.linkedin ||
       filters.category ||
-      filters.industry ||
       filters.priority
   );
 
@@ -65,11 +64,9 @@ export function PeopleFilters({ filters, options }) {
     const params = new URLSearchParams(searchParams.toString());
 
     params.delete("page");
-
-    if (name === "industry") {
-      params.delete("companyIndustry");
-      params.delete("company_industry");
-    }
+    params.delete("industry");
+    params.delete("companyIndustry");
+    params.delete("company_industry");
 
     if (name === "category") {
       params.delete("companyCategory");
@@ -119,7 +116,7 @@ export function PeopleFilters({ filters, options }) {
   }
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
+    <div className="flex flex-col gap-4 xl:flex-row xl:flex-nowrap xl:items-end">
       <FilterSelect
         emptyLabel="All statuses"
         label="Status"
@@ -172,18 +169,6 @@ export function PeopleFilters({ filters, options }) {
         options={options?.categories || []}
         value={filters.category}
         widthClass="sm:w-52"
-      />
-      <FilterSelect
-        emptyLabel="All industries"
-        label="Company industry"
-        name="industry"
-        onChange={updateFilter}
-        options={(options?.industries || []).map((industry) => ({
-          label: industry,
-          value: industry
-        }))}
-        value={filters.industry}
-        widthClass="sm:w-64"
       />
       <FilterSelect
         emptyLabel="All priorities"

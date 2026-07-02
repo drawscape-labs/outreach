@@ -87,7 +87,8 @@ Stable fields still need evidence, but may be accepted from older sources:
 ## Yacht Broker Priority Evidence
 
 - Verify yacht broker priority from current company-owned pages, listing inventory, brand/dealer pages, or authoritative directories.
-- Treat sailboat, sailing yacht, sail catamaran, yacht racing, or sailing brokerage inventory as evidence for `high` priority.
-- Treat powerboat, motor yacht, outboard/inboard boat, or general boat sales as evidence that the company is not a strict superyacht-only broker; use `medium` unless sailboat evidence supports `high`.
-- Set `low` only when evidence supports both parts of the rule: the company is strictly a superyacht broker and it lacks sailboat, sailing yacht, powerboat, motor-yacht, or general boat brokerage/sales presence.
+- Treat mainstream/high-volume sailboat dealer or brokerage evidence as support for `high`: production sailboats, sailing catamarans, active used sailboat listings, or brands such as Catalina, J/Boats, Beneteau, Jeanneau, Dufour, Hanse, Lagoon, and comparable non-superyacht sail brands.
+- Do not treat "sailing yacht" language by itself as `high`. Large sailing superyachts, custom megayachts, racing superyachts, and crewed sailing-yacht charters are lower fit than popular-volume sailboat dealers.
+- Treat primarily luxury-yacht or superyacht brokerages as `low` when their sail evidence is limited to sailing superyachts, custom megayachts, crewed charters, or occasional large-yacht listings.
+- Treat powerboat, motor yacht, outboard/inboard boat, or general boat sales as `medium` unless separate evidence supports the mainstream sailboat `high` rule or the luxury/superyacht `low` rule.
 - If the available source language is generic, such as only "yacht brokerage" or "luxury yachts," keep priority `medium` and list priority as a review note when producing an enriched record.

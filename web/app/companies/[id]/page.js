@@ -5,6 +5,7 @@ import {
   ExternalAnchor,
   PageHeader,
   PageShell,
+  PriorityLevel,
   SectionHeader
 } from "../../../components";
 import { PeopleTable } from "../../people/components/people-table";
@@ -15,8 +16,7 @@ import {
   companyDetailSelect
 } from "../../api/companies/model";
 import {
-  COMPANY_CATEGORY_LABELS,
-  COMPANY_PRIORITY_LABELS
+  COMPANY_CATEGORY_LABELS
 } from "../../api/companies/schema";
 import { personFromCompanyPosition } from "../../api/people/model";
 
@@ -72,10 +72,6 @@ function formatHeadcount(company) {
 
 function formatCategory(category) {
   return COMPANY_CATEGORY_LABELS[category] || category;
-}
-
-function formatPriority(priority) {
-  return COMPANY_PRIORITY_LABELS[priority] || priority;
 }
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
@@ -210,13 +206,16 @@ export default async function CompanyDetailPage({ params, searchParams }) {
               <FieldValue value={company.category ? formatCategory(company.category) : ""} />
             </CompanyDetailItem>
             <CompanyDetailItem label="Priority">
-              <FieldValue value={company.priority ? formatPriority(company.priority) : ""} />
+              <PriorityLevel priority={company.priority} />
             </CompanyDetailItem>
             <CompanyDetailItem label="Industry">
               <FieldValue value={company.industry} />
             </CompanyDetailItem>
             <CompanyDetailItem label="Location">
               <FieldValue value={company.location} />
+            </CompanyDetailItem>
+            <CompanyDetailItem label="Country">
+              <FieldValue value={company.country} />
             </CompanyDetailItem>
           </CompanyDetailColumn>
 

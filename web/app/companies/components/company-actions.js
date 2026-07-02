@@ -29,6 +29,7 @@ function buildEnrichCompanyInput(company) {
     valueLine("Priority", company.priority),
     valueLine("Industry", company.industry),
     valueLine("Location", company.location),
+    valueLine("Country", company.country),
     valueLine("Employee count", company.employeeCount),
     valueLine("Employee count range", company.employeeCountRange),
     valueLine("Description", company.description),
@@ -64,6 +65,7 @@ function buildProspectInput({ company, people }) {
     valueLine("Priority", company.priority),
     valueLine("Industry", company.industry),
     valueLine("Location", company.location),
+    valueLine("Country", company.country),
     "Desired titles: sales reps, brokers, sales managers, general managers, client-facing sales leadership",
     peopleLines.length ? `Existing people: ${peopleLines.join("; ")}` : ""
   ].filter(Boolean).join("\n");

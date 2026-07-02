@@ -13,8 +13,28 @@ const NO_SANDBOX_MODE = "none";
 const MAX_INPUT_LENGTH = 8000;
 
 const CODEX_SKILLS = new Map([
-  ["enrich-company", { sandbox: NO_SANDBOX_MODE }],
-  ["prospect-account", { sandbox: NO_SANDBOX_MODE }]
+  [
+    "enrich-company",
+    {
+      sandbox: NO_SANDBOX_MODE,
+      model: "gpt-5.5",
+      modelReasoningEffort: "low",
+      modelVerbosity: "low",
+      serviceTier: "",
+      toolOutputTokenLimit: 8000
+    }
+  ],
+  [
+    "prospect-account",
+    {
+      sandbox: NO_SANDBOX_MODE,
+      model: "gpt-5.5",
+      modelReasoningEffort: "low",
+      modelVerbosity: "low",
+      serviceTier: "",
+      toolOutputTokenLimit: 8000
+    }
+  ]
 ]);
 
 function json(data, init) {
@@ -74,6 +94,46 @@ function skillLogDir(skill) {
   return path.join(LOG_ROOT, safeName(skill), "logs");
 }
 
+function tomlLiteral(value) {
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  return JSON.stringify(String(value));
+}
+
+function appendLaunchSettings(args, config) {
+  if (config.model) {
+    args.push("--model", config.model);
+  }
+
+  if (config.modelReasoningEffort) {
+    args.push("-c", `model_reasoning_effort=${tomlLiteral(config.modelReasoningEffort)}`);
+  }
+
+  if (config.modelVerbosity) {
+    args.push("-c", `model_verbosity=${tomlLiteral(config.modelVerbosity)}`);
+  }
+
+  if (config.serviceTier) {
+    args.push("-c", `service_tier=${tomlLiteral(config.serviceTier)}`);
+  }
+
+  if (config.toolOutputTokenLimit !== null && config.toolOutputTokenLimit !== undefined) {
+    args.push("-c", `tool_output_token_limit=${tomlLiteral(config.toolOutputTokenLimit)}`);
+  }
+}
+
+function launchSettings(config) {
+  return {
+    model: config.model,
+    modelReasoningEffort: config.modelReasoningEffort,
+    modelVerbosity: config.modelVerbosity,
+    serviceTier: config.serviceTier || null,
+    toolOutputTokenLimit: config.toolOutputTokenLimit
+  };
+}
+
 function checkCodex() {
   const result = spawnSync(DEFAULT_CODEX_BIN, ["--version"], {
     cwd: REPO_ROOT,
@@ -116,6 +176,9 @@ export async function GET() {
     skills: Array.from(CODEX_SKILLS.keys()),
     sandboxes: Object.fromEntries(
       Array.from(CODEX_SKILLS, ([skill, config]) => [skill, config.sandbox])
+    ),
+    launchSettings: Object.fromEntries(
+      Array.from(CODEX_SKILLS, ([skill, config]) => [skill, launchSettings(config)])
     )
   });
 }
@@ -190,6 +253,7 @@ export async function POST(request) {
   ];
 
   globalArgs.push("--search");
+  appendLaunchSettings(globalArgs, skillConfig);
 
   if (sandbox === NO_SANDBOX_MODE) {
     execArgs.push("--dangerously-bypass-approvals-and-sandbox");
@@ -238,6 +302,7 @@ export async function POST(request) {
       pid: child.pid,
       skill,
       sandbox,
+      launchSettings: launchSettings(skillConfig),
       cwd: REPO_ROOT,
       codexBin: DEFAULT_CODEX_BIN,
       codexVersion: codex.version,

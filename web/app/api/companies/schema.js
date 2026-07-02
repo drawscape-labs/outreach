@@ -9,6 +9,7 @@ export const COMPANY_FIELDS = {
   priority: "priority",
   industry: "industry",
   location: "location",
+  country: "country",
   employeeCount: "employeeCount",
   employeeCountRange: "employeeCountRange",
   dateEnriched: "dateEnriched",
@@ -27,6 +28,7 @@ export const COMPANY_FIELD_ALIASES = {
   priority: ["priority"],
   industry: ["industry"],
   location: ["location"],
+  country: ["country", "country_name"],
   employeeCount: ["employeeCount", "employee_count"],
   employeeCountRange: ["employeeCountRange", "employee_count_range"],
   dateEnriched: ["dateEnriched", "date_enriched"],
@@ -59,6 +61,7 @@ export const COMPANY_FILTER_PARAMS = {
   domain: ["domain"],
   industry: ["industry"],
   linkedinCompanyUrl: ["linkedinCompanyUrl", "linkedin_company_url"],
+  country: ["country", "country_name"],
   priority: ["priority"]
 };
 

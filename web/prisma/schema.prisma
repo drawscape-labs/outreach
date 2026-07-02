@@ -18,6 +18,7 @@ model Company {
   priority           String     @default("medium")
   industry           String?
   location           String?
+  country            String?
   employeeCount      Int?       @map("employee_count")
   employeeCountRange String?    @map("employee_count_range")
   dateEnriched       String?    @map("date_enriched")

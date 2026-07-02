@@ -3,9 +3,11 @@ import {
   DataTable,
   EmptyValue,
   ExternalAnchor,
+  formatPriorityLevel,
   Link,
   PageHeader,
   PageShell,
+  PriorityLevel,
   TableEmpty,
   TableBody,
   TableCell,
@@ -31,8 +33,7 @@ import {
 import {
   COMPANY_CATEGORIES,
   COMPANY_CATEGORY_LABELS,
-  COMPANY_PRIORITIES,
-  COMPANY_PRIORITY_LABELS
+  COMPANY_PRIORITIES
 } from "../api/companies/schema";
 
 export const dynamic = "force-dynamic";
@@ -40,6 +41,11 @@ export const runtime = "nodejs";
 
 const companiesPerPage = 25;
 const contactFilters = ["with_people", "without_people"];
+const prioritySortOrder = {
+  high: 0,
+  medium: 1,
+  low: 2
+};
 
 const createdDateFormatter = new Intl.DateTimeFormat("en-US", {
   day: "numeric",
@@ -107,10 +113,6 @@ function formatCategory(category) {
   return COMPANY_CATEGORY_LABELS[category] || category;
 }
 
-function formatPriority(priority) {
-  return COMPANY_PRIORITY_LABELS[priority] || priority;
-}
-
 function formatCreatedAt(value) {
   if (!value) {
     return "";
@@ -169,7 +171,7 @@ function getSort(searchParams) {
     ? "asc"
     : "desc";
 
-  if (sort === "created_at") {
+  if (sort === "created_at" || sort === "priority") {
     return { direction, sort };
   }
 
@@ -190,6 +192,24 @@ async function getCompanies(sort) {
   });
 
   return companies.map(companyTableRow);
+}
+
+function sortCompanies(companies, sort) {
+  if (sort.sort !== "priority") {
+    return companies;
+  }
+
+  return [...companies].sort((first, second) => {
+    const firstPriority = prioritySortOrder[first.priority] ?? Number.MAX_SAFE_INTEGER;
+    const secondPriority = prioritySortOrder[second.priority] ?? Number.MAX_SAFE_INTEGER;
+    const priorityComparison = firstPriority - secondPriority;
+
+    if (priorityComparison !== 0) {
+      return sort.direction === "desc" ? priorityComparison : -priorityComparison;
+    }
+
+    return first.name.localeCompare(second.name) || first.id - second.id;
+  });
 }
 
 function getUniqueValues(items, key) {
@@ -261,11 +281,11 @@ function addFiltersToParams(params, filters) {
 }
 
 function addSortToParams(params, sort) {
-  if (sort.sort !== "created_at") {
+  if (sort.sort === "name") {
     return;
   }
 
-  params.set("sort", "created_at");
+  params.set("sort", sort.sort);
   params.set("direction", sort.direction);
 }
 
@@ -297,7 +317,20 @@ function createdSortHref(filters, sort) {
   return `/companies?${params.toString()}`;
 }
 
-function CreatedSortIndicator({ direction }) {
+function prioritySortHref(filters, sort) {
+  const params = new URLSearchParams();
+  const nextDirection = sort.sort === "priority" && sort.direction === "desc"
+    ? "asc"
+    : "desc";
+
+  addFiltersToParams(params, filters);
+  params.set("sort", "priority");
+  params.set("direction", nextDirection);
+
+  return `/companies?${params.toString()}`;
+}
+
+function SortIndicator({ direction }) {
   return (
     <span className="inline-flex h-3 w-3 items-center justify-center" aria-hidden="true">
       <span
@@ -325,7 +358,25 @@ function CreatedHeader({ filters, sort }) {
       href={createdSortHref(filters, sort)}
     >
       <span>Created</span>
-      {isSorted ? <CreatedSortIndicator direction={sort.direction} /> : null}
+      {isSorted ? <SortIndicator direction={sort.direction} /> : null}
+    </Link>
+  );
+}
+
+function PriorityHeader({ filters, sort }) {
+  const isSorted = sort.sort === "priority";
+  const nextDirection = isSorted && sort.direction === "desc"
+    ? "lowest first"
+    : "highest first";
+
+  return (
+    <Link
+      aria-label={`Sort by priority ${nextDirection}`}
+      className="inline-flex items-center gap-1.5 text-zinc-700 hover:text-teal-700 dark:text-zinc-300 dark:hover:text-teal-300"
+      href={prioritySortHref(filters, sort)}
+    >
+      <span>Priority</span>
+      {isSorted ? <SortIndicator direction={sort.direction} /> : null}
     </Link>
   );
 }
@@ -423,14 +474,15 @@ export default async function CompaniesPage({ searchParams }) {
       value: category
     })),
     priorities: COMPANY_PRIORITIES.map((priority) => ({
-      label: formatPriority(priority),
+      label: formatPriorityLevel(priority),
       value: priority
     })),
     industries: getUniqueValues(allCompanies, "industry")
   };
   const filters = getFilters(resolvedSearchParams, options);
-  const companies = allCompanies.filter((company) =>
-    companyMatchesFilters(company, filters)
+  const companies = sortCompanies(
+    allCompanies.filter((company) => companyMatchesFilters(company, filters)),
+    sort
   );
   const totalPages = Math.max(1, Math.ceil(companies.length / companiesPerPage));
   const requestedPage = positiveIntegerSearchParam(resolvedSearchParams, "page");
@@ -456,6 +508,19 @@ export default async function CompaniesPage({ searchParams }) {
                 <TableHeader scope="col" className="hidden lg:table-cell">
                   Category
                 </TableHeader>
+                <TableHeader
+                  scope="col"
+                  className="hidden lg:table-cell"
+                  aria-sort={
+                    sort.sort === "priority"
+                      ? sort.direction === "asc"
+                        ? "ascending"
+                        : "descending"
+                      : undefined
+                  }
+                >
+                  <PriorityHeader filters={filters} sort={sort} />
+                </TableHeader>
                 <TableHeader scope="col" className="hidden xl:table-cell">
                   Industry
                 </TableHeader>
@@ -464,6 +529,9 @@ export default async function CompaniesPage({ searchParams }) {
                 </TableHeader>
                 <TableHeader scope="col" className="hidden 2xl:table-cell">
                   Location
+                </TableHeader>
+                <TableHeader scope="col" className="hidden xl:table-cell">
+                  Country
                 </TableHeader>
                 <TableHeader
                   scope="col"
@@ -478,14 +546,11 @@ export default async function CompaniesPage({ searchParams }) {
                 >
                   <CreatedHeader filters={filters} sort={sort} />
                 </TableHeader>
-                <TableHeader scope="col" className="hidden text-right sm:table-cell">
-                  Links
-                </TableHeader>
               </TableRow>
             </TableHead>
             <TableBody>
               {paginatedCompanies.length === 0 ? (
-                <TableEmpty colSpan={8}>No companies match these filters.</TableEmpty>
+                <TableEmpty colSpan={9}>No companies match these filters.</TableEmpty>
               ) : (
                 paginatedCompanies.map((company) => {
                   const formattedCreatedAt = formatCreatedAt(company.createdAt);
@@ -515,9 +580,17 @@ export default async function CompaniesPage({ searchParams }) {
                           <dd className="mt-1 truncate text-gray-400 dark:text-zinc-500">
                             {company.category ? formatCategory(company.category) : "Category missing"}
                           </dd>
+                          <dt className="sr-only">Priority</dt>
+                          <dd className="mt-2">
+                            <PriorityLevel priority={company.priority} />
+                          </dd>
                           <dt className="sr-only">Industry</dt>
                           <dd className="mt-1 truncate text-gray-400 dark:text-zinc-500">
                             {company.industry || "Industry missing"}
+                          </dd>
+                          <dt className="sr-only">Country</dt>
+                          <dd className="mt-1 truncate text-gray-400 dark:text-zinc-500">
+                            {company.country || ""}
                           </dd>
                           <dt className="sr-only">Headcount</dt>
                           <dd className="mt-1 truncate text-gray-400 dark:text-zinc-500">
@@ -527,15 +600,6 @@ export default async function CompaniesPage({ searchParams }) {
                           <dd className="mt-1 truncate text-gray-400 dark:text-zinc-500">
                             {formattedCreatedAt || "Created date missing"}
                           </dd>
-                          <dt className="sr-only">Links</dt>
-                          <dd className="mt-2 flex gap-x-3 sm:hidden">
-                            <ExternalAnchor href={company.linkedinCompanyUrl}>
-                              LinkedIn
-                            </ExternalAnchor>
-                            <ExternalAnchor href={company.websiteUrl} missingLabel="No site">
-                              Website
-                            </ExternalAnchor>
-                          </dd>
                         </dl>
                       </TableCell>
                       <TableCell className="text-zinc-500 dark:text-zinc-400">
@@ -543,6 +607,9 @@ export default async function CompaniesPage({ searchParams }) {
                       </TableCell>
                       <TableCell className="hidden text-zinc-500 dark:text-zinc-400 lg:table-cell">
                         {company.category ? formatCategory(company.category) : <EmptyValue />}
+                      </TableCell>
+                      <TableCell className="hidden text-zinc-500 dark:text-zinc-400 lg:table-cell">
+                        <PriorityLevel priority={company.priority} />
                       </TableCell>
                       <TableCell className="hidden text-zinc-500 dark:text-zinc-400 xl:table-cell">
                         {company.industry || <EmptyValue />}
@@ -553,21 +620,14 @@ export default async function CompaniesPage({ searchParams }) {
                       <TableCell className="hidden text-zinc-500 dark:text-zinc-400 2xl:table-cell">
                         {company.location || <EmptyValue />}
                       </TableCell>
+                      <TableCell className="hidden text-zinc-500 dark:text-zinc-400 xl:table-cell">
+                        {company.country || ""}
+                      </TableCell>
                       <TableCell
                         className="hidden text-zinc-500 dark:text-zinc-400 xl:table-cell"
                         title={company.createdAt || undefined}
                       >
                         {formattedCreatedAt || <EmptyValue />}
-                      </TableCell>
-                      <TableCell className="hidden text-right font-medium sm:table-cell">
-                        <div className="flex justify-end gap-x-4">
-                          <ExternalAnchor href={company.linkedinCompanyUrl}>
-                            LinkedIn
-                          </ExternalAnchor>
-                          <ExternalAnchor href={company.websiteUrl} missingLabel="No site">
-                            Website
-                          </ExternalAnchor>
-                        </div>
                       </TableCell>
                     </TableRow>
                   );

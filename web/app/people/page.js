@@ -1,4 +1,5 @@
 import {
+  formatPriorityLevel,
   PageHeader,
   PageShell,
   SectionHeader
@@ -15,14 +16,12 @@ import { isLeadStatus } from "../../lib/statuses";
 import { PeopleTable } from "./components/people-table";
 import { PeopleFilters } from "./components/people-filters";
 import {
-  listPeopleCompanyIndustries,
   listPeopleTablePage
 } from "../api/people/model";
 import {
   COMPANY_CATEGORIES,
   COMPANY_CATEGORY_LABELS,
-  COMPANY_PRIORITIES,
-  COMPANY_PRIORITY_LABELS
+  COMPANY_PRIORITIES
 } from "../api/companies/schema";
 import {
   PERSON_EMAIL_FILTER_VALUES,
@@ -101,10 +100,6 @@ function getFilters(searchParams, options) {
     searchParams,
     PERSON_FILTER_PARAMS.companyCategory
   );
-  const industry = getFirstSearchParam(
-    searchParams,
-    PERSON_FILTER_PARAMS.companyIndustry
-  );
   const priority = getFirstSearchParam(
     searchParams,
     PERSON_FILTER_PARAMS.companyPriority
@@ -118,7 +113,6 @@ function getFilters(searchParams, options) {
     category: options.categories.some((option) => option.value === category)
       ? category
       : "",
-    industry: options.industries.includes(industry) ? industry : "",
     priority: options.priorities.some((option) => option.value === priority)
       ? priority
       : ""
@@ -144,10 +138,6 @@ function addFiltersToParams(params, filters) {
 
   if (filters.category) {
     params.set("category", filters.category);
-  }
-
-  if (filters.industry) {
-    params.set("industry", filters.industry);
   }
 
   if (filters.priority) {
@@ -290,10 +280,9 @@ export default async function PeoplePage({ searchParams }) {
       value: category
     })),
     priorities: COMPANY_PRIORITIES.map((priority) => ({
-      label: COMPANY_PRIORITY_LABELS[priority] || priority,
+      label: formatPriorityLevel(priority),
       value: priority
-    })),
-    industries: await listPeopleCompanyIndustries()
+    }))
   };
   const filters = getFilters(resolvedSearchParams, options);
   const {

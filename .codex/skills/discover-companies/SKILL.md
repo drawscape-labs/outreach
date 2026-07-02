@@ -41,13 +41,14 @@ Use:
 2. Build search strategy:
    - For lookalikes, identify shared traits first: brands sold, customer type, region, price point, brokerage/dealer model, sales motion, and gifting relevance.
    - Use several query families instead of one broad search. Examples: `"Porsche dealer" "sales" "LinkedIn company"`, `"aircraft sales" "brokerage" "team"`, `"yacht brokerage" "sailboat sales" "LinkedIn"`, brand dealer locators, association directories, and regional searches.
+   - For sailboat or yacht company discovery, check the YBAA CPYB Certified Yacht Brokers directory at `https://members.ybaa.org/cpyb-certified-yacht-brokers/FindStartsWith?term=%23%21`. Treat it as a name source: broker entries often expose brokerage/company names even when no company link is available. Google those names and verify each company through official websites, authoritative directories, or public LinkedIn company pages before adding it as a candidate.
    - Prefer official company websites, manufacturer/dealer locators, industry associations, reputable directories, and public LinkedIn company pages. Use directories to discover candidates, then verify on company-controlled or authoritative sources.
 3. Qualify candidates:
    - Require evidence that the company sells aircraft, cars, Porsche/luxury automobiles, sailboats, yachts, or the user-specified high-value category.
    - Prefer companies with visible sales teams, brokers, brand ambassadors, client advisors, or dealership staff that `$prospect-account` could later target.
    - Reject service-only, parts-only, rental-only, defunct, acquired/merged, or ambiguous businesses unless the user explicitly asked for them.
    - Treat local dealership/location records separately from parent brands when the local entity has its own domain or LinkedIn page.
-   - For yacht brokers, set `priority` before import: use `high` when evidence shows sailboat/sailing yacht/sail catamaran presence, `low` only for strictly superyacht-only brokers with no sailboat or powerboat/motor-yacht/general boat sales presence, and `medium` for powerboat/motor-yacht brokers or generic yacht broker evidence without verified sailboat presence.
+   - For yacht brokers, set `priority` before import: use `high` for mainstream/high-volume sailboat dealers or brokers with production sailboat, sailing catamaran, active used sailboat, or brand evidence such as Catalina, J/Boats, Beneteau, Jeanneau, Dufour, Hanse, Lagoon, or comparable non-superyacht sail brands. Use `low` for primarily luxury-yacht or superyacht brokers whose sail evidence is limited to sailing superyachts, custom megayachts, crewed sailing-yacht charters, or occasional large-yacht listings. Use `medium` for powerboat, motor-yacht, general boat, mixed yacht, or ambiguous yacht broker evidence when the high or low rule is not clearly proven.
    - Mark uncertain matches as `needs_review`; do not import them.
 4. Prepare `candidates.json`:
    - Keep one object per company.

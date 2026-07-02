@@ -32,12 +32,24 @@ const companySelect = {
   priority: true,
   industry: true,
   location: true,
+  country: true,
   employeeCount: true,
   employeeCountRange: true,
   dateEnriched: true,
   notes: true,
   createdAt: true,
   updatedAt: true
+};
+
+const companyOptionSelect = {
+  id: true,
+  name: true,
+  domain: true,
+  websiteUrl: true,
+  category: true,
+  priority: true,
+  industry: true,
+  country: true
 };
 
 export const companyListSelect = {
@@ -51,6 +63,7 @@ export const companyListSelect = {
   priority: true,
   industry: true,
   location: true,
+  country: true,
   employeeCount: true,
   employeeCountRange: true,
   dateEnriched: true,
@@ -83,6 +96,7 @@ export const companyDetailSelect = {
   priority: true,
   industry: true,
   location: true,
+  country: true,
   employeeCount: true,
   employeeCountRange: true,
   dateEnriched: true,
@@ -213,6 +227,13 @@ const companyTextFields = [
     nullAsUndefinedOnCreate: true
   },
   {
+    column: COMPANY_FIELDS.country,
+    label: "country",
+    names: COMPANY_FIELD_ALIASES.country,
+    normalize: normalizeWhitespace,
+    nullAsUndefinedOnCreate: true
+  },
+  {
     column: COMPANY_FIELDS.employeeCountRange,
     label: "employeeCountRange",
     names: COMPANY_FIELD_ALIASES.employeeCountRange,
@@ -264,6 +285,7 @@ export function companyJson(company) {
     priority: company.priority,
     industry: company.industry,
     location: company.location,
+    country: company.country,
     employeeCount: company.employeeCount,
     employeeCountRange: company.employeeCountRange,
     dateEnriched: company.dateEnriched,
@@ -275,6 +297,26 @@ export function companyJson(company) {
 
 export function companyDetail(company) {
   return companyJson(company);
+}
+
+export function companyOption(company, nameCounts = new Map()) {
+  const duplicateName = nameCounts.get(company.name) > 1;
+  const label = duplicateName && company.domain
+    ? `${company.name} (${company.domain})`
+    : company.name;
+
+  return {
+    value: String(company.id),
+    label,
+    id: company.id,
+    name: company.name,
+    domain: company.domain,
+    websiteUrl: company.websiteUrl,
+    category: company.category,
+    priority: company.priority,
+    industry: company.industry,
+    country: company.country
+  };
 }
 
 export function companyTableRow(company) {
@@ -300,6 +342,7 @@ export function companyTableRow(company) {
     priority: company.priority,
     industry: company.industry,
     location: company.location,
+    country: company.country,
     employeeCount: company.employeeCount,
     employeeCountRange: company.employeeCountRange,
     dateEnriched: company.dateEnriched,
@@ -329,6 +372,9 @@ export function listCompanies(searchParams) {
   const category = searchParams.get(COMPANY_FILTER_PARAMS.category[0])?.trim();
   const domain = searchParams.get(COMPANY_FILTER_PARAMS.domain[0])?.trim();
   const industry = searchParams.get(COMPANY_FILTER_PARAMS.industry[0])?.trim();
+  const country =
+    searchParams.get(COMPANY_FILTER_PARAMS.country[0])?.trim() ||
+    searchParams.get(COMPANY_FILTER_PARAMS.country[1])?.trim();
   const priority = searchParams
     .get(COMPANY_FILTER_PARAMS.priority[0])
     ?.trim()
@@ -365,6 +411,10 @@ export function listCompanies(searchParams) {
     where.industry = industry;
   }
 
+  if (country) {
+    where.country = country;
+  }
+
   if (linkedinCompanyUrl) {
     identityFilters.push({
       linkedinCompanyUrl: normalizeLinkedInCompanyUrl(
@@ -385,6 +435,19 @@ export function listCompanies(searchParams) {
     orderBy: [{ name: "asc" }, { id: "asc" }],
     select: companySelect
   });
+}
+
+export async function listCompanyOptions() {
+  const companies = await prisma.company.findMany({
+    orderBy: [{ name: "asc" }, { id: "asc" }],
+    select: companyOptionSelect
+  });
+  const nameCounts = companies.reduce((counts, company) => {
+    counts.set(company.name, (counts.get(company.name) || 0) + 1);
+    return counts;
+  }, new Map());
+
+  return companies.map((company) => companyOption(company, nameCounts));
 }
 
 export function createCompany(payload) {

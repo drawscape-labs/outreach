@@ -168,6 +168,15 @@ function normalizeCompany(input) {
   ));
   const industry = normalizeWhitespace(firstValue(company.industry, firstArrayValue(classification.industries)));
   const locationText = typeof company.location === "string" ? company.location : headquartersText(location);
+  const country = normalizeWhitespace(firstValue(
+    company.country,
+    company.country_name,
+    company.countryName,
+    location?.headquarters?.country,
+    location?.country,
+    input.country,
+    input.country_name
+  ));
 
   return {
     name: normalizeWhitespace(firstValue(company.name, identity.name, input.input?.company_name)),
@@ -179,6 +188,7 @@ function normalizeCompany(input) {
     priority: normalizePriority(firstValue(company.priority, input.priority, classification.priority, metadata.priority)),
     industry,
     location: normalizeWhitespace(locationText),
+    country,
     employee_count: normalizeInteger(firstValue(company.employee_count, company.employeeCount, details.employee_count)),
     employee_count_range: normalizeWhitespace(firstValue(company.employee_count_range, company.employeeCountRange, details.employee_count_range)),
     date_enriched: normalizeWhitespace(firstValue(company.date_enriched, company.dateEnriched, metadata.last_enriched_at)),
@@ -228,6 +238,7 @@ function apiPayload(company, { forCreate, stampDate }) {
   addValue(payload, "priority", company.priority);
   addValue(payload, "industry", company.industry);
   addValue(payload, "location", company.location);
+  addValue(payload, "country", company.country);
   addInteger(payload, "employee_count", company.employee_count);
   addValue(payload, "employee_count_range", company.employee_count_range);
   addValue(payload, "date_enriched", stampDate ? todayIso() : company.date_enriched);

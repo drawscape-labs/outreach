@@ -4,6 +4,7 @@ Use the active project schema when available. When no schema is available, use t
 
 For Drawscape Outreach, the active schema intentionally omits source/evidence columns. Do not persist source URLs, evidence arrays, or source-only prose into the database or `notes` unless the user explicitly asks for that data.
 Drawscape Outreach uses `companies.date_enriched` for the company enrichment date when writing enriched company records.
+Drawscape Outreach stores the best-supported headquarters country in `companies.country`.
 Drawscape Outreach company writes must go through the web app API, not direct SQLite. Use `scripts/upsert-company-api.js` from this skill; add API functionality before falling back to database access.
 
 ## Canonical JSON
@@ -106,6 +107,7 @@ Use one evidence entry per source or per field when the target schema supports i
 - `social_urls`: array of objects with `platform` and `url` if the schema allows objects; otherwise array of URLs.
 - `industries`, `categories`, `tags`: lowercase slugs unless the project uses title-cased labels.
 - `priority`: for Drawscape Outreach, map top-level `priority` or `classification.priority` to `companies.priority`. Use only `high`, `medium`, or `low`; omit unknown priority rather than writing a placeholder value.
+- `country`: for Drawscape Outreach, map `location.headquarters.country`, top-level `country`, or `country_name` to `companies.country`. Prefer the full country name from a current official address; leave it null when the headquarters country is ambiguous.
 - `country_code`: ISO 3166-1 alpha-2.
 - `founded_year`: integer year only.
 - `employee_count`: concrete integer total headcount only when a source reports one. Use evidence confidence to distinguish official counts from secondary/platform estimates.
@@ -139,10 +141,10 @@ Leave fields null or empty when not supported by evidence. Do not substitute pro
 
 For Drawscape Outreach, company `priority` is a fit score with values `high`, `medium`, or `low`.
 
-- Use `high` for yacht brokers with current evidence of sailboat, sailing yacht, sail catamaran, or sail-focused brokerage/listing presence.
-- Use `low` for yacht brokers only when evidence shows they are strictly a superyacht broker and do not sell or broker sailboats, sailing yachts, powerboats, motor yachts, or other non-superyacht boats.
-- Use `medium` for yacht brokers that sell or broker powerboats/motor yachts but have no verified sailboat presence.
-- Use `medium` when a yacht broker is described only generically and the evidence does not prove the sailboat/high-priority or strict-superyacht/low-priority case.
+- Use `high` for yacht brokers or dealers with current evidence of mainstream/high-volume sailboat sales: production sailboats, sailing catamarans, active used sailboat listings, or brands such as Catalina, J/Boats, Beneteau, Jeanneau, Dufour, Hanse, Lagoon, and comparable non-superyacht sail brands.
+- Use `low` for yacht brokers whose business is primarily luxury yachts or superyachts when their sail evidence is limited to sailing superyachts, custom megayachts, crewed sailing-yacht charters, or occasional large-yacht listings.
+- Use `medium` for yacht brokers that sell or broker powerboats, motor yachts, general boats, or mixed yacht inventory when evidence does not clearly prove either the mainstream sailboat/high-priority case or luxury-superyacht/low-priority case.
+- Use `medium` when a yacht broker is described only generically and the evidence does not prove the high or low case.
 - Preserve a user-provided priority unless current evidence clearly contradicts it; note the reason when changing priority during enrichment.
 
 ## Company Upsert Rules

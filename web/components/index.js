@@ -8,6 +8,11 @@ export { PageHeader } from "./page-header";
 export { PageShell } from "./page-shell";
 export { PageStats } from "./page-stats";
 export { PersonIdentity } from "./person-identity";
+export {
+  formatPriorityLevel,
+  PriorityLevel,
+  PRIORITY_LEVELS
+} from "./priority-level";
 export { QualifiedStatus } from "./qualified-status";
 export { SectionHeader } from "./section-header";
 export { StatusPill } from "./status-pill";
