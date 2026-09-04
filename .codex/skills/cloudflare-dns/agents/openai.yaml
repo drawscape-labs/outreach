@@ -1,4 +1,0 @@
-interface:
-  display_name: "Cloudflare DNS"
-  short_description: "Update Drawscape Cloudflare DNS records"
-  default_prompt: "Use $cloudflare-dns to add a DNS record for drawscape.ink."

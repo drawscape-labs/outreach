@@ -1,0 +1,4 @@
+interface:
+  display_name: "QuickMail Reply Sync"
+  short_description: "Sync QuickMail replies to outreach status"
+  default_prompt: "Use the quickmail-sync-replies skill to sync recent QuickMail reply events into the outreach database."

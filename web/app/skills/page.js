@@ -5,7 +5,7 @@ import { PageHeader, PageShell } from "@/components";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const skillsDirectory = path.resolve(process.cwd(), "../.codex/skills");
+const skillsDirectory = path.resolve(process.cwd(), "../.agents/skills");
 const coreSkillOrder = new Map(
   ["setup", "prospect-company", "discover-companies"].map((name, index) => [
     name,
@@ -45,23 +45,6 @@ function frontmatterValue(markdown, key) {
   return line ? unquote(line.slice(key.length + 1)) : "";
 }
 
-function defaultPrompt(skillDirectory, name) {
-  const agentPath = path.join(skillDirectory, "agents", "openai.yaml");
-
-  if (!fs.existsSync(agentPath)) {
-    return `Use $${name} to help with this task.`;
-  }
-
-  const agentConfig = fs.readFileSync(agentPath, "utf8");
-  const promptLine = agentConfig
-    .split(/\r?\n/)
-    .find((line) => line.trimStart().startsWith("default_prompt:"));
-
-  return promptLine
-    ? unquote(promptLine.trimStart().slice("default_prompt:".length))
-    : `Use $${name} to help with this task.`;
-}
-
 function listSkills() {
   if (!fs.existsSync(skillsDirectory)) {
     return [];
@@ -86,7 +69,7 @@ function listSkills() {
           frontmatterValue(markdown, "description") ||
           "No description is available for this skill.",
         name,
-        prompt: defaultPrompt(skillDirectory, name)
+        prompt: `Use the ${name} skill.`
       };
     })
     .filter(Boolean)
@@ -111,7 +94,7 @@ export default function SkillsPage() {
       <PageHeader
         eyebrow="Automation"
         title="Skills"
-        description="Repository-specific workflows Codex can use to set up, research, enrich, and maintain this outreach workspace."
+        description="Agent skills for setting up, researching, enriching, and maintaining this outreach workspace."
       />
 
       <section className="mt-6" aria-labelledby="available-skills">
@@ -150,7 +133,7 @@ export default function SkillsPage() {
                 >
                   <div className="flex items-center gap-3">
                     <span className="grid size-9 shrink-0 place-items-center rounded-md bg-teal-50 font-mono text-sm font-semibold text-teal-700 dark:bg-teal-400/10 dark:text-teal-300">
-                      $
+                      A
                     </span>
                     <h3 className="font-mono text-sm font-semibold text-gray-900 dark:text-white">
                       {skill.name}

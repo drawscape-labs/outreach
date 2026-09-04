@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const REPO_ROOT = path.resolve(process.cwd(), "..");
-const LOG_ROOT = path.join(REPO_ROOT, ".codex", "tmp");
+const LOG_ROOT = path.join(REPO_ROOT, ".agent-runs");
 const DEFAULT_CODEX_BIN = process.env.CODEX_BIN || "codex";
 const NO_SANDBOX_MODE = "none";
 const MAX_INPUT_LENGTH = 8000;

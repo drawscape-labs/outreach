@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cloudflare DNS"
+  short_description: "Update Cloudflare DNS records"
+  default_prompt: "Use the cloudflare-dns skill to add a DNS record for a configured domain."

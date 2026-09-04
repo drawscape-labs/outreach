@@ -13,9 +13,18 @@ Before discovering, qualifying, enriching, or prospecting accounts, read `docs/i
 
 Keep reusable research, evidence, deduplication, and API workflow rules in skills. Do not copy market-specific segments, title lists, or priority rules into skills, application code, or agent instructions. User-provided targeting requirements take precedence over configured defaults.
 
-The Markdown strategy files guide Codex skills only. The web application must not parse them, require a fixed structure, or depend on them to start. Store company category and priority as ordinary strings and derive application filter choices from existing database values.
+The Markdown strategy files guide agent skills only. The web application must not parse them, require a fixed structure, or depend on them to start. Store company category and priority as ordinary strings and derive application filter choices from existing database values.
 
 Account segments classify companies. Contact personas classify the people to find at those companies. Do not use one concept as the other.
+
+## Agent skills
+
+- `.agents/skills/` is the canonical skill directory.
+- `.codex/skills` and `.claude/skills` are compatibility links to the canonical directory. Do not create duplicate skill copies in those directories.
+- Keep skill instructions agent-neutral. Put agent-specific invocation syntax in the README or the relevant interface.
+- Resolve bundled scripts and references relative to each skill's `SKILL.md`.
+- Store generated skill artifacts under `.agent-runs/`, which is ignored by Git.
+- The web app's `/api/codex` route is intentionally Codex-only and may launch privileged background processes.
 
 ## Web application
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,7 +23,7 @@ function buildEnrichCompanyInput(company, workspaceName) {
   return [
     `Enrich this existing ${workspaceName} company and save the updated company record through the web app API at http://localhost:4200.`,
     "Read docs/industries.md and docs/personas.md before assigning an industry or priority.",
-    "Create a run directory under .codex/tmp/enrich-company/ and keep normalized input, source notes, enriched JSON, dry-run output, apply output, and logs there.",
+    "Create a run directory under .agent-runs/enrich-company/ and keep normalized input, source notes, enriched JSON, dry-run output, apply output, and logs there.",
     "Update the existing row by company ID, domain, or LinkedIn URL. Do not create a duplicate company.",
     "Set companies.date_enriched to today's ISO date when the update succeeds, then read back the row and report the changed fields.",
     "If enrichment is blocked by an identity conflict, do not write and report the conflict.",
@@ -58,8 +59,8 @@ function buildProspectInput({ company, people, workspaceName }) {
     `Prospect this existing ${workspaceName} company and save importable results through the web app API at http://localhost:4200.`,
     "Read docs/industries.md and docs/personas.md and use the personas associated with the company's industry. User-requested titles take precedence over configured defaults.",
     "This web-app action is explicit approval to import/upsert the company, people, positions, and verified emails that pass prospect-company validation through the API.",
-    "Create a run directory under .codex/tmp/prospect-company/ with relevant subfolders and keep the prospect JSON, research notes, validation output, duplicate-check output, upsert output, and logs there.",
-    "Validate the prospect JSON, check duplicates through the API, then run `node .codex/skills/prospect-company/scripts/upsert-prospects.js <artifact> --api-base http://localhost:4200 --apply`.",
+    "Create a run directory under .agent-runs/prospect-company/ with relevant subfolders and keep the prospect JSON, research notes, validation output, duplicate-check output, upsert output, and logs there.",
+    "Validate the prospect JSON, check duplicates through the API, then run `node .agents/skills/prospect-company/scripts/upsert-prospects.js <artifact> --api-base http://localhost:4200 --apply`.",
     "Do not write generated files to data/. Do not access SQLite directly. If the API is unreachable or import is blocked, leave the database unchanged and report the failure.",
     "Do not create duplicate companies or people. If a duplicate or identity conflict is ambiguous, skip that record, do not write it, and report the conflict.",
     "After import, read back the linked people for this company through the API and report inserted, updated, skipped, and conflicted records.",
@@ -81,8 +82,8 @@ function buildProspectInput({ company, people, workspaceName }) {
 function initialLaunchState(status) {
   if (status?.state === "launched") {
     const resultDirectory = status.skill
-      ? `.codex/tmp/${status.skill}/logs`
-      : ".codex/tmp";
+      ? `.agent-runs/${status.skill}/logs`
+      : ".agent-runs";
 
     return {
       status: "success",
@@ -111,12 +112,10 @@ const CODEX_ACTIONS = [
     label: "Enrich Company",
     skill: "enrich-company",
     summary:
-      "Research this company and update its existing record with better account data.",
+      "A Codex agent researches this company and updates its record.",
     effects: [
-      "Reads the current company record and the targeting guidance in docs/industries.md and docs/personas.md.",
-      "Researches public sources for details such as industry, location, country, headcount, description, category, and priority.",
-      "Updates this company through the local web app API and records the enrichment date. It will not intentionally create a duplicate company.",
-      "Skips the update and reports the issue if it encounters an ambiguous identity conflict."
+      "Finds details such as industry, location, headcount, description, category, and priority.",
+      "Updates the existing company. It stops if it cannot safely identify the company."
     ],
     buildInput: ({ company, workspaceName }) => buildEnrichCompanyInput(company, workspaceName)
   },
@@ -125,59 +124,84 @@ const CODEX_ACTIONS = [
     label: "Prospect & Save",
     skill: "prospect-company",
     summary:
-      "Research people at this company who match your configured buyer personas and save qualified contacts.",
+      "A Codex agent finds people at this company and saves qualified contacts.",
     effects: [
-      "Reads this company, its existing contacts, and the targeting guidance in docs/industries.md and docs/personas.md.",
-      "Searches public sources for relevant people, professional profiles, current roles, and work emails when available.",
-      "Validates and deduplicates the results, then imports or updates the company, people, positions, and verified emails through the local web app API.",
-      "Skips ambiguous identity conflicts and reports inserted, updated, skipped, and conflicted records."
+      "Finds people who match the buyer personas in docs/personas.md.",
+      "Checks for duplicates and saves roles, profiles, and verified work emails."
     ],
     buildInput: buildProspectInput
   }
 ];
 
-function ActionConfirmationDialog({ action, companyName, isLaunching, error, onClose, onLaunch }) {
+function ActionConfirmationDialog({
+  action,
+  company,
+  codexStatus,
+  isCheckingCodex,
+  isLaunching,
+  error,
+  onClose,
+  onLaunch
+}) {
   if (!action) {
     return null;
   }
 
+  const codexAvailable = codexStatus?.ok === true;
+  const manualTask = `${company.name}${company.domain ? ` (${company.domain})` : ""}`;
+
   return (
-    <Dialog open onClose={() => !isLaunching && onClose()} size="lg">
+    <Dialog open onClose={() => !isLaunching && onClose()} size="md">
       <DialogTitle>{action.label}</DialogTitle>
       <DialogBody>
         <p className="text-sm/6 text-zinc-600 dark:text-zinc-300">
           {action.summary}
         </p>
 
-        <div className="mt-5 rounded-lg bg-teal-50 p-4 ring-1 ring-teal-600/20 dark:bg-teal-400/10 dark:ring-teal-400/20">
-          <p className="font-semibold text-teal-900 dark:text-teal-200">
-            This launches a background Codex agent.
-          </p>
-          <p className="mt-1 text-sm/6 text-teal-800 dark:text-teal-300">
-            The server starts a detached Codex CLI process using the ${action.skill} skill. The
-            agent continues working after this modal closes and can research the web, create run
-            artifacts, and make the local database changes described below.
-          </p>
-        </div>
+        <ul className="mt-4 list-disc space-y-2 pl-5 text-sm/6 text-zinc-600 marker:text-zinc-400 dark:text-zinc-300">
+          {action.effects.map((effect) => (
+            <li key={effect}>{effect}</li>
+          ))}
+        </ul>
 
-        <div className="mt-5">
+        <div className="mt-5 rounded-lg bg-zinc-100 p-3 dark:bg-zinc-800">
           <p className="text-sm font-semibold text-zinc-950 dark:text-white">
-            What the agent will do for {companyName}
+            Runs in the background
           </p>
-          <ul className="mt-2 list-disc space-y-2 pl-5 text-sm/6 text-zinc-600 marker:text-zinc-400 dark:text-zinc-300">
-            {action.effects.map((effect) => (
-              <li key={effect}>{effect}</li>
-            ))}
-          </ul>
+          <p className="mt-1 text-sm/6 text-zinc-600 dark:text-zinc-300">
+            You can close this page while the agent works. It can update the local database. Logs
+            are saved in <code>.agent-runs/{action.skill}/</code>.
+          </p>
+          <p className="mt-1 text-xs/5 text-zinc-500 dark:text-zinc-400">
+            Runs without interactive approvals or sandboxing.
+          </p>
         </div>
 
-        <div className="mt-5 rounded-lg bg-amber-50 p-4 ring-1 ring-amber-600/20 dark:bg-amber-400/10 dark:ring-amber-400/20">
-          <p className="text-sm/6 text-amber-900 dark:text-amber-200">
-            This is privileged local automation. The agent runs without interactive approvals or
-            sandboxing. There is no live progress view and closing this page does not cancel the
-            run. Its final report and logs are saved under <code>.codex/tmp/{action.skill}/</code>.
+        {isCheckingCodex ? (
+          <p className="mt-4 text-sm/6 text-zinc-500 dark:text-zinc-400">
+            Checking for Codex CLI...
           </p>
-        </div>
+        ) : !codexAvailable ? (
+          <div className="mt-4 rounded-lg bg-amber-50 p-3 ring-1 ring-amber-600/20 dark:bg-amber-400/10 dark:ring-amber-400/20">
+            <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+              Codex CLI is not available
+            </p>
+            <p className="mt-1 text-sm/6 text-amber-800 dark:text-amber-300">
+              This server cannot launch the background agent. Open this repo in Codex or Claude
+              Code and run:
+            </p>
+            <div className="mt-2 space-y-2 text-xs/5 text-amber-900 dark:text-amber-200">
+              <p>
+                <span className="font-semibold">Codex:</span>{" "}
+                <code>${action.skill} {manualTask}</code>
+              </p>
+              <p>
+                <span className="font-semibold">Claude Code:</span>{" "}
+                <code>/{action.skill} {manualTask}</code>
+              </p>
+            </div>
+          </div>
+        ) : null}
 
         {error ? (
           <p className="mt-4 rounded-md bg-rose-50 px-3 py-2 text-sm/6 text-rose-700 ring-1 ring-rose-600/20 dark:bg-rose-400/10 dark:text-rose-300 dark:ring-rose-400/20">
@@ -189,8 +213,19 @@ function ActionConfirmationDialog({ action, companyName, isLaunching, error, onC
         <Button type="button" plain disabled={isLaunching} onClick={onClose}>
           Cancel
         </Button>
-        <Button type="button" color="teal" disabled={isLaunching} onClick={onLaunch}>
-          {isLaunching ? "Launching..." : "Launch background agent"}
+        <Button
+          type="button"
+          color="teal"
+          disabled={isCheckingCodex || !codexAvailable || isLaunching}
+          onClick={onLaunch}
+        >
+          {isLaunching
+            ? "Launching..."
+            : isCheckingCodex
+              ? "Checking Codex..."
+              : codexAvailable
+                ? "Launch background agent"
+                : "Codex CLI required"}
         </Button>
       </DialogActions>
     </Dialog>
@@ -200,6 +235,13 @@ function ActionConfirmationDialog({ action, companyName, isLaunching, error, onC
 export function CompanyActions({ company, people = [], launchStatus, workspaceName }) {
   const [launchState, setLaunchState] = useState(() => initialLaunchState(launchStatus));
   const [selectedAction, setSelectedAction] = useState(null);
+  const codexStatusQuery = useQuery({
+    queryKey: ["codex", "status"],
+    queryFn: () => codexApi.status(),
+    enabled: Boolean(selectedAction),
+    retry: false,
+    staleTime: 30_000
+  });
   const isLaunching = launchState.status === "launching";
 
   async function handleLaunch(action) {
@@ -218,7 +260,7 @@ export function CompanyActions({ company, people = [], launchStatus, workspaceNa
       setLaunchState({
         status: "success",
         actionKey: action.key,
-        message: `${action.label} started PID ${payload.pid}. Final result lands in ${payload.logDir || `.codex/tmp/${action.skill}/logs`}.`
+        message: `${action.label} started PID ${payload.pid}. Final result lands in ${payload.logDir || `.agent-runs/${action.skill}/logs`}.`
       });
       setSelectedAction(null);
     } catch (error) {
@@ -268,9 +310,15 @@ export function CompanyActions({ company, people = [], launchStatus, workspaceNa
 
       <ActionConfirmationDialog
         action={selectedAction}
-        companyName={company.name}
+        company={company}
+        codexStatus={codexStatusQuery.data}
+        isCheckingCodex={codexStatusQuery.isLoading}
         isLaunching={isLaunching}
-        error={selectedAction && launchState.status === "error" ? launchState.message : ""}
+        error={
+          selectedAction && launchState.status === "error"
+            ? launchState.message
+            : ""
+        }
         onClose={() => setSelectedAction(null)}
         onLaunch={() => handleLaunch(selectedAction)}
       />

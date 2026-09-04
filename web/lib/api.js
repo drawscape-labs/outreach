@@ -64,6 +64,12 @@ export async function apiRequest(path, { body, headers, ...options } = {}) {
 }
 
 export const codexApi = {
+  status() {
+    return apiRequest("/api/codex", {
+      cache: "no-store"
+    });
+  },
+
   launch(body) {
     return apiRequest("/api/codex", {
       method: "POST",

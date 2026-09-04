@@ -1,4 +1,0 @@
-interface:
-  display_name: "Gmail Domain Cloudflare"
-  short_description: "Set up Gmail DNS and redirects in Cloudflare"
-  default_prompt: "Use $gmail-domain-cloudflare to set up Gmail DNS and redirect a new domain to drawscape.io."

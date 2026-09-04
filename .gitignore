@@ -30,7 +30,7 @@ data/backups/
 .cache/
 .parcel-cache/
 .vite/
-.codex/tmp/
+.agent-runs/
 
 # OS and editor files
 .DS_Store

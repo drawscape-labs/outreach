@@ -1,0 +1,4 @@
+interface:
+  display_name: "Discover Companies"
+  short_description: "Find and import target company accounts"
+  default_prompt: "Use the discover-companies skill with docs/industries.md and docs/personas.md to find and import companies matching the configured audience."
