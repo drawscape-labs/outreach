@@ -86,6 +86,6 @@ Stable fields still need evidence, but may be accepted from older sources:
 
 ## Account Fit And Priority Evidence
 
-- Read `industries.md` and use the selected industry's qualification and priority rules.
+- Read `docs/industries.md` and use the selected industry's qualification and priority rules.
 - Verify priority using the source types relevant to the configured rule, favoring current company-owned evidence and authoritative directories.
 - Do not upgrade priority from generic market language alone. If the evidence does not prove a segment-specific high or low rule, use the configured default and note the ambiguity.

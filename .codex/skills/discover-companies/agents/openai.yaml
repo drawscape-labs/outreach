@@ -1,4 +1,4 @@
 interface:
   display_name: "Discover Companies"
   short_description: "Find and import target company accounts"
-  default_prompt: "Use $discover-companies with industries.md and personas.md to find and import companies matching the configured audience."
+  default_prompt: "Use $discover-companies with docs/industries.md and docs/personas.md to find and import companies matching the configured audience."

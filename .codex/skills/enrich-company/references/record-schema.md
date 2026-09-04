@@ -34,7 +34,7 @@ Company writes must go through the web app API, not direct SQLite. Use `scripts/
     "categories": [],
     "tags": [],
     "business_model": "b2b|b2c|b2b2c|marketplace|nonprofit|government|unknown",
-    "priority": "<priority value from industries.md>"
+    "priority": "<priority value from docs/industries.md>"
   },
   "location": {
     "headquarters": {
@@ -105,8 +105,8 @@ Use one evidence entry per source or per field when the target schema supports i
 - `linkedin_url`: normalized LinkedIn company page URL, not a personal profile. In this app it maps to `linkedin_company_url`, which must be unique when present.
 - `social_urls`: array of objects with `platform` and `url` if the schema allows objects; otherwise array of URLs.
 - `industries`, `categories`, `tags`: lowercase slugs unless the project uses title-cased labels.
-- `priority`: map top-level `priority` or `classification.priority` to `companies.priority`. Use the priority wording from `industries.md`; omit unknown priority rather than writing a placeholder value.
-- `category`: use the consistent category name or identifier described in `industries.md`.
+- `priority`: map top-level `priority` or `classification.priority` to `companies.priority`. Use the priority wording from `docs/industries.md`; omit unknown priority rather than writing a placeholder value.
+- `category`: use the consistent category name or identifier described in `docs/industries.md`.
 - `country`: map `location.headquarters.country`, top-level `country`, or `country_name` to `companies.country`. Prefer the full country name from a current official address; leave it null when the headquarters country is ambiguous.
 - `country_code`: ISO 3166-1 alpha-2.
 - `founded_year`: integer year only.
@@ -139,7 +139,7 @@ Leave fields null or empty when not supported by evidence. Do not substitute pro
 
 ## Outreach Priority Rules
 
-Use the selected industry's priority rules in `industries.md`. Preserve a user-provided priority unless current evidence clearly contradicts it, and note the reason when changing priority during enrichment.
+Use the selected industry's priority rules in `docs/industries.md`. Preserve a user-provided priority unless current evidence clearly contradicts it, and note the reason when changing priority during enrichment.
 
 ## Company Upsert Rules
 

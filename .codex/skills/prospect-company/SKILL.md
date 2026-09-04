@@ -1,6 +1,6 @@
 ---
 name: prospect-company
-description: Research and import prospect records for the industries and personas in industries.md and personas.md. Use when the user wants to find account contacts, public professional profiles and work emails, dedupe through the web app API, or upsert companies, people, and positions.
+description: Research and import prospect records for the industries and personas in docs/industries.md and docs/personas.md. Use when the user wants to find account contacts, public professional profiles and work emails, dedupe through the web app API, or upsert companies, people, and positions.
 ---
 
 # Prospect Company
@@ -12,7 +12,7 @@ Research one target account, find contacts matching the configured buyer persona
 - Default to importing verified prospects through the web app API after validation and duplicate checks. Use dry-run only when the user explicitly asks to review without writing, or when unresolved conflicts/ambiguous matches require review.
 - Interface with the database through the web app API. Do not access the SQLite database directly from this skill; add or extend an API endpoint first if a needed database operation is missing.
 - If the API is unreachable from the current Codex run, stop before import and report the API connectivity failure. Do not fall back to Prisma, `sqlite3`, or direct SQLite writes.
-- Read the repository-root `industries.md` and `personas.md` before selecting or ranking contacts. Use the industry's associated personas and the stated value proposition. User-requested titles take precedence over configured defaults.
+- Read `docs/industries.md` and `docs/personas.md` before selecting or ranking contacts. Use the industry's associated personas and the stated value proposition. User-requested titles take precedence over configured defaults.
 - Treat the provided domain and LinkedIn company URL as identity hints; verify them before importing.
 - Never use company name alone as a database uniqueness key.
 - Do not scrape logged-in LinkedIn pages, bypass access controls, automate LinkedIn sessions, or collect data from paywalled/member-only pages. Record LinkedIn profile URLs found through public web search or public pages, but mark inaccessible LinkedIn details as unavailable.
@@ -27,7 +27,7 @@ Research one target account, find contacts matching the configured buyer persona
 
 Before a full prospecting run, read the relevant references:
 
-- The repository-root `industries.md` and `personas.md` for industries, personas, and title rankings.
+- `docs/industries.md` and `docs/personas.md` for industries, personas, and title rankings.
 - `references/output-schema.md` for the prospect JSON shape expected by scripts.
 - `references/database-schema.md` for the app's table mappings.
 - `references/dedupe-rules.md` for duplicate and conflict handling.
@@ -54,7 +54,7 @@ Before a full prospecting run, read the relevant references:
    - Look for companies by normalized `domain` first and canonical `linkedin_company_url` second.
    - Look for people by `profile_key`, `linkedin_profile_url`, then email when available.
 4. Research the account:
-   - Resolve the account to an industry described in `industries.md`, then identify the relevant personas and title lists in `personas.md`.
+   - Resolve the account to an industry described in `docs/industries.md`, then identify the relevant personas and title lists in `docs/personas.md`.
    - Start with the company website and inspect the team, staff, leadership, location, contact, news, press, and other pages suggested by the selected segment's discovery configuration.
    - Prioritize titles described as targets, review titles marked for manual judgment, and normally skip titles described as excluded.
    - For each candidate, search the same company-controlled pages for a public work email and inspect visible text, `mailto:` links, contact buttons, vCards, PDFs, and page source for directly associated email addresses.

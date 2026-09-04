@@ -1,6 +1,6 @@
 ---
 name: discover-companies
-description: Discover, qualify, and import company accounts for the audience defined in industries.md. Use when the user asks to find more companies, build an account list, research lookalikes, import discovered companies, or seed companies before enrichment.
+description: Discover, qualify, and import company accounts for the audience defined in docs/industries.md. Use when the user asks to find more companies, build an account list, research lookalikes, import discovered companies, or seed companies before enrichment.
 ---
 
 # Discover Companies
@@ -9,7 +9,7 @@ Find companies that match a user-provided audience prompt and the repository's c
 
 ## Outreach Configuration
 
-Before discovery, read the repository-root `industries.md` and `personas.md`. They are the source of truth for the organization and value proposition, industries, qualification and priority rules, personas, discovery sources, and query suggestions. User-provided audience requirements take precedence.
+Before discovery, read `docs/industries.md` and `docs/personas.md`. They are the source of truth for the organization and value proposition, industries, qualification and priority rules, personas, discovery sources, and query suggestions. User-provided audience requirements take precedence.
 
 ## Core Rules
 
@@ -40,8 +40,8 @@ Use:
 
 1. Interpret the audience prompt:
    - Extract required traits, examples/lookalikes, geography, exclusions, minimum quality bar, and requested count.
-   - If no count is provided, use the default candidate count in `industries.md`.
-   - Use the category name or identifier given for the relevant industry in `industries.md`. Keep it consistent across records rather than inventing variations.
+   - If no count is provided, use the default candidate count in `docs/industries.md`.
+   - Use the category name or identifier given for the relevant industry in `docs/industries.md`. Keep it consistent across records rather than inventing variations.
 2. Build search strategy:
    - For lookalikes, identify shared traits first: offering, customer type, geography, price point, sales motion, and relevance to the configured value proposition.
    - Use the discovery sources and query suggestions described for the selected industry, plus any general source guidance, to build several query families instead of relying on one broad search.

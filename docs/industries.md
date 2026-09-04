@@ -1,6 +1,6 @@
 # Industries
 
-This file defines the organizations to pursue. Personas are defined separately in `personas.md`.
+This file defines the organizations to pursue. Personas are defined separately in `docs/personas.md`.
 
 ## Strategy
 

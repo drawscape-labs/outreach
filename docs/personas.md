@@ -1,6 +1,6 @@
 # Personas
 
-This file defines people to find within the industries in `industries.md`. An industry is an organization type; a persona is a role held by a person.
+This file defines people to find within the industries in `docs/industries.md`. An industry is an organization type; a persona is a role held by a person.
 
 ## sales_advisors
 

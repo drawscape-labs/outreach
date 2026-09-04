@@ -11,7 +11,7 @@ Turn a company name, domain, LinkedIn company URL, or partial company object int
 
 Before producing a full enriched record, read:
 
-- The repository-root `industries.md` and `personas.md` for industries, qualification rules, and industry-specific priority rules.
+- `docs/industries.md` and `docs/personas.md` for industries, qualification rules, and industry-specific priority rules.
 - `references/source-rules.md` for source priority, conflict handling, and freshness rules.
 - `references/record-schema.md` for the canonical output shape and field normalization rules.
 
@@ -46,7 +46,7 @@ If the active repo already has a company/account schema, inspect it first and ma
    - Prefer explicit company-owned address, contact, about, or location pages; use reputable directories only when official sources are missing.
    - Infer country from city/region only when the address is unambiguous, and leave it unknown when multiple plausible countries remain.
 7. Set company priority when the target schema supports it:
-   - Resolve the company to the category name or identifier described in `industries.md`.
+   - Resolve the company to the category name or identifier described in `docs/industries.md`.
    - Apply that industry's priority guidance using current evidence.
    - Use the documented default only when no more specific supported rule applies.
 8. Normalize values into the target database schema:
@@ -67,7 +67,7 @@ When the user wants the record written into a codebase or database:
 - Use `node .codex/skills/enrich-company/scripts/upsert-company-api.js <company.json> --api-base http://localhost:4200 --apply` for company writes. Run the same command without `--apply` to preview the API payload and insert/update plan.
 - The helper looks up existing companies through `GET /api/companies?domain=...` and `GET /api/companies?linkedin_company_url=...`, then writes through `POST /api/companies` or `PATCH /api/companies/:id`.
 - The helper maps `location.headquarters.country`, top-level `country`, or `country_name` to `companies.country` when supplied.
-- The helper maps `priority` to `companies.priority` when supplied. Use the value described in `industries.md`; omit it only when evidence is insufficient.
+- The helper maps `priority` to `companies.priority` when supplied. Use the value described in `docs/industries.md`; omit it only when evidence is insufficient.
 - Respect existing column names, enum values, nullable fields, casing, and relationship tables.
 - Treat the company `domain` as the logical primary key for company records. It must be normalized, non-null, and unique.
 - Treat `linkedin_company_url` as an optional unique company identifier when the target schema permits it; never invent one.
@@ -90,7 +90,7 @@ When the user wants the record written into a codebase or database:
 - Use ISO country codes, normalized URLs, and stable enum slugs when possible.
 - Treat employee count/headcount as a core field. Record `employee_count` only when a source reports a concrete integer; record `employee_count_range` when only a range is supported. Do not convert ranges into midpoint guesses.
 - Treat headquarters country as a core company field. Use the country value supported by evidence, preferably the full country name from an official address.
-- Treat company priority as a core fit field. Use the industry's rules from `industries.md` instead of assigning every company in an industry the same priority.
+- Treat company priority as a core fit field. Use the industry's rules from `docs/industries.md` instead of assigning every company in an industry the same priority.
 - Treat revenue, funding, and traffic estimates as ranges unless a primary source gives exact values.
 - Include the current date in `date_enriched` or `last_enriched_at` when the target schema has such a field; for database writes, follow the completion-marker rules above.
 - Mark inaccessible LinkedIn data as unavailable instead of trying to bypass login, scraping controls, or paywalls.

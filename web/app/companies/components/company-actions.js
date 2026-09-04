@@ -15,7 +15,7 @@ function valueLine(label, value) {
 function buildEnrichCompanyInput(company, workspaceName) {
   return [
     `Enrich this existing ${workspaceName} company and save the updated company record through the web app API at http://localhost:4200.`,
-    "Read industries.md and personas.md before assigning an industry or priority.",
+    "Read docs/industries.md and docs/personas.md before assigning an industry or priority.",
     "Create a run directory under .codex/tmp/enrich-company/ and keep normalized input, source notes, enriched JSON, dry-run output, apply output, and logs there.",
     "Update the existing row by company ID, domain, or LinkedIn URL. Do not create a duplicate company.",
     "Set companies.date_enriched to today's ISO date when the update succeeds, then read back the row and report the changed fields.",
@@ -50,7 +50,7 @@ function buildProspectInput({ company, people, workspaceName }) {
 
   return [
     `Prospect this existing ${workspaceName} company and save importable results through the web app API at http://localhost:4200.`,
-    "Read industries.md and personas.md and use the personas associated with the company's industry. User-requested titles take precedence over configured defaults.",
+    "Read docs/industries.md and docs/personas.md and use the personas associated with the company's industry. User-requested titles take precedence over configured defaults.",
     "This web-app action is explicit approval to import/upsert the company, people, positions, and verified emails that pass prospect-company validation through the API.",
     "Create a run directory under .codex/tmp/prospect-company/ with relevant subfolders and keep the prospect JSON, research notes, validation output, duplicate-check output, upsert output, and logs there.",
     "Validate the prospect JSON, check duplicates through the API, then run `node .codex/skills/prospect-company/scripts/upsert-prospects.js <artifact> --api-base http://localhost:4200 --apply`.",

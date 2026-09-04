@@ -9,7 +9,7 @@ Configure this repository for the user's organization. Treat the existing Drawsc
 
 ## Start with an audit
 
-Read `README.md`, `industries.md`, `personas.md`, `package.json`, `web/package.json`, `.env.example`, and `AGENTS.md`. Search tracked files for the current organization name, domain, repository slug, package prefix, and organization-specific environment variable names. Separate:
+Read `README.md`, `docs/industries.md`, `docs/personas.md`, `package.json`, `web/package.json`, `.env.example`, and `AGENTS.md`. Search tracked files for the current organization name, domain, repository slug, package prefix, and organization-specific environment variable names. Separate:
 
 - Core outreach identity and targeting that should be replaced.
 - Generic application or research mechanics that should remain.
@@ -59,7 +59,7 @@ Before editing, show a compact summary of the proposed organization, industries,
 
 After the user accepts the summary:
 
-- Replace the contents of `industries.md` and `personas.md` with clear human-readable guidance. These files do not need a machine-readable structure and must not be required for the web application to run.
+- Replace the contents of `docs/industries.md` and `docs/personas.md` with clear human-readable guidance. These files do not need a machine-readable structure and must not be required for the web application to run.
 - Update current organization identity in package metadata, lockfile metadata, README examples, browser storage namespaces, core outreach skill wording, and generic API-base environment variable names where applicable.
 - Adapt or remove organization-specific optional skills only according to the user's explicit choice. Do not replace unrelated domains, URLs, credentials, or historical migration contents merely because they contain the old name.
 - Keep reusable research, evidence, API, deduplication, and application mechanics intact.

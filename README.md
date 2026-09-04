@@ -61,7 +61,7 @@ Never commit `.env`, API keys, prospect exports, or a populated SQLite database.
 
 ## Customize the outreach strategy
 
-[`industries.md`](./industries.md) and [`personas.md`](./personas.md) are the single source of truth for:
+[`docs/industries.md`](./docs/industries.md) and [`docs/personas.md`](./docs/personas.md) are the single source of truth for:
 
 - Organization name, offering, and value proposition
 - Account segments and their qualification and priority rules
@@ -70,7 +70,7 @@ Never commit `.env`, API keys, prospect exports, or a populated SQLite database.
 
 Account segments describe the organizations you want to reach, such as aircraft dealers or yacht clubs. Contact personas describe the people inside those organizations, such as brokers, sales managers, or event directors. Keep these concepts separate when adapting the configuration.
 
-To reuse the project for another market, describe the strategy, qualification rules, priorities, and discovery approach in `industries.md`, then describe the relevant people and role titles in `personas.md`. The files are guidance for Codex skills, not application configuration, so they can use whatever Markdown structure is clearest.
+To reuse the project for another market, describe the strategy, qualification rules, priorities, and discovery approach in `docs/industries.md`, then describe the relevant people and role titles in `docs/personas.md`. The files are guidance for Codex skills, not application configuration, so they can use whatever Markdown structure is clearest.
 
 The web app does not read or validate these files. Company category and priority are ordinary database strings, and filter choices are derived from values already stored in company records. Changing the strategy therefore requires no application restart, code edit, or database migration.
 
@@ -113,4 +113,4 @@ Prospect data and provider credentials may be sensitive. Keep `.env`, `data/*.sq
 
 The Next.js app and API live in `web/app/`, shared UI in `web/components/`, and the database schema and migrations in `web/prisma/`. Companies are identified by domain; people by a unique profile key. Positions link people to companies, and campaigns cache QuickMail metadata. Person statuses are New, Contacted, Replied, or Converted.
 
-Edit [industries.md](./industries.md) and [personas.md](./personas.md) to change how the bundled skills choose and qualify prospects. Keeping category names consistent is useful for clean filtering, but the application does not impose an allowlist.
+Edit [docs/industries.md](./docs/industries.md) and [docs/personas.md](./docs/personas.md) to change how the bundled skills choose and qualify prospects. Keeping category names consistent is useful for clean filtering, but the application does not impose an allowlist.

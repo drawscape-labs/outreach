@@ -40,7 +40,7 @@ Rules:
 
 - Normalize `domain` to lowercase host without `www.`.
 - Normalize `linkedin_company_url` to `https://www.linkedin.com/company/<slug>`.
-- Use the consistent category name or identifier described in the repository-root `industries.md` for `category`.
+- Use the consistent category name or identifier described in `docs/industries.md` for `category`.
 - Use a single-sentence display description.
 - Use `employee_count` only for exact total employee counts and `employee_count_range` when only a range is available.
 - Use `date_enriched` as a nullable text date/timestamp for when company enrichment data was last gathered.

@@ -4,7 +4,7 @@ This is a local prospecting and sales workspace for researching companies and th
 
 ## Outreach strategy
 
-Before discovering, qualifying, enriching, or prospecting accounts, read the repository-root `industries.md` and `personas.md`. Together, they are the single source of truth for:
+Before discovering, qualifying, enriching, or prospecting accounts, read `docs/industries.md` and `docs/personas.md`. Together, they are the single source of truth for:
 
 - The organization, offering, and value proposition
 - Account segments and their qualification and priority rules
