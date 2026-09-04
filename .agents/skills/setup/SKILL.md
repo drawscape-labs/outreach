@@ -83,6 +83,7 @@ Wait for each group's answers before asking the next group or doing more work. D
    - Priority levels, their order and definitions, and the default priority. Recommend keeping `high`, `medium`, and `low` unless the user needs a different model.
 
 3. **Industries / account segments**
+   - Ask which types of companies they want to reach, in which locations, and what makes a company a good or poor fit. Ask for example customers when useful.
    - A consistent category value, label, and description for each segment.
    - Terms and aliases that indicate a match.
    - Qualification, exclusion, and priority rules.
@@ -90,6 +91,7 @@ Wait for each group's answers before asking the next group or doing more work. D
    - Which personas apply to the segment.
 
 4. **Contact personas**
+   - Ask who buys, approves, or influences the purchase within each target industry, and which roles should be excluded. Offer suggested titles based on their answers when they do not know the exact titles.
    - A consistent persona name, label, and description for each persona.
    - Which industries it applies to.
    - Target titles, titles that need manual review, and excluded titles.
@@ -102,6 +104,8 @@ Wait for each group's answers before asking the next group or doing more work. D
    - Whether the local database contains sample data that should be cleared.
 
 Never ask the user to paste secrets into tracked files. Explain that integration credentials belong only in the repository-root `.env`.
+
+The industry and persona questions are required for company configuration, even when the user skips every integration. Explain briefly that their answers will replace the bundled strategy in both documents. Do not assume the current industries, personas, or exclusions apply to the new company. If answers are incomplete, propose a concise draft and wait for confirmation rather than retaining sample targeting or inventing it silently.
 
 ## Configure chosen integrations
 
@@ -118,7 +122,10 @@ Before editing company settings, show a compact summary of the proposed organiza
 
 After the user accepts the summary:
 
-- Replace the contents of `docs/industries.md` and `docs/personas.md` with clear human-readable guidance. These files do not need a machine-readable structure and must not be required for the web application to run.
+- Regenerate both `docs/industries.md` and `docs/personas.md` from the accepted interview answers. Replace the full bundled strategy; do not merely rename the company, append new sections, or leave unrelated Drawscape targeting in place. Retain an existing strategy detail only when the user explicitly chose it.
+- In `docs/industries.md`, write the organization, offering, value proposition, target company segments and locations, qualification and exclusion rules, priority guidance, and discovery sources or queries.
+- In `docs/personas.md`, write the contact roles for those segments, their purchasing role, target/review/excluded titles, and relevant qualification notes. Use the same segment names across both documents.
+- Write concise, human-readable Markdown. These files do not need a machine-readable structure and must not be required for the web application to run.
 - Update current organization identity in package metadata, lockfile metadata, README examples, browser storage namespaces, core outreach skill wording, and generic API-base environment variable names where applicable.
 - Adapt or remove organization-specific optional skills only according to the user's explicit choice. Do not replace unrelated domains, URLs, credentials, or historical migration contents merely because they contain the old name.
 - Keep reusable research, evidence, API, deduplication, and application mechanics intact.
@@ -127,6 +134,8 @@ After the user accepts the summary:
 If the user requests a database reset, resolve the exact active database path and confirm which data will be removed. Stop writers and make a consistent SQLite backup (including any WAL data) under ignored `data/backups/`. Verify the backup before removing the active database and its sidecars, then run `npm run db:init`. Never rewrite Git history; if sensitive data was previously committed, flag that separately for the repository owner.
 
 ## Validate and hand off
+
+Read both regenerated strategy documents and review their diff. Confirm that both reflect the approved answers, persona-to-industry relationships agree, and no unapproved sample identity, offering, segment, title list, or exclusion remains. Searching for the former company name alone is insufficient: old targeting can remain without mentioning that name. Report both documents as updated in the handoff. If either is unfinished, report company configuration as incomplete and do not start prospect discovery using the bundled strategy.
 
 After applying configuration, rerun lint and build if files affecting those checks changed:
 
