@@ -1,12 +1,16 @@
 ---
 name: setup
-description: Interview a repository owner and replace the bundled company identity, outreach industries, personas, optional integrations, and local prospect data for their organization. Use when initializing or reinitializing a fork of this outreach repository.
-compatibility: Requires filesystem access, Node.js 20+, npm, and Git. Internet access is useful for validating integration documentation.
+description: Guide a repository owner from a fresh computer to a running outreach app. Check prerequisites, install dependencies, prepare the environment and database, and configure their company, targeting, and chosen integrations. Use for first-time setup or reinitializing a fork.
+compatibility: Requires an agent interface with repository access. Shell access enables installation and checks; internet access is needed to download missing software and dependencies. Helps install Node.js, npm, and Git when missing. Codex CLI is optional for web-launched jobs.
 ---
 
 # Set Up the Outreach Repository
 
 Configure this repository for the user's organization. Treat the bundled organization content as sample data to replace, not defaults to preserve.
+
+Assume the user is already working in Claude, Claude Code, Codex, or another agent interface. Do not require Codex CLI to use this skill. If the interface cannot run local commands, give short commands for the user's operating system and ask for the results. A server running in a remote agent environment is not necessarily reachable at localhost on the user's computer.
+
+Use simple language and ask a few related questions at a time. Reuse answers already given. Complete routine installation steps within the user's request; ask about choices that affect their company, integrations, existing data, or system setup. On repeat runs, inspect what already works and resume from the missing step.
 
 ## Start with an audit
 
@@ -18,6 +22,23 @@ Read `README.md`, `docs/industries.md`, `docs/personas.md`, `package.json`, `web
 - Historical migrations or third-party references that should not be rewritten blindly.
 
 Do not treat industries as personas. Industries classify target organizations; personas classify people within those organizations.
+
+## Check the computer and install
+
+1. Identify the repository root, operating system, shell, and whether commands run on the user's computer or a remote environment. Read the package engine requirements and scripts before selecting commands.
+2. Check `node --version`, `npm --version`, and `git --version` separately. Check the Node version against both package files, not just whether the command exists. The current minimum is Node.js 20.9. Missing Node or Git must not prevent reading the files and planning setup.
+3. If software is missing or too old, guide installation using the official Node.js download page (https://nodejs.org/en/download) and Git installation page (https://git-scm.com/downloads). Prefer a supported Node LTS version compatible with the repository. Check for an existing version manager before choosing an installer; do not replace an existing system installation blindly. npm normally comes with Node. Use instructions for the detected OS and verify versions again after installation or a terminal restart. Let the user handle installer dialogs and credentials when necessary.
+4. Run `npm --prefix web ci` from the repository root for a fresh install. Keep development dependencies: Prisma and build tools are needed during setup. On an existing working install, avoid reinstalling without a reason. If installation fails, inspect the first actionable error and resolve it before continuing; do not delete the lockfile or use force flags to hide dependency problems.
+
+If Git metadata is absent because the user downloaded an archive, use filesystem searches for the audit. Do not require cloning again merely to read skills or run the app.
+
+## Prepare the environment and database
+
+- Create the repository-root `.env` from `.env.example` only when it is absent. Preserve existing values and add only missing settings. Use shell-appropriate commands. Do not print credentials or ask the user to paste them into chat.
+- Check for competing environment files under `web/` and inherited environment variables. Report conflicting keys without exposing values. Reconcile the intended root configuration before proceeding; preserve a local backup before relocating an existing file. Do not silently point the app at a different database.
+- Resolve `DATABASE_URL` to the actual database path using the repository's database helper. Check whether a database already exists. Keep it by default; ask about a reset only if the user wants to remove existing records.
+- Run `npm run db:init` to generate Prisma Client and apply checked-in migrations, then `npm run db:migrate:status`. Use these commands instead of creating a migration during setup. No separate SQLite server is needed.
+- Confirm the app can read the same database after starting it. A successful migration command alone does not prove the runtime configuration is correct. Also verify the configured application label in the browser; do not claim an environment setting works merely because it was written to `.env`.
 
 ## Interview the user
 
@@ -48,11 +69,21 @@ Ask a few related questions at a time and retain earlier answers. Offer reasonab
    - Any role-specific qualification notes.
 
 5. **Repository options**
-   - Which supported agent harnesses and optional Hunter, QuickMail, Cloudflare, or other bundled integrations should remain.
+   - Whether they want only manual records, guided research in their current agent, web-launched background jobs, or automated email campaigns.
+   - Whether to configure Hunter, QuickMail, Cloudflare, or other bundled integrations now or skip them.
    - Whether organization-specific optional skills should be adapted or removed.
    - Whether the local database contains sample data that should be cleared.
 
 Never ask the user to paste secrets into tracked files. Explain that integration credentials belong only in the repository-root `.env`.
+
+## Configure chosen integrations
+
+- **Codex CLI:** needed only for background jobs launched by web buttons. Skip installation if the user does not want that feature. If selected, check that the server's local user can run `codex --version`. Inspect `codex login --help` for the installed version's sign-in/status commands, check authentication, and guide sign-in if needed. CLI availability, authentication, and a successful job are separate checks. Do not launch a prospecting job merely to test login. If unavailable, the user can still ask their current agent to use the skills.
+- **Hunter:** optional email research. Guide the user to put `HUNTER_API_KEY` in root `.env`; use the `hunter-io` skill for an account check when requested. Avoid paid searches as an installation test.
+- **QuickMail:** required for automated email campaigns. Guide root `.env` configuration using the README. Verify access with a read-only check when configured. Do not add leads, activate campaigns, or send email during setup.
+- **Cloudflare and other integrations:** configure only when chosen, following the relevant skill. Do not change DNS just to verify credentials.
+
+Read the relevant integration skill before using it. Missing optional integrations must not block the base app. Report whether each chosen integration was verified, skipped, or still needs user action.
 
 ## Preview and apply
 
@@ -66,7 +97,7 @@ After the user accepts the summary:
 - Keep reusable research, evidence, API, deduplication, and application mechanics intact.
 - Run a tracked-file search for the former organization name, domain, and slug. Review each remaining match and either update it or explain why it was intentionally retained.
 
-If the active SQLite database contains shipped or existing records, do not overwrite it silently. Get explicit confirmation for the reset, copy it to an ignored timestamped file under `data/backups/`, remove only the active database and its SQLite sidecar files, then run `npm run db:init`. Never rewrite Git history; if sensitive data was previously committed, flag that separately for the repository owner.
+If the user requests a database reset, resolve the exact active database path and confirm which data will be removed. Stop writers and make a consistent SQLite backup (including any WAL data) under ignored `data/backups/`. Verify the backup before removing the active database and its sidecars, then run `npm run db:init`. Never rewrite Git history; if sensitive data was previously committed, flag that separately for the repository owner.
 
 ## Validate and hand off
 
@@ -77,4 +108,10 @@ npm --prefix web run lint
 npm run build
 ```
 
-When useful, start the development server and check the main routes. Finish with a concise report covering changed strategy and identity files, retained old-name references, database backup/reset status, optional integrations, validation results, and any remaining manual secret setup.
+Start `npm run dev` using the interface's supported persistent process mechanism. Check port 4200 first; reuse a healthy instance of this repository or report a conflict instead of stopping an unrelated process. Keep the server running for the user and give its reachable URL. If using another port, account for the repository's port-4200 assumptions in skill/API workflows before claiming they work.
+
+Check `/companies`, `/people`, `/skills`, and database reads through `/api/companies` and `/api/people`. Empty lists are valid on a fresh install. Verify page navigation and a filter in the browser when available. If browser checks or local access are unavailable, state exactly what was checked and what remains unverified. Report application defects rather than masking them with undocumented local settings or broad code changes.
+
+Offer a first task: “Use the discover-companies skill to find and save five companies matching my industries.” Run it only if the user wants that research and saving step, and read that skill first. Do not imply setup has already populated the database.
+
+Finish with the app URL, installation/database check results, company configuration status, chosen integrations, and any remaining user actions. Include how to restart the app. Distinguish verified functionality from skipped checks; do not claim a complete setup while a required check is failing.
