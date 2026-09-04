@@ -23,6 +23,8 @@ Whenever you ask the user a question or request an action, stop all task work an
 
 Use a blocking question tool if available, or end the response with the question. Do not use asynchronous questions that let work continue. No response is not approval or a default selection. Resume only after receiving the answer, and resolve that answer before moving on.
 
+Keep routine interview pauses natural: ask the question and end the response. Do not add statements such as “the setup skill requires me to wait” or “I am pausing for your answer,” and do not quote these internal workflow rules or show their file path as part of the interview. Explain actual installation blockers only when that helps the user answer.
+
 Ask during phase one only when installation cannot safely proceed without an answer. For example, finish checks that do not depend on the port choice before asking about an occupied port; once the question is asked, stop. Never ask company questions early to collect answers while installation runs.
 
 ## Start with an audit
