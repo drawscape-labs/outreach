@@ -171,8 +171,7 @@ const companyTextFields = [
         COMPANY_API_MESSAGES.invalidLinkedinCompanyUrl
       );
     },
-    nullAsUndefinedOnCreate: true,
-    requiredOnCreate: true
+    nullAsUndefinedOnCreate: true
   },
   {
     column: COMPANY_FIELDS.websiteUrl,

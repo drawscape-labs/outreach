@@ -244,6 +244,17 @@ function readPersonId(value) {
   return Number.isInteger(id) && id > 0 ? id : null;
 }
 
+function prominentPositionTitle(positions) {
+  const currentTitles = positions
+    .filter((position) => position.isCurrent && position.title)
+    .map((position) => position.title);
+  const titles = currentTitles.length
+    ? currentTitles
+    : positions.map((position) => position.title).filter(Boolean);
+
+  return [...new Set(titles)].join(" · ");
+}
+
 async function getPersonDetail(personId) {
   const id = readPersonId(personId);
 
@@ -267,11 +278,22 @@ export default async function PersonDetailPage({ params }) {
 
   const person = personJson(personRecord);
   const positions = personRecord.positions.map(positionCompany);
+  const positionTitle = prominentPositionTitle(positions);
   const quickmailState = await loadQuickmailLead(person);
 
   return (
     <PageShell>
-      <PageHeader eyebrow="Person" title={person.name}>
+      <PageHeader
+        eyebrow="Person"
+        title={person.name}
+        description={
+          positionTitle ? (
+            <span className="text-base/6 font-semibold text-gray-900 dark:text-white">
+              {positionTitle}
+            </span>
+          ) : undefined
+        }
+      >
         <PersonActions
           personId={person.id}
           personName={person.name}
@@ -305,8 +327,12 @@ export default async function PersonDetailPage({ params }) {
             <DetailItem label="Profile key">
               <FieldValue value={person.profileKey} />
             </DetailItem>
-            <DetailItem label="LinkedIn">
-              <ExternalAnchor href={person.linkedinProfileUrl}>Profile</ExternalAnchor>
+            <DetailItem label="LinkedIn profile">
+              <ExternalAnchor href={person.linkedinProfileUrl}>
+                {person.linkedinProfileUrl
+                  ?.replace(/^https?:\/\/(www\.)?/, "") || "View LinkedIn profile"}
+                <span aria-hidden="true"> ↗</span>
+              </ExternalAnchor>
             </DetailItem>
             <DetailItem label="QuickMail lead id">
               <FieldValue value={person.quickmailLeadId} />

@@ -110,6 +110,19 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const LINKEDIN_PROFILE_TYPES = new Set(["in", "pub"]);
 const PHONE_ALLOWED_PATTERN = /^[0-9+().\-\s#ext]+$/i;
 const QUICKMAIL_LEAD_ID_PATTERN = /^lead_[A-Za-z0-9]+$/;
+const POSITION_SEARCH_ALIASES = {
+  bd: ["business", "development"],
+  bizdev: ["business", "development"],
+  ceo: ["chief", "executive", "officer"],
+  cfo: ["chief", "financial", "officer"],
+  cmo: ["chief", "marketing", "officer"],
+  coo: ["chief", "operating", "officer"],
+  cso: ["chief", "sales", "officer"],
+  gm: ["general", "manager"],
+  md: ["managing", "director"],
+  mgr: ["manager"],
+  vp: ["vice", "president"]
+};
 
 function assertEmail(value, message = PERSON_API_MESSAGES.invalidEmail) {
   if (value === null || value === undefined) {
@@ -424,6 +437,19 @@ function searchParamValue(searchParams, names) {
   return "";
 }
 
+function statusFilterValues(searchParams) {
+  const values = typeof searchParams?.getAll === "function"
+    ? PERSON_FILTER_PARAMS.status.flatMap((name) => searchParams.getAll(name))
+    : [searchParamValue(searchParams, PERSON_FILTER_PARAMS.status)];
+
+  return [...new Set(
+    values
+      .flatMap((value) => String(value || "").split(","))
+      .map((value) => value.trim())
+      .filter(Boolean)
+  )];
+}
+
 function addAndFilter(where, filter) {
   where.AND = [...(where.AND || []), filter];
 }
@@ -450,10 +476,53 @@ function addTextPresenceFilter(where, field, value) {
   }
 }
 
+function positionSearchTerms(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .split(" ")
+    .map((term) => term.trim())
+    .filter((term) => term.length > 1)
+    .map((term) => ({
+      term,
+      aliases: POSITION_SEARCH_ALIASES[term] || []
+    }));
+}
+
+function addPositionSearchFilter(positionFilter, value) {
+  const terms = positionSearchTerms(value);
+
+  if (!terms.length) {
+    return;
+  }
+
+  positionFilter.AND = [
+    ...(positionFilter.AND || []),
+    ...terms.map(({ term, aliases }) => {
+      const directMatch = { title: { contains: term } };
+
+      if (!aliases.length) {
+        return directMatch;
+      }
+
+      return {
+        OR: [
+          directMatch,
+          {
+            AND: aliases.map((alias) => ({
+              title: { contains: alias }
+            }))
+          }
+        ]
+      };
+    })
+  ];
+}
+
 function peopleWhere(searchParams, { currentPositionsOnly = false } = {}) {
   const where = {};
   const positionFilter = {};
-  const status = searchParamValue(searchParams, PERSON_FILTER_PARAMS.status);
+  const statuses = statusFilterValues(searchParams);
   const email = searchParamValue(searchParams, PERSON_FILTER_PARAMS.email);
   const emailAddress = searchParamValue(
     searchParams,
@@ -465,6 +534,7 @@ function peopleWhere(searchParams, { currentPositionsOnly = false } = {}) {
     PERSON_FILTER_PARAMS.linkedinProfileUrl
   );
   const profileKey = searchParamValue(searchParams, PERSON_FILTER_PARAMS.profileKey);
+  const position = searchParamValue(searchParams, PERSON_FILTER_PARAMS.position);
   const quickmailLeadId = searchParamValue(
     searchParams,
     PERSON_FILTER_PARAMS.quickmailLeadId
@@ -490,12 +560,16 @@ function peopleWhere(searchParams, { currentPositionsOnly = false } = {}) {
     positionFilter.isCurrent = true;
   }
 
-  if (status) {
-    if (!PERSON_STATUSES.includes(status)) {
+  if (position) {
+    addPositionSearchFilter(positionFilter, position);
+  }
+
+  if (statuses.length) {
+    if (statuses.some((status) => !PERSON_STATUSES.includes(status))) {
       throw new ApiError(PERSON_API_MESSAGES.invalidStatus);
     }
 
-    where.status = status;
+    where.status = statuses.length === 1 ? statuses[0] : { in: statuses };
   }
 
   if (qualified !== undefined) {

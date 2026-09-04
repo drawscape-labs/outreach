@@ -107,6 +107,7 @@ Use one evidence entry per source or per field when the target schema supports i
 - `social_urls`: array of objects with `platform` and `url` if the schema allows objects; otherwise array of URLs.
 - `industries`, `categories`, `tags`: lowercase slugs unless the project uses title-cased labels.
 - `priority`: for Drawscape Outreach, map top-level `priority` or `classification.priority` to `companies.priority`. Use only `high`, `medium`, or `low`; omit unknown priority rather than writing a placeholder value.
+- `category`: use `yacht_club` for private sailing and yachting clubs; use `yacht` for yacht brokers, dealers, and sellers.
 - `country`: for Drawscape Outreach, map `location.headquarters.country`, top-level `country`, or `country_name` to `companies.country`. Prefer the full country name from a current official address; leave it null when the headquarters country is ambiguous.
 - `country_code`: ISO 3166-1 alpha-2.
 - `founded_year`: integer year only.
@@ -153,7 +154,7 @@ For database writes:
 
 - Use the web app API for lookup and writes: `GET /api/companies?domain=...`, `GET /api/companies?linkedin_company_url=...`, `POST /api/companies`, and `PATCH /api/companies/:id`.
 - Use normalized `domain` as the primary match key.
-- Use normalized `linkedin_company_url` as the secondary unique match key.
-- Update an existing row when either key matches the same company.
-- Stop for human review when the domain matches one company and the LinkedIn company URL matches another.
-- Do not insert a company record without both a unique domain and a unique LinkedIn company URL when the target schema requires both.
+- Use normalized `linkedin_company_url` as the secondary unique match key when it is available.
+- Update an existing row when the domain matches, or when a supplied LinkedIn company URL matches the same company.
+- Stop for human review when the domain matches one company and a supplied LinkedIn company URL matches another.
+- Do not insert a company record without a unique normalized domain. Leave LinkedIn blank until it is publicly verified when the target schema permits it.

@@ -118,6 +118,13 @@ function categoryFrom(value) {
       return "automotive";
     }
     if (
+      normalized === "yacht_club" ||
+      normalized === "yacht club" ||
+      normalized.includes("yacht club")
+    ) {
+      return "yacht_club";
+    }
+    if (
       normalized === "yacht" ||
       normalized === "yachts" ||
       normalized === "boat" ||
@@ -200,9 +207,8 @@ function validateCompany(company) {
   const errors = [];
   if (!company.name) errors.push("name is required");
   if (!company.domain) errors.push("domain is required");
-  if (!company.linkedin_company_url) errors.push("linkedin_company_url is required");
-  if (company.category && !["aircraft", "automotive", "yacht"].includes(company.category)) {
-    errors.push("category must be aircraft, automotive, or yacht");
+  if (company.category && !["aircraft", "automotive", "yacht", "yacht_club"].includes(company.category)) {
+    errors.push("category must be aircraft, automotive, yacht, or yacht_club");
   }
   if (company.priority && !["high", "medium", "low"].includes(company.priority)) {
     errors.push("priority must be high, medium, or low");

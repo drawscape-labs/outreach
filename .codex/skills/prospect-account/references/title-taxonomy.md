@@ -122,6 +122,60 @@ Usually skip:
 - Parts
 - Rigging
 
+## Yacht Clubs
+
+For custom member gifts and regatta or event trophies, prioritize leaders who
+run the club, sailing, yachting or marine operations, and private club events.
+Approve current titles containing `Coach` when the role belongs to the club's
+sailing, racing, junior sailing, or boat-class program. Do not use this rule for
+fitness, racquet, swim, or other unrelated athletic coaches unless requested.
+
+High relevance:
+
+- General Manager
+- Marine Manager
+- Sailing Director
+- Coach
+- Head Coach
+- Sailing Coach
+- Head Sailing Coach
+- Junior Sailing Coach
+- Fleet Coach
+- Head Fleet Coach
+- Boat-Class Coach (for example, Opti, ILCA, 420, or RS Feva Coach)
+- Director of Yachting
+- Waterfront Director
+- Marina Director
+- Facilities & Marina Director
+- Regatta Director
+- Events Director
+- Event Director
+- Events Manager
+- Event Manager
+- Events Coordinator
+- Event Coordinator
+- Private Events Director
+- Private Events Manager
+- Private Events Coordinator
+
+Review:
+
+- Assistant General Manager
+- Membership Director
+- Waterfront Amenities Director
+- Assistant Sailing Director
+- Assistant Marine Manager
+- Assistant Marina Manager
+- Clubhouse Manager
+- Communications Manager
+
+Usually skip:
+
+- Marina Staff
+- Launch Operator
+- Dockhand
+- Service Staff
+
 ## Seniority
 
 Use these normalized values when clear:

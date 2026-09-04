@@ -1,0 +1,535 @@
+{
+  "schemaVersion": 1,
+  "organization": {
+    "name": "Drawscape",
+    "workspaceName": "Drawscape Outreach",
+    "website": "https://www.drawscape.io",
+    "offering": "Custom artwork based on a client's aircraft, automobile, sailboat, or yacht.",
+    "valueProposition": "Create personalized artwork that sellers and member organizations can give to clients or members after a sale, at an event, or as a recognition gift."
+  },
+  "qualification": {
+    "minimumEvidence": [
+      "Verify the account through a current official website or another authoritative public source.",
+      "Require evidence that the account matches at least one configured account segment.",
+      "Prefer accounts with visible client-facing teams that match at least one configured contact persona."
+    ],
+    "exclude": [
+      "Service-only or parts-only businesses without a relevant sales motion.",
+      "Rental-only businesses unless the user explicitly requests them.",
+      "Defunct, acquired, or ambiguous businesses whose current identity cannot be verified."
+    ]
+  },
+  "priority": {
+    "default": "medium",
+    "levels": [
+      {
+        "id": "high",
+        "label": "High",
+        "description": "Strong evidence of fit, a repeatable high-value client relationship, and reachable matching contacts."
+      },
+      {
+        "id": "medium",
+        "label": "Medium",
+        "description": "Qualified account with plausible fit, but weaker volume, contact, or positioning evidence."
+      },
+      {
+        "id": "low",
+        "label": "Low",
+        "description": "Adjacent account with limited evidence for the configured value proposition."
+      }
+    ]
+  },
+  "discovery": {
+    "defaultCandidateCount": 10,
+    "sourcePreference": [
+      "Official company websites and company-controlled team or location pages.",
+      "Manufacturer and brand dealer locators.",
+      "Industry associations and professional directories.",
+      "Public LinkedIn company pages and public search results.",
+      "Reputable industry directories used as discovery leads, followed by primary-source verification."
+    ]
+  },
+  "accountSegments": [
+    {
+      "id": "aircraft",
+      "label": "Aircraft Dealers & Brokers",
+      "description": "Companies that sell or broker business, private, or general-aviation aircraft.",
+      "aliases": [
+        "aircraft",
+        "aviation"
+      ],
+      "matchTerms": [
+        "aircraft sales",
+        "aircraft dealer",
+        "aircraft brokerage",
+        "aircraft broker",
+        "aviation sales"
+      ],
+      "qualification": {
+        "include": [
+          "Current evidence of aircraft sales, acquisitions, brokerage, or dealership activity.",
+          "A visible sales, brokerage, business-development, or client-advisory function."
+        ],
+        "exclude": [
+          "Maintenance, avionics, charter, flight training, or management businesses with no aircraft sales evidence."
+        ]
+      },
+      "priorityRules": {
+        "high": [
+          "Established aircraft seller or broker with a visible client-facing sales team and current inventory or transaction evidence."
+        ],
+        "medium": [
+          "Verified aircraft seller or broker with limited public evidence about volume or team size."
+        ],
+        "low": [
+          "Aviation business with aircraft sales as a secondary or weakly supported activity."
+        ]
+      },
+      "discovery": {
+        "sources": [
+          "Aircraft dealer and broker directories",
+          "Manufacturer sales and authorized-dealer directories",
+          "Official aircraft inventory and team pages"
+        ],
+        "queries": [
+          "\"aircraft sales\" brokerage team",
+          "\"aircraft broker\" sales team",
+          "business aircraft dealer sales"
+        ]
+      },
+      "contactPersonaIds": [
+        "sales_advisors",
+        "brokers",
+        "sales_leadership",
+        "business_development"
+      ]
+    },
+    {
+      "id": "automotive",
+      "label": "Automotive Dealers",
+      "description": "Dealerships and dealer groups selling Porsche, luxury, performance, or other high-value automobiles.",
+      "aliases": [
+        "automotive",
+        "auto",
+        "car",
+        "cars"
+      ],
+      "matchTerms": [
+        "porsche",
+        "luxury automobile",
+        "luxury automotive",
+        "luxury car",
+        "car dealership",
+        "automotive dealership",
+        "auto dealer"
+      ],
+      "qualification": {
+        "include": [
+          "Current evidence of vehicle sales through a dealership or dealer group.",
+          "Prefer Porsche, luxury, performance, collector, and other high-value vehicle sellers."
+        ],
+        "exclude": [
+          "Repair, parts, rental, detailing, or service businesses with no vehicle sales operation."
+        ]
+      },
+      "priorityRules": {
+        "high": [
+          "Porsche or luxury/performance dealership with a visible sales team and active vehicle inventory."
+        ],
+        "medium": [
+          "Premium or mixed-brand dealership with a relevant sales team but less direct fit evidence."
+        ],
+        "low": [
+          "General dealership whose inventory and customer experience show limited high-value or gifting relevance."
+        ]
+      },
+      "discovery": {
+        "sources": [
+          "Manufacturer dealer locators",
+          "Official dealership staff and inventory pages",
+          "Dealer-group location directories"
+        ],
+        "queries": [
+          "\"Porsche dealer\" sales team",
+          "\"luxury car dealership\" staff",
+          "\"performance automobile dealer\" client advisor"
+        ]
+      },
+      "contactPersonaIds": [
+        "sales_advisors",
+        "sales_leadership",
+        "dealership_leadership",
+        "business_development"
+      ]
+    },
+    {
+      "id": "yacht",
+      "label": "Yacht & Sailboat Brokers",
+      "description": "Brokerages and dealers that sell yachts, sailboats, sailing catamarans, or related high-value vessels.",
+      "aliases": [
+        "yacht",
+        "yachts",
+        "boat",
+        "boats",
+        "sailboat",
+        "sailboats"
+      ],
+      "matchTerms": [
+        "yacht brokerage",
+        "yacht broker",
+        "yacht sales",
+        "sailboat sales",
+        "sailing yacht",
+        "sailing catamaran",
+        "boat dealer"
+      ],
+      "qualification": {
+        "include": [
+          "Current evidence of yacht, sailboat, sailing-catamaran, or boat sales and brokerage.",
+          "Prefer accounts with visible brokers, sales advisors, or sales leadership."
+        ],
+        "exclude": [
+          "Charter-only, marina-only, service-only, or boatyard businesses with no vessel sales evidence."
+        ]
+      },
+      "priorityRules": {
+        "high": [
+          "Mainstream or high-volume sailboat dealer or broker with production sailboats, sailing catamarans, active used sailboat inventory, or brands such as Catalina, J/Boats, Beneteau, Jeanneau, Dufour, Hanse, or Lagoon."
+        ],
+        "medium": [
+          "Powerboat, motor-yacht, general-boat, mixed-yacht, or otherwise ambiguous broker when neither the high nor low rule is clearly proven.",
+          "A company described only generically as a yacht brokerage when current inventory evidence is inconclusive."
+        ],
+        "low": [
+          "Primarily luxury-yacht or superyacht broker whose sail evidence is limited to sailing superyachts, custom megayachts, crewed sailing-yacht charters, or occasional large-yacht listings."
+        ]
+      },
+      "discovery": {
+        "sources": [
+          "Official brokerage inventory and broker pages",
+          "Yacht Brokers Association of America CPYB directory: https://members.ybaa.org/cpyb-certified-yacht-brokers/FindStartsWith?term=%23%21",
+          "Boat-brand dealer locators and sailing-industry associations"
+        ],
+        "queries": [
+          "\"yacht brokerage\" brokers team",
+          "\"sailboat sales\" team",
+          "\"yacht broker\" sales director"
+        ]
+      },
+      "contactPersonaIds": [
+        "brokers",
+        "sales_advisors",
+        "sales_leadership",
+        "business_development"
+      ]
+    },
+    {
+      "id": "yacht_club",
+      "label": "Yacht Clubs",
+      "description": "Private sailing and yachting clubs with member-gift, regatta, event, trophy, or recognition opportunities.",
+      "aliases": [
+        "yacht_club",
+        "yacht club",
+        "sailing club"
+      ],
+      "matchTerms": [
+        "private yacht club",
+        "yacht club",
+        "sailing club"
+      ],
+      "qualification": {
+        "include": [
+          "A current private sailing or yachting club with active members, sailing programs, regattas, private events, or recognition programs.",
+          "Prefer clubs with visible leadership for operations, sailing, racing, events, or member experience."
+        ],
+        "exclude": [
+          "Commercial marinas, public boat ramps, and social clubs with no meaningful sailing, yachting, event, or recognition activity."
+        ]
+      },
+      "priorityRules": {
+        "high": [
+          "Active regattas, sailing programs, private events, awards, or member-recognition programs plus visible matching leaders."
+        ],
+        "medium": [
+          "Verified private yacht or sailing club with plausible gift or event relevance but limited public program detail."
+        ],
+        "low": [
+          "Club with weak sailing, event, award, or member-gifting evidence."
+        ]
+      },
+      "discovery": {
+        "sources": [
+          "Official club leadership, sailing-program, regatta, and private-event pages",
+          "Regional and national sailing associations",
+          "Regatta calendars and club directories"
+        ],
+        "queries": [
+          "\"yacht club\" sailing director",
+          "\"yacht club\" private events",
+          "\"sailing club\" regatta director"
+        ]
+      },
+      "contactPersonaIds": [
+        "club_leadership",
+        "sailing_program_leadership",
+        "event_leadership"
+      ]
+    }
+  ],
+  "contactPersonas": [
+    {
+      "id": "sales_advisors",
+      "label": "Sales Advisors & Representatives",
+      "description": "Client-facing individual contributors who guide buyers through a high-value purchase.",
+      "accountSegmentIds": [
+        "aircraft",
+        "automotive",
+        "yacht"
+      ],
+      "targetTitles": [
+        "Aircraft Sales",
+        "Aircraft Sales Executive",
+        "Aircraft Sales Representative",
+        "Aviation Sales",
+        "Sales",
+        "Sales Consultant",
+        "Client Advisor",
+        "Brand Ambassador",
+        "Global Brand Ambassador",
+        "Brand Specialist",
+        "Fleet Sales",
+        "Guest Experience",
+        "Guest Experience Manager",
+        "Yacht Sales",
+        "New Yacht Sales",
+        "Pre-Owned Yacht Sales",
+        "Used Yacht Sales",
+        "Sailboat Sales",
+        "Yacht Sales Consultant",
+        "Yacht Sales Advisor",
+        "Yacht Sales Executive",
+        "Yacht Sales Representative",
+        "Yacht Consultant",
+        "Yacht Advisor"
+      ],
+      "reviewTitles": [
+        "Account Executive",
+        "Finance Manager",
+        "Charter Sales"
+      ],
+      "excludedTitles": [
+        "Pilot",
+        "Maintenance",
+        "Avionics",
+        "Service Advisor",
+        "Parts Manager",
+        "Technician",
+        "Captain",
+        "Service Manager",
+        "Yard Manager",
+        "Rigging"
+      ]
+    },
+    {
+      "id": "brokers",
+      "label": "Brokers",
+      "description": "People directly responsible for aircraft, yacht, or sailboat brokerage and sales relationships.",
+      "accountSegmentIds": [
+        "aircraft",
+        "yacht"
+      ],
+      "targetTitles": [
+        "Aircraft Broker",
+        "Broker",
+        "Yacht Broker",
+        "Certified Professional Yacht Broker",
+        "Managing Broker",
+        "Principal Broker",
+        "Broker Associate",
+        "Sales Broker",
+        "Brokerage Sales",
+        "Brokerage Manager",
+        "Sailboat Broker"
+      ],
+      "reviewTitles": [
+        "Charter Broker",
+        "Charter Manager"
+      ],
+      "excludedTitles": [
+        "Captain",
+        "Service Manager",
+        "Yard Manager",
+        "Parts",
+        "Rigging"
+      ]
+    },
+    {
+      "id": "sales_leadership",
+      "label": "Sales Leadership",
+      "description": "Managers and executives who lead sales teams, territories, or revenue relationships.",
+      "accountSegmentIds": [
+        "aircraft",
+        "automotive",
+        "yacht"
+      ],
+      "targetTitles": [
+        "Sales Manager",
+        "General Sales Manager",
+        "Internet Sales Manager",
+        "Yacht Sales Manager",
+        "Regional Sales Manager",
+        "Sales Director",
+        "Director of Sales",
+        "Director of Yacht Sales",
+        "Managing Director",
+        "VP Sales",
+        "VP of Sales",
+        "Vice President of Sales"
+      ],
+      "reviewTitles": [
+        "Owner",
+        "Founder",
+        "Location Manager"
+      ],
+      "excludedTitles": [
+        "Service Manager",
+        "Parts Manager",
+        "Marketing Coordinator"
+      ]
+    },
+    {
+      "id": "dealership_leadership",
+      "label": "Dealership Leadership",
+      "description": "Automotive leaders who own or manage the customer experience and gifting decisions.",
+      "accountSegmentIds": [
+        "automotive"
+      ],
+      "targetTitles": [
+        "General Manager",
+        "Dealer Principal"
+      ],
+      "reviewTitles": [
+        "Business Development Center",
+        "Finance Manager"
+      ],
+      "excludedTitles": [
+        "Service Manager",
+        "Parts Manager"
+      ]
+    },
+    {
+      "id": "business_development",
+      "label": "Business Development",
+      "description": "People responsible for partnerships, growth, and client-development programs.",
+      "accountSegmentIds": [
+        "aircraft",
+        "automotive",
+        "yacht"
+      ],
+      "targetTitles": [
+        "Business Development",
+        "Business Development Manager",
+        "Director of Business Development",
+        "VP of Business Development",
+        "Vice President of Business Development"
+      ],
+      "reviewTitles": [
+        "Account Executive",
+        "Owner",
+        "Founder"
+      ],
+      "excludedTitles": [
+        "Marketing Coordinator"
+      ]
+    },
+    {
+      "id": "club_leadership",
+      "label": "Yacht Club Leadership",
+      "description": "Leaders responsible for club operations, marine facilities, and member experience.",
+      "accountSegmentIds": [
+        "yacht_club"
+      ],
+      "targetTitles": [
+        "General Manager",
+        "Marine Manager",
+        "Director of Yachting",
+        "Waterfront Director",
+        "Marina Director",
+        "Facilities & Marina Director"
+      ],
+      "reviewTitles": [
+        "Assistant General Manager",
+        "Membership Director",
+        "Waterfront Amenities Director",
+        "Assistant Marine Manager",
+        "Assistant Marina Manager",
+        "Clubhouse Manager",
+        "Communications Manager"
+      ],
+      "excludedTitles": [
+        "Marina Staff",
+        "Launch Operator",
+        "Dockhand",
+        "Service Staff"
+      ]
+    },
+    {
+      "id": "sailing_program_leadership",
+      "label": "Sailing Program Leadership",
+      "description": "Leaders and coaches responsible for club sailing, racing, and junior programs.",
+      "accountSegmentIds": [
+        "yacht_club"
+      ],
+      "qualificationNotes": [
+        "Approve coach titles only when the role belongs to sailing, racing, junior sailing, or a boat-class program.",
+        "Do not qualify fitness, racquet, swim, or unrelated athletic coaches unless the user requests them."
+      ],
+      "targetTitles": [
+        "Sailing Director",
+        "Coach",
+        "Head Coach",
+        "Sailing Coach",
+        "Head Sailing Coach",
+        "Junior Sailing Coach",
+        "Fleet Coach",
+        "Head Fleet Coach",
+        "Boat-Class Coach"
+      ],
+      "reviewTitles": [
+        "Assistant Sailing Director"
+      ],
+      "excludedTitles": [
+        "Fitness Coach",
+        "Racquet Coach",
+        "Swim Coach"
+      ]
+    },
+    {
+      "id": "event_leadership",
+      "label": "Event & Regatta Leadership",
+      "description": "People who manage private events, regattas, awards, trophies, or member recognition.",
+      "accountSegmentIds": [
+        "yacht_club"
+      ],
+      "targetTitles": [
+        "Regatta Director",
+        "Events Director",
+        "Event Director",
+        "Events Manager",
+        "Event Manager",
+        "Events Coordinator",
+        "Event Coordinator",
+        "Private Events Director",
+        "Private Events Manager",
+        "Private Events Coordinator"
+      ],
+      "reviewTitles": [
+        "Membership Director",
+        "Communications Manager"
+      ],
+      "excludedTitles": [
+        "Service Staff"
+      ]
+    }
+  ]
+}

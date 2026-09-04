@@ -71,9 +71,9 @@ When the user wants the record written into a codebase or database:
 - The helper maps `priority` to `companies.priority` when supplied. Use only `high`, `medium`, or `low`; omit it only when the target schema does not support priority or evidence is insufficient.
 - Respect existing column names, enum values, nullable fields, casing, and relationship tables.
 - Treat the company `domain` as the logical primary key for company records. It must be normalized, non-null, and unique.
-- Treat `linkedin_company_url` as a required unique company identifier when the target schema has that column.
-- Before inserting a company, check for an existing row by normalized `domain` first and `linkedin_company_url` second. Update the existing row instead of creating a duplicate.
-- If one input conflicts with an existing domain or LinkedIn company URL, stop and surface the conflict rather than forcing an insert.
+- Treat `linkedin_company_url` as an optional unique company identifier when the target schema permits it; never invent one.
+- Before inserting a company, check for an existing row by normalized `domain` first and `linkedin_company_url` second when available. Update the existing row instead of creating a duplicate.
+- If one input conflicts with an existing domain and a supplied LinkedIn company URL matches another row, stop and surface the conflict rather than forcing an insert.
 - Never use company name alone as a uniqueness key.
 - Use deterministic IDs only if the project already has a convention for them.
 - Do not invent schema fields. Put useful extra data in a notes/metadata field only if one exists.

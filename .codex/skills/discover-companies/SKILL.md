@@ -13,8 +13,8 @@ Find companies that match a user-provided audience prompt, verify they fit Draws
 - Interface with the database only through the Drawscape web app API. Do not use Prisma, `sqlite3`, direct SQLite reads/writes, seed scripts, or ad hoc database edits from this skill.
 - If the API is unreachable, start the app from `web/` with `npm run dev -- --port 4200` or use the existing local instance. Stop before import if the API remains unreachable.
 - Default API base: `http://localhost:4200`.
-- Create only companies with a verified `name`, normalized `domain`, and public `linkedin_company_url`; the current API requires all three on create.
-- Never use company name alone as a uniqueness key. Check existing companies by normalized `domain` first and `linkedin_company_url` second.
+- Create only companies with a verified `name` and normalized `domain`; add a public `linkedin_company_url` whenever one is verified. The current API permits a missing LinkedIn company URL for domain-first account staging.
+- Never use company name alone as a uniqueness key. Check existing companies by normalized `domain` first and public `linkedin_company_url` second when present.
 - Do not store discovery evidence URLs in company `notes`. Keep evidence in the run artifact.
 - Do not set `date_enriched` during discovery import. `$enrich-company` owns enrichment completion and date stamping.
 - Do not scrape logged-in LinkedIn pages, bypass access controls, or rely on member-only data. Use public search results and public pages only.
@@ -37,7 +37,7 @@ Use:
 1. Interpret the audience prompt:
    - Extract required traits, examples/lookalikes, geography, exclusions, minimum quality bar, and requested count.
    - If no count is provided, aim for 10 strong candidates before importing.
-   - Map target fit to API categories: `aircraft`, `automotive`, or `yacht`. Use the closest category only when the company actually sells that type of high-value vehicle or watercraft.
+- Map target fit to API categories: `aircraft`, `automotive`, `yacht`, or `yacht_club`. Use `yacht_club` for private sailing/yachting clubs; use `yacht` only for yacht brokers, dealers, and sellers.
 2. Build search strategy:
    - For lookalikes, identify shared traits first: brands sold, customer type, region, price point, brokerage/dealer model, sales motion, and gifting relevance.
    - Use several query families instead of one broad search. Examples: `"Porsche dealer" "sales" "LinkedIn company"`, `"aircraft sales" "brokerage" "team"`, `"yacht brokerage" "sailboat sales" "LinkedIn"`, brand dealer locators, association directories, and regional searches.

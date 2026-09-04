@@ -3,9 +3,10 @@ import Script from "next/script";
 import { Link } from "@/components";
 import { QueryProvider } from "@/components/query-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { OUTREACH_WORKSPACE_NAME } from "@/lib/outreach-config";
 
 export const metadata = {
-  title: "Drawscape Outreach",
+  title: OUTREACH_WORKSPACE_NAME,
   description: "Prospecting database for companies and people",
   icons: {
     icon: "/icon.png"
@@ -45,10 +46,10 @@ export default function RootLayout({ children }) {
             <div className="flex h-16 items-center justify-between gap-x-4">
               <Link className="flex min-w-0 shrink-0 items-center gap-x-3" href="/">
                 <span className="grid size-9 place-items-center rounded-md bg-teal-700 text-sm font-semibold text-white shadow-sm dark:bg-teal-500 dark:text-zinc-950">
-                  D
+                  {OUTREACH_WORKSPACE_NAME.charAt(0).toUpperCase()}
                 </span>
                 <span className="truncate text-sm font-semibold text-gray-900 dark:text-white sm:text-base">
-                  Drawscape Outreach
+                  {OUTREACH_WORKSPACE_NAME}
                 </span>
               </Link>
               <ThemeToggle className="flex sm:hidden" />

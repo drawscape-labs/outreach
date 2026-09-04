@@ -107,6 +107,13 @@ function categoryFrom(value) {
       return "automotive";
     }
     if (
+      normalized === "yacht_club" ||
+      normalized === "yacht club" ||
+      normalized.includes("yacht club")
+    ) {
+      return "yacht_club";
+    }
+    if (
       normalized === "yacht" ||
       normalized === "yachts" ||
       normalized === "boat" ||
@@ -182,6 +189,7 @@ function normalizeCandidate(input, index) {
     priority: priorityFrom(source.priority),
     industry: normalizeWhitespace(source.industry),
     location: normalizeWhitespace(source.location),
+    country: normalizeWhitespace(firstValue(source.country, source.country_name, source.countryName)),
     notes: normalizeWhitespace(source.notes),
     discovery
   };
@@ -191,9 +199,8 @@ function validateCandidate(candidate) {
   const errors = [];
   if (!candidate.name) errors.push("name is required");
   if (!candidate.domain) errors.push("domain is required");
-  if (!candidate.linkedin_company_url) errors.push("linkedin_company_url is required");
-  if (candidate.category && !["aircraft", "automotive", "yacht"].includes(candidate.category)) {
-    errors.push("category must be aircraft, automotive, or yacht");
+  if (candidate.category && !["aircraft", "automotive", "yacht", "yacht_club"].includes(candidate.category)) {
+    errors.push("category must be aircraft, automotive, yacht, or yacht_club");
   }
   if (candidate.priority && !["high", "medium", "low"].includes(candidate.priority)) {
     errors.push("priority must be high, medium, or low");
@@ -218,6 +225,7 @@ function apiPayload(candidate) {
   addValue(payload, "priority", candidate.priority);
   addValue(payload, "industry", candidate.industry);
   addValue(payload, "location", candidate.location);
+  addValue(payload, "country", candidate.country);
   return payload;
 }
 

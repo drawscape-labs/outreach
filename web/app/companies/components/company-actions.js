@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { codexApi } from "@/lib/api";
+import { OUTREACH_WORKSPACE_NAME } from "@/lib/outreach-config";
 
 function valueLine(label, value) {
   if (value === null || value === undefined || String(value).trim() === "") {
@@ -14,7 +15,8 @@ function valueLine(label, value) {
 
 function buildEnrichCompanyInput(company) {
   return [
-    "Enrich this existing Drawscape Outreach company and save the updated company record through the web app API at http://localhost:4200.",
+    `Enrich this existing ${OUTREACH_WORKSPACE_NAME} company and save the updated company record through the web app API at http://localhost:4200.`,
+    "Read outreach.config.json before assigning an account segment or priority.",
     "Create a run directory under .codex/tmp/enrich-company/ and keep normalized input, source notes, enriched JSON, dry-run output, apply output, and logs there.",
     "Update the existing row by company ID, domain, or LinkedIn URL. Do not create a duplicate company.",
     "Set companies.date_enriched to today's ISO date when the update succeeds, then read back the row and report the changed fields.",
@@ -48,7 +50,8 @@ function buildProspectInput({ company, people }) {
     .filter(Boolean);
 
   return [
-    "Prospect this existing Drawscape Outreach company and save importable results through the web app API at http://localhost:4200.",
+    `Prospect this existing ${OUTREACH_WORKSPACE_NAME} company and save importable results through the web app API at http://localhost:4200.`,
+    "Read outreach.config.json and use the contact personas associated with the company's account segment. User-requested titles take precedence over configured defaults.",
     "This web-app action is explicit approval to import/upsert the company, people, positions, and verified emails that pass prospect-account validation through the API.",
     "Create a run directory under .codex/tmp/prospect-account/ with relevant subfolders and keep the prospect JSON, research notes, validation output, duplicate-check output, upsert output, and logs there.",
     "Validate the prospect JSON, check duplicates through the API, then run `node .codex/skills/prospect-account/scripts/upsert-prospects.js <artifact> --api-base http://localhost:4200 --apply`.",
@@ -66,7 +69,6 @@ function buildProspectInput({ company, people }) {
     valueLine("Industry", company.industry),
     valueLine("Location", company.location),
     valueLine("Country", company.country),
-    "Desired titles: sales reps, brokers, sales managers, general managers, client-facing sales leadership",
     peopleLines.length ? `Existing people: ${peopleLines.join("; ")}` : ""
   ].filter(Boolean).join("\n");
 }

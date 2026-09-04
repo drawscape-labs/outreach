@@ -30,8 +30,7 @@ import {
 import {
   PERSON_EMAIL_FILTER_VALUES,
   PERSON_FILTER_PARAMS,
-  PERSON_LINKEDIN_FILTER_VALUES,
-  PERSON_QUALIFIED_FILTER_VALUES
+  PERSON_LINKEDIN_FILTER_VALUES
 } from "@/app/api/people/schema";
 
 export const dynamic = "force-dynamic";
@@ -72,9 +71,20 @@ function getFirstSearchParam(searchParams, keys) {
   return "";
 }
 
+function getStatusFilters(searchParams) {
+  const rawStatuses = Array.isArray(searchParams?.status)
+    ? searchParams.status
+    : [searchParams?.status];
+
+  return [...new Set(
+    rawStatuses
+      .flatMap((status) => String(status || "").split(","))
+      .map((status) => status.trim())
+      .filter(isLeadStatus)
+  )];
+}
+
 function getFilters(searchParams, options) {
-  const status = firstSearchParam(searchParams, "status");
-  const qualified = firstSearchParam(searchParams, "qualified");
   const email = firstSearchParam(searchParams, "email");
   const linkedin = getFirstSearchParam(
     searchParams,
@@ -88,10 +98,10 @@ function getFilters(searchParams, options) {
     searchParams,
     PERSON_FILTER_PARAMS.companyPriority
   );
+  const position = getFirstSearchParam(searchParams, PERSON_FILTER_PARAMS.position);
 
   return {
-    status: isLeadStatus(status) ? status : "",
-    qualified: PERSON_QUALIFIED_FILTER_VALUES.includes(qualified) ? qualified : "",
+    status: getStatusFilters(searchParams),
     email: PERSON_EMAIL_FILTER_VALUES.includes(email) ? email : "",
     linkedin: PERSON_LINKEDIN_FILTER_VALUES.includes(linkedin) ? linkedin : "",
     category: options.categories.some((option) => option.value === category)
@@ -99,17 +109,14 @@ function getFilters(searchParams, options) {
       : "",
     priority: options.priorities.some((option) => option.value === priority)
       ? priority
-      : ""
+      : "",
+    position
   };
 }
 
 function addFiltersToParams(params, filters) {
-  if (filters.status) {
-    params.set("status", filters.status);
-  }
-
-  if (filters.qualified) {
-    params.set("qualified", filters.qualified);
+  if (filters.status.length) {
+    params.set("status", filters.status.join(","));
   }
 
   if (filters.email) {
@@ -126,6 +133,10 @@ function addFiltersToParams(params, filters) {
 
   if (filters.priority) {
     params.set("priority", filters.priority);
+  }
+
+  if (filters.position) {
+    params.set("position", filters.position);
   }
 }
 

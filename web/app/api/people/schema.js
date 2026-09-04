@@ -82,6 +82,7 @@ export const PERSON_FILTER_PARAMS = {
   emailAddress: ["emailAddress", "email_address", "exactEmail", "exact_email"],
   linkedin: ["linkedin", "linkedinProfile", "linkedin_profile"],
   linkedinProfileUrl: ["linkedinProfileUrl", "linkedin_profile_url"],
+  position: ["position", "positionTitle", "position_title"],
   profileKey: ["profileKey", "profile_key"],
   qualified: ["qualified"],
   quickmailLeadId: ["quickmailLeadId", "quickmail_lead_id", "leadId", "lead_id"],
