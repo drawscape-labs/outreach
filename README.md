@@ -10,7 +10,7 @@ The included strategy is configured for Drawscape, which creates custom artwork 
 - npm
 - Git
 
-Codex CLI, Hunter, and QuickMail are optional. The core web app and SQLite database work without them.
+Codex CLI and Hunter are optional. The core web app and SQLite database also work without QuickMail, but QuickMail is required to send and manage automated outreach campaigns.
 
 ## Install from a fresh clone
 
@@ -99,9 +99,43 @@ npm start
 
 - **Codex:** install and sign in to Codex CLI, then run the app from the same local user account. Repository skills under `.codex/skills/` provide account discovery, company enrichment, contact prospecting, and email research workflows.
 - **Hunter:** set `HUNTER_API_KEY` in the root `.env` to enable the Hunter-backed skill scripts.
-- **QuickMail:** set `QUICKMAIL_API_KEY` and, when useful, `QUICKMAIL_WORKSPACE_ID` in the root `.env` to enable campaign and reply synchronization.
 
 Codex actions use the authenticated CLI installed for the user running the server. Install and sign in using the [official CLI instructions](https://learn.chatgpt.com/docs/codex/cli). Run artifacts live in `.codex/tmp/`. The current launcher bypasses approvals and sandboxing, so treat these actions as privileged local automation.
+
+## QuickMail campaign integration
+
+QuickMail is the campaign and sending system for this project. It is optional if you only want to research companies, collect contacts, and track them locally. It is required if you want to place contacts into automated outreach sequences, manage active campaigns, or synchronize outreach activity back into the application.
+
+Create campaign sequences, sending schedules, inboxes, and message content in QuickMail. The application does not replace QuickMail's sequence editor or email-delivery infrastructure. Instead, it connects researched people in the local database to the campaigns managed by QuickMail.
+
+### Configure QuickMail
+
+Create a QuickMail API key and add it to the repository-root `.env`:
+
+```dotenv
+QUICKMAIL_API_KEY="your-api-key"
+QUICKMAIL_WORKSPACE_ID="your-workspace-id"
+```
+
+`QUICKMAIL_API_KEY` authenticates campaign and lead operations. `QUICKMAIL_WORKSPACE_ID` identifies the workspace in which new QuickMail leads should be created. The workspace ID can sometimes be inferred from a selected campaign, but configuring it explicitly is recommended. Never commit either value.
+
+### Campaign workflow
+
+1. Create and configure the campaign in QuickMail, including its sequence, schedule, sending inboxes, and safety limits.
+2. Open **Campaigns** in this application and select **Sync from QuickMail**. Campaigns remain owned by QuickMail; the local database stores a mirror used for selection and status display.
+3. Research and verify a person in this application. A verified work email is strongly recommended before outreach.
+4. From the person's action menu, select **Add to campaign** and choose the appropriate QuickMail campaign.
+5. The application creates or reuses the QuickMail lead, adds it to the campaign, saves the QuickMail lead ID locally, and marks the person as **Contacted**.
+
+Campaign synchronization imports active and archived campaign metadata. If a campaign is removed from the QuickMail response, its local record is archived rather than deleted so existing prospect records retain stable references.
+
+### Reply synchronization
+
+The bundled `$quickmail-sync-replies` skill reconciles reply events with local people and changes matching records to **Replied**. It matches the stored QuickMail lead ID first and then falls back to an exact normalized email address.
+
+QuickMail's API may not expose a complete historical, per-lead reply feed. When direct retrieval is unavailable, provide the skill with a QuickMail or Zapier reply export, webhook payload, or other supported CSV, JSON, or NDJSON event file. Review unmatched or ambiguous events before applying updates.
+
+Adding a person to a campaign is an external action that can cause email to be sent according to the campaign's QuickMail configuration. Confirm the campaign, message content, recipients, sending schedule, and compliance requirements in QuickMail before adding leads.
 
 ## Security
 
