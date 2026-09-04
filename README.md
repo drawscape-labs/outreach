@@ -10,7 +10,14 @@ The included strategy is configured for Drawscape, which creates custom artwork 
 - npm
 - Git
 
-Codex CLI and Hunter are optional. The core web app and SQLite database also work without QuickMail, but QuickMail is required to send and manage automated outreach campaigns.
+The web app and SQLite database can be used as a manually maintained prospect database without any external integration. Additional requirements depend on the workflow:
+
+| Workflow | Requirement |
+| --- | --- |
+| Manually create, edit, browse, and filter companies and people | No external integration |
+| Run guided setup, company discovery, qualification, enrichment, contact prospecting, or skill-based email research | Codex CLI |
+| Improve work-email discovery and verification in the included research workflows | Hunter API key (optional enhancement) |
+| Add prospects to automated sequences, send outreach, manage campaigns, and synchronize campaign activity | QuickMail |
 
 ## Install from a fresh clone
 
@@ -95,10 +102,11 @@ npm run build
 npm start
 ```
 
-## Optional integrations
+## Workflow integrations
 
-- **Codex:** install and sign in to Codex CLI, then run the app from the same local user account. Repository skills under `.codex/skills/` provide account discovery, company enrichment, contact prospecting, and email research workflows.
-- **Hunter:** set `HUNTER_API_KEY` in the root `.env` to enable the Hunter-backed skill scripts.
+- **Codex CLI — required for guided prospecting:** install and sign in to Codex CLI, then run the app from the same local user account. The repository's guided setup, account discovery, qualification, company enrichment, contact prospecting, and skill-based email research workflows are implemented as skills under `.codex/skills/`. Without Codex CLI, the web app remains usable as a manually maintained prospect database, but it cannot launch those research agents.
+- **QuickMail — required for automated outreach:** QuickMail owns the email sequences, sending schedules, inboxes, and campaign delivery. It is required to add researched contacts to automated campaigns and synchronize campaign activity. It is not required for research or manual record management. See [QuickMail campaign integration](#quickmail-campaign-integration).
+- **Hunter — optional email-research enhancement:** set `HUNTER_API_KEY` in the root `.env` to enable Hunter-backed email discovery and verification. Hunter can improve email coverage and confidence, but the remaining discovery and prospecting workflows can run without it. The included Hunter workflow is invoked through Codex CLI.
 
 Codex actions use the authenticated CLI installed for the user running the server. Install and sign in using the [official CLI instructions](https://learn.chatgpt.com/docs/codex/cli). Run artifacts live in `.codex/tmp/`. The current launcher bypasses approvals and sandboxing, so treat these actions as privileged local automation.
 

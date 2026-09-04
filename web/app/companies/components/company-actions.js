@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogTitle
+} from "@/components/ui/dialog";
 import { codexApi } from "@/lib/api";
 
 function valueLine(label, value) {
@@ -104,23 +110,99 @@ const CODEX_ACTIONS = [
     key: "enrich",
     label: "Enrich Company",
     skill: "enrich-company",
+    summary:
+      "Research this company and update its existing record with better account data.",
+    effects: [
+      "Reads the current company record and the targeting guidance in docs/industries.md and docs/personas.md.",
+      "Researches public sources for details such as industry, location, country, headcount, description, category, and priority.",
+      "Updates this company through the local web app API and records the enrichment date. It will not intentionally create a duplicate company.",
+      "Skips the update and reports the issue if it encounters an ambiguous identity conflict."
+    ],
     buildInput: ({ company, workspaceName }) => buildEnrichCompanyInput(company, workspaceName)
   },
   {
     key: "prospect",
     label: "Prospect & Save",
     skill: "prospect-company",
+    summary:
+      "Research people at this company who match your configured buyer personas and save qualified contacts.",
+    effects: [
+      "Reads this company, its existing contacts, and the targeting guidance in docs/industries.md and docs/personas.md.",
+      "Searches public sources for relevant people, professional profiles, current roles, and work emails when available.",
+      "Validates and deduplicates the results, then imports or updates the company, people, positions, and verified emails through the local web app API.",
+      "Skips ambiguous identity conflicts and reports inserted, updated, skipped, and conflicted records."
+    ],
     buildInput: buildProspectInput
   }
 ];
 
+function ActionConfirmationDialog({ action, companyName, isLaunching, error, onClose, onLaunch }) {
+  if (!action) {
+    return null;
+  }
+
+  return (
+    <Dialog open onClose={() => !isLaunching && onClose()} size="lg">
+      <DialogTitle>{action.label}</DialogTitle>
+      <DialogBody>
+        <p className="text-sm/6 text-zinc-600 dark:text-zinc-300">
+          {action.summary}
+        </p>
+
+        <div className="mt-5 rounded-lg bg-teal-50 p-4 ring-1 ring-teal-600/20 dark:bg-teal-400/10 dark:ring-teal-400/20">
+          <p className="font-semibold text-teal-900 dark:text-teal-200">
+            This launches a background Codex agent.
+          </p>
+          <p className="mt-1 text-sm/6 text-teal-800 dark:text-teal-300">
+            The server starts a detached Codex CLI process using the ${action.skill} skill. The
+            agent continues working after this modal closes and can research the web, create run
+            artifacts, and make the local database changes described below.
+          </p>
+        </div>
+
+        <div className="mt-5">
+          <p className="text-sm font-semibold text-zinc-950 dark:text-white">
+            What the agent will do for {companyName}
+          </p>
+          <ul className="mt-2 list-disc space-y-2 pl-5 text-sm/6 text-zinc-600 marker:text-zinc-400 dark:text-zinc-300">
+            {action.effects.map((effect) => (
+              <li key={effect}>{effect}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="mt-5 rounded-lg bg-amber-50 p-4 ring-1 ring-amber-600/20 dark:bg-amber-400/10 dark:ring-amber-400/20">
+          <p className="text-sm/6 text-amber-900 dark:text-amber-200">
+            This is privileged local automation. The agent runs without interactive approvals or
+            sandboxing. There is no live progress view and closing this page does not cancel the
+            run. Its final report and logs are saved under <code>.codex/tmp/{action.skill}/</code>.
+          </p>
+        </div>
+
+        {error ? (
+          <p className="mt-4 rounded-md bg-rose-50 px-3 py-2 text-sm/6 text-rose-700 ring-1 ring-rose-600/20 dark:bg-rose-400/10 dark:text-rose-300 dark:ring-rose-400/20">
+            {error}
+          </p>
+        ) : null}
+      </DialogBody>
+      <DialogActions>
+        <Button type="button" plain disabled={isLaunching} onClick={onClose}>
+          Cancel
+        </Button>
+        <Button type="button" color="teal" disabled={isLaunching} onClick={onLaunch}>
+          {isLaunching ? "Launching..." : "Launch background agent"}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
 export function CompanyActions({ company, people = [], launchStatus, workspaceName }) {
   const [launchState, setLaunchState] = useState(() => initialLaunchState(launchStatus));
+  const [selectedAction, setSelectedAction] = useState(null);
   const isLaunching = launchState.status === "launching";
 
-  async function handleSubmit(event, action) {
-    event.preventDefault();
-
+  async function handleLaunch(action) {
     setLaunchState({
       status: "launching",
       actionKey: action.key,
@@ -138,6 +220,7 @@ export function CompanyActions({ company, people = [], launchStatus, workspaceNa
         actionKey: action.key,
         message: `${action.label} started PID ${payload.pid}. Final result lands in ${payload.logDir || `.codex/tmp/${action.skill}/logs`}.`
       });
+      setSelectedAction(null);
     } catch (error) {
       setLaunchState({
         status: "error",
@@ -151,28 +234,22 @@ export function CompanyActions({ company, people = [], launchStatus, workspaceNa
     <div className="flex flex-col items-start gap-2 sm:items-end">
       <div className="flex flex-wrap items-center gap-2 sm:justify-end">
         {CODEX_ACTIONS.map((action) => {
-          const input = action.buildInput({ company, people, workspaceName });
           const isCurrentAction = launchState.actionKey === action.key;
 
           return (
-            <form
+            <Button
               key={action.key}
-              action="/api/codex"
-              method="post"
-              onSubmit={(event) => handleSubmit(event, action)}
+              type="button"
+              outline
+              aria-label={`${action.label} ${company.name}`}
+              disabled={isLaunching}
+              onClick={() => {
+                setLaunchState({ status: "idle", message: "" });
+                setSelectedAction(action);
+              }}
             >
-              <input type="hidden" name="skill" value={action.skill} />
-              <input type="hidden" name="input" value={input} />
-              <input type="hidden" name="redirectTo" value={`/companies/${company.id}`} />
-              <Button
-                type="submit"
-                outline
-                aria-label={`${action.label} ${company.name}`}
-                disabled={isLaunching}
-              >
-                {isLaunching && isCurrentAction ? "Launching..." : action.label}
-              </Button>
-            </form>
+              {isLaunching && isCurrentAction ? "Launching..." : action.label}
+            </Button>
           );
         })}
       </div>
@@ -188,6 +265,15 @@ export function CompanyActions({ company, people = [], launchStatus, workspaceNa
           {launchState.message}
         </p>
       ) : null}
+
+      <ActionConfirmationDialog
+        action={selectedAction}
+        companyName={company.name}
+        isLaunching={isLaunching}
+        error={selectedAction && launchState.status === "error" ? launchState.message : ""}
+        onClose={() => setSelectedAction(null)}
+        onLaunch={() => handleLaunch(selectedAction)}
+      />
     </div>
   );
 }
