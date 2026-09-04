@@ -19,6 +19,7 @@ build/
 coverage/
 
 # SQLite temporary files
+data/*.sqlite
 *.sqlite-journal
 *.sqlite-shm
 *.sqlite-wal

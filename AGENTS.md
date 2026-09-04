@@ -1,51 +1,63 @@
-# Overview
-You a a prospecting and sales agent that is helping Drawscape (www.drawscape.io) find B2B opportunites to sell their art. 
-The goal is to find sales people and decision makers at companies that sell aircraft, cars, porsche, and sailboats, yachts.
-The pitch is that Drawscape will make custom art that they can then gift to their clients when a deal closes.
+# Project overview
 
+This is a local prospecting and sales workspace for researching companies and the people who influence purchasing decisions.
 
-# Web Application
-We are creating a basic SQLite database to track companies/people/positions with some basic status columsn to track progress.
+## Outreach strategy
 
-## Project Strucutre
-/web
-  /app
-    layout.js - main layout
-    page.js - main page
-    /[feature] - name of the core feature (companies, people, etc)
-      /[id] - detail page for and individual record
-      /components - reusable compoentns that are related to this feature, like tables, labels, etc.
-      /lib - no react disaply compoent code, helper function and pure js/typscript functions
-      page.js - overview page, usually a list type display
-  /components - truely global componets used everywhere. status, labels, modals, dialogs, buttons, etc.
-    /ui - these are the ui componets we should be reusing everywhere (select, form elemesnt, etc.) based on Headless UI v2.1
-  /types - store global type information here, indtead of stuffing into each component.
-  /lib - for pure library files quickmail api, datbase wrapper, api wrappers, prisma etc. Make sure these are commented properly to state goal of the lib file. 
-  /api - server routes for different api calls. this should map basic CRUD operations for our DB models. will also include non db features like 
-    /quickmail - proxy for the front end to comminicatw with quickmail via the server util librayra
-    /people - CRUD operations for our people table
-      /[id] - people detail routes for retrive, update, delete, etc
-      model.js - let's keep our model definiation here for primsma and model data read/write and manipulations. 
-      types.js - any typscript def we need specific to this model
-      schema.js - static vocabulary/config home: enums, allowed values, field names, aliases, default values
-    /companies CRUID operations for our companies table
+Before discovering, qualifying, enriching, or prospecting accounts, read the repository-root `industries.md` and `personas.md`. Together, they are the single source of truth for:
 
+- The organization, offering, and value proposition
+- Account segments and their qualification and priority rules
+- Contact personas and their target, review, and excluded titles
+- Preferred discovery sources and suggested queries
 
-## UI Examples
-Use the examples in `/tailwind-pro-examples` to build ui elements. Check here first before creating your own styles or ui elements.
-Use the `/web/components/ui` Headless UI v2.1 compoents when building.
+Keep reusable research, evidence, deduplication, and API workflow rules in skills. Do not copy market-specific segments, title lists, or priority rules into skills, application code, or agent instructions. User-provided targeting requirements take precedence over configured defaults.
 
-## Design Philsophy
-When designing elements/screens/pages for the web app, i value minimalistic design. We do not want endless headers, descirptions, and helper text explaining everyting. We was simple lables/headers and necesssary information.
+The Markdown strategy files guide Codex skills only. The web application must not parse them, require a fixed structure, or depend on them to start. Store company category and priority as ordinary strings and derive application filter choices from existing database values.
 
-## Dark Mode
-We need to support it!
+Account segments classify companies. Contact personas classify the people to find at those companies. Do not use one concept as the other.
 
-## global components
-we want to create global components only when thigns are being reused more than once, simple stuff like status fields, people avatars, labels, etc. so that we can a constistent design on each page. 
+## Web application
 
-## Testing
-When building a new feature, make sure to run the dev server, or use existing instance, to check your work visually in a browser. 
+The app uses a local SQLite database to track companies, people, positions, campaigns, and outreach status.
 
-# Quickmail
-quickmail is our campaign an sequencing software we'll use. we need to integrate with it via the api. Here are the docs you can use https://api.quickmail.com/help
+### Project structure
+
+- `web/app/` — Next.js pages, layouts, and feature routes
+- `web/app/[feature]/[id]/` — detail pages for individual records
+- `web/app/[feature]/components/` — components used only by that feature
+- `web/app/[feature]/lib/` — feature-specific non-React helpers
+- `web/app/api/` — API route handlers
+- `web/app/api/[model]/model.js` — model data access and manipulation
+- `web/app/api/[model]/schema.js` — model fields, aliases, allowed values, defaults, and messages
+- `web/components/` — components reused across features
+- `web/components/ui/` — shared Headless UI-based controls
+- `web/lib/` — shared non-React helpers, API wrappers, Prisma, and integrations
+- `web/prisma/` — Prisma schema and forward-only database migrations
+
+Use the examples in `ui-examples/` before creating new UI patterns. Reuse `web/components/ui/` controls where appropriate.
+
+### Design
+
+- Prefer minimal interfaces with concise labels and only necessary explanatory text.
+- Support dark mode.
+- Create global components only for patterns reused in more than one place.
+- Keep display code out of `lib/` modules.
+
+### Data and API changes
+
+- Use the local API for normal application and skill writes; do not edit SQLite directly.
+- Preserve domain-based company deduplication and profile/email-based person deduplication.
+- Let skills read industries, priorities, personas, and title guidance from the Markdown strategy files; keep the application independent of their contents.
+- Use Prisma migrations for structural database changes. Do not add fixed segment or persona allowlists to SQLite.
+
+### Testing
+
+For application changes, run lint and a production build. Start the development or production server and check the changed flow in a browser when the environment permits it.
+
+## Optional integrations
+
+- QuickMail API documentation: https://api.quickmail.com/help
+- Codex, Hunter, and QuickMail setup: `README.md`
+
+Treat the Codex route as privileged local automation. Do not expose this application to an untrusted network without authentication, authorization, and a hardened job runner.

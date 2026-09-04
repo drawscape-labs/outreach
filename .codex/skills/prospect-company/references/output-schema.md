@@ -6,24 +6,24 @@ Use this JSON shape for prospect artifacts and import scripts. Set `mode` to `"a
 {
   "mode": "apply",
   "input": {
-    "company_name": "Hinckley Yachts",
-    "domain": "hinckleyyachts.com",
-    "linkedin_company_url": "https://www.linkedin.com/company/hinckley-yachts/",
-    "target_titles": ["Yacht Broker", "Sales Director"]
+    "company_name": "Example Company",
+    "domain": "example.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/example-company/",
+    "target_titles": ["Configured Target Title"]
   },
   "company": {
-    "name": "Hinckley Yachts",
-    "domain": "hinckleyyachts.com",
-    "website_url": "https://www.hinckleyyachts.com",
-    "linkedin_company_url": "https://www.linkedin.com/company/hinckley-yachts",
-    "description": "Hinckley Yachts builds, sells, and services premium yachts.",
-    "category": "yacht",
-    "industry": "Yacht sales and service",
+    "name": "Example Company",
+    "domain": "example.com",
+    "website_url": "https://www.example.com",
+    "linkedin_company_url": "https://www.linkedin.com/company/example-company",
+    "description": "Example Company matches a configured account segment.",
+    "category": "<industry category name or identifier>",
+    "industry": "Configured target industry",
     "location": "Southwest Harbor, Maine",
     "confidence": "high",
     "evidence": [
       {
-        "url": "https://www.hinckleyyachts.com",
+        "url": "https://www.example.com",
         "label": "Company website",
         "note": "Brand and domain match."
       }
@@ -43,13 +43,13 @@ Use this JSON shape for prospect artifacts and import scripts. Set `mode` to `"a
         {
           "url": "https://example.com/team/jane-smith",
           "label": "Team page",
-          "note": "Lists Jane Smith as Yacht Broker."
+          "note": "Lists Jane Smith in a configured target role."
         }
       ],
       "positions": [
         {
-          "company_domain": "hinckleyyachts.com",
-          "title": "Yacht Broker",
+          "company_domain": "example.com",
+          "title": "Configured Target Title",
           "department": "Sales",
           "seniority": null,
           "start_date": null,
@@ -78,7 +78,7 @@ Company:
 
 - `name`
 - `domain`
-- `linkedin_company_url`
+- `linkedin_company_url` when publicly verified; it may be `null` for domain-first account staging.
 
 Person:
 

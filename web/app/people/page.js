@@ -20,13 +20,10 @@ import { isLeadStatus } from "@/lib/statuses";
 import { PeopleTable } from "./components/people-table";
 import { PeopleFilters } from "./components/people-filters";
 import {
-  listPeopleTablePage
-} from "@/app/api/people/model";
-import {
-  COMPANY_CATEGORIES,
-  COMPANY_CATEGORY_LABELS,
-  COMPANY_PRIORITIES
-} from "@/app/api/companies/schema";
+  listCompanyCategories,
+  listCompanyPriorities
+} from "@/app/api/companies/model";
+import { listPeopleTablePage } from "@/app/api/people/model";
 import {
   PERSON_EMAIL_FILTER_VALUES,
   PERSON_FILTER_PARAMS,
@@ -269,12 +266,16 @@ function PeoplePagination({
 export default async function PeoplePage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const sort = createdAtSort(resolvedSearchParams);
+  const [categories, priorities] = await Promise.all([
+    listCompanyCategories(),
+    listCompanyPriorities()
+  ]);
   const options = {
-    categories: COMPANY_CATEGORIES.map((category) => ({
-      label: COMPANY_CATEGORY_LABELS[category] || category,
+    categories: categories.map((category) => ({
+      label: category,
       value: category
     })),
-    priorities: COMPANY_PRIORITIES.map((priority) => ({
+    priorities: priorities.map((priority) => ({
       label: formatPriorityLevel(priority),
       value: priority
     }))

@@ -17,9 +17,6 @@ import {
   companyDetail,
   companyDetailSelect
 } from "@/app/api/companies/model";
-import {
-  COMPANY_CATEGORY_LABELS
-} from "@/app/api/companies/schema";
 import { personFromCompanyPosition } from "@/app/api/people/model";
 
 export const dynamic = "force-dynamic";
@@ -70,10 +67,6 @@ function formatHeadcount(company) {
   }
 
   return company.employeeCountRange || "";
-}
-
-function formatCategory(category) {
-  return COMPANY_CATEGORY_LABELS[category] || category;
 }
 
 function getCodexLaunchStatus(searchParams) {
@@ -134,6 +127,7 @@ export default async function CompanyDetailPage({ params, searchParams }) {
           company={company}
           people={people}
           launchStatus={getCodexLaunchStatus(resolvedSearchParams)}
+          workspaceName={process.env.OUTREACH_APP_NAME?.trim() || "Outreach"}
         />
       </PageHeader>
 
@@ -161,7 +155,7 @@ export default async function CompanyDetailPage({ params, searchParams }) {
 
           <CompanyDetailColumn>
             <CompanyDetailItem label="Category">
-              <FieldValue value={company.category ? formatCategory(company.category) : ""} />
+              <FieldValue value={company.category} />
             </CompanyDetailItem>
             <CompanyDetailItem label="Priority">
               <PriorityLevel priority={company.priority} />

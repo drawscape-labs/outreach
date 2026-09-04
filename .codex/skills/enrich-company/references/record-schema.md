@@ -2,10 +2,9 @@
 
 Use the active project schema when available. When no schema is available, use this canonical shape.
 
-For Drawscape Outreach, the active schema intentionally omits source/evidence columns. Do not persist source URLs, evidence arrays, or source-only prose into the database or `notes` unless the user explicitly asks for that data.
-Drawscape Outreach uses `companies.date_enriched` for the company enrichment date when writing enriched company records.
-Drawscape Outreach stores the best-supported headquarters country in `companies.country`.
-Drawscape Outreach company writes must go through the web app API, not direct SQLite. Use `scripts/upsert-company-api.js` from this skill; add API functionality before falling back to database access.
+This repository's active schema intentionally omits source/evidence columns. Do not persist source URLs, evidence arrays, or source-only prose into the database or `notes` unless the user explicitly asks for that data.
+The app uses `companies.date_enriched` for the company enrichment date and stores the best-supported headquarters country in `companies.country`.
+Company writes must go through the web app API, not direct SQLite. Use `scripts/upsert-company-api.js` from this skill; add API functionality before falling back to database access.
 
 ## Canonical JSON
 
@@ -35,7 +34,7 @@ Drawscape Outreach company writes must go through the web app API, not direct SQ
     "categories": [],
     "tags": [],
     "business_model": "b2b|b2c|b2b2c|marketplace|nonprofit|government|unknown",
-    "priority": "high|medium|low|unknown"
+    "priority": "<priority value from industries.md>"
   },
   "location": {
     "headquarters": {
@@ -97,18 +96,18 @@ Use one evidence entry per source or per field when the target schema supports i
 ## Normalization
 
 - `identity.name`: use the casual public brand/display name. Prefer the shortest name a human would naturally use in the CRM when the official site, logo, domain, or LinkedIn profile supports it.
-- Strip legal suffixes and generic service descriptors from `identity.name` when they are filler rather than the brand: `Inc.`, `LLC`, `Ltd.`, `Company`, `Group`, `Aircraft Sales`, `Sales & Acquisitions`, `Aircraft Sales & Acquisitions`, `Aircraft Sales and Brokerage`, `Brokerage`, `Aviation Services`, `Yacht Sales`, `Auto Group`, `Dealership`.
+- Strip legal suffixes and generic service descriptors from `identity.name` when they are filler rather than the brand, such as `Inc.`, `LLC`, `Ltd.`, `Company`, `Group`, or a generic industry descriptor.
 - Preserve descriptors that are part of the actual brand or needed for disambiguation. Do not reduce a name to a generic word when the shorter brand is not clearly supported by evidence.
 - Put the full legal, SEO, or directory name in `identity.legal_name`, `identity.aliases`, or evidence when supported.
-- Example: `Altivation Aircraft Sales & Acquisitions` maps to `identity.name: "Altivation"` and an alias or evidence value containing the full source name.
+- Example: `Example Brand Sales & Acquisitions` maps to `identity.name: "Example Brand"` and an alias or evidence value containing the full source name.
 - `domain`: registrable domain only, lowercased, without protocol, path, or `www`. Treat this as the logical primary key for company records; it must be unique and non-null.
 - `website_url`: canonical HTTPS URL when available.
-- `linkedin_url`: normalized LinkedIn company page URL, not a personal profile. In the Drawscape Outreach `companies` table this maps to `linkedin_company_url`, which must be unique.
+- `linkedin_url`: normalized LinkedIn company page URL, not a personal profile. In this app it maps to `linkedin_company_url`, which must be unique when present.
 - `social_urls`: array of objects with `platform` and `url` if the schema allows objects; otherwise array of URLs.
 - `industries`, `categories`, `tags`: lowercase slugs unless the project uses title-cased labels.
-- `priority`: for Drawscape Outreach, map top-level `priority` or `classification.priority` to `companies.priority`. Use only `high`, `medium`, or `low`; omit unknown priority rather than writing a placeholder value.
-- `category`: use `yacht_club` for private sailing and yachting clubs; use `yacht` for yacht brokers, dealers, and sellers.
-- `country`: for Drawscape Outreach, map `location.headquarters.country`, top-level `country`, or `country_name` to `companies.country`. Prefer the full country name from a current official address; leave it null when the headquarters country is ambiguous.
+- `priority`: map top-level `priority` or `classification.priority` to `companies.priority`. Use the priority wording from `industries.md`; omit unknown priority rather than writing a placeholder value.
+- `category`: use the consistent category name or identifier described in `industries.md`.
+- `country`: map `location.headquarters.country`, top-level `country`, or `country_name` to `companies.country`. Prefer the full country name from a current official address; leave it null when the headquarters country is ambiguous.
 - `country_code`: ISO 3166-1 alpha-2.
 - `founded_year`: integer year only.
 - `employee_count`: concrete integer total headcount only when a source reports one. Use evidence confidence to distinguish official counts from secondary/platform estimates.
@@ -138,15 +137,9 @@ Aim to fill these high-value fields when evidence exists:
 
 Leave fields null or empty when not supported by evidence. Do not substitute prose like "not available" inside data fields unless the project schema requires strings.
 
-## Drawscape Outreach Priority Rules
+## Outreach Priority Rules
 
-For Drawscape Outreach, company `priority` is a fit score with values `high`, `medium`, or `low`.
-
-- Use `high` for yacht brokers or dealers with current evidence of mainstream/high-volume sailboat sales: production sailboats, sailing catamarans, active used sailboat listings, or brands such as Catalina, J/Boats, Beneteau, Jeanneau, Dufour, Hanse, Lagoon, and comparable non-superyacht sail brands.
-- Use `low` for yacht brokers whose business is primarily luxury yachts or superyachts when their sail evidence is limited to sailing superyachts, custom megayachts, crewed sailing-yacht charters, or occasional large-yacht listings.
-- Use `medium` for yacht brokers that sell or broker powerboats, motor yachts, general boats, or mixed yacht inventory when evidence does not clearly prove either the mainstream sailboat/high-priority case or luxury-superyacht/low-priority case.
-- Use `medium` when a yacht broker is described only generically and the evidence does not prove the high or low case.
-- Preserve a user-provided priority unless current evidence clearly contradicts it; note the reason when changing priority during enrichment.
+Use the selected industry's priority rules in `industries.md`. Preserve a user-provided priority unless current evidence clearly contradicts it, and note the reason when changing priority during enrichment.
 
 ## Company Upsert Rules
 

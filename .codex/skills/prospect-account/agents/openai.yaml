@@ -1,4 +1,0 @@
-interface:
-  display_name: "Prospect Account"
-  short_description: "Research accounts, find LinkedIn and emails"
-  default_prompt: "Use $prospect-account to research a target company, find matching sales contacts with public LinkedIn URLs and direct work emails, validate and import verified prospects through the web app API, and kick off email lookup after imports."

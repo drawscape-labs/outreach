@@ -1,0 +1,4 @@
+interface:
+  display_name: "Setup"
+  short_description: "Configure this outreach repo for your company"
+  default_prompt: "Use $setup to configure this outreach repository for my company."

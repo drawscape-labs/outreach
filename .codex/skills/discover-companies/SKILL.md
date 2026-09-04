@@ -1,16 +1,20 @@
 ---
 name: discover-companies
-description: Discover, qualify, and import new Drawscape Outreach company accounts from a natural-language audience prompt, lookalike company list, geography, or niche such as aircraft dealers, Porsche/luxury car dealerships, yacht/sailboat brokers, and other high-value vehicle sellers. Use when the user asks to find more companies, build an account list, research lookalikes, import discovered companies, or seed companies before enrichment through the Drawscape web app API.
+description: Discover, qualify, and import company accounts for the audience defined in industries.md. Use when the user asks to find more companies, build an account list, research lookalikes, import discovered companies, or seed companies before enrichment.
 ---
 
 # Discover Companies
 
-Find companies that match a user-provided audience prompt, verify they fit Drawscape's B2B gifting use case, import new company rows through the web app API, then run `$enrich-company` for the newly inserted records.
+Find companies that match a user-provided audience prompt and the repository's configured outreach strategy, import new company rows through the web app API, then run `$enrich-company` for the newly inserted records.
+
+## Outreach Configuration
+
+Before discovery, read the repository-root `industries.md` and `personas.md`. They are the source of truth for the organization and value proposition, industries, qualification and priority rules, personas, discovery sources, and query suggestions. User-provided audience requirements take precedence.
 
 ## Core Rules
 
 - Use current web search and browser inspection for discovery. Company data changes; do not rely on memory.
-- Interface with the database only through the Drawscape web app API. Do not use Prisma, `sqlite3`, direct SQLite reads/writes, seed scripts, or ad hoc database edits from this skill.
+- Interface with the database only through the outreach web app API. Do not use Prisma, `sqlite3`, direct SQLite reads/writes, seed scripts, or ad hoc database edits from this skill.
 - If the API is unreachable, start the app from `web/` with `npm run dev -- --port 4200` or use the existing local instance. Stop before import if the API remains unreachable.
 - Default API base: `http://localhost:4200`.
 - Create only companies with a verified `name` and normalized `domain`; add a public `linkedin_company_url` whenever one is verified. The current API permits a missing LinkedIn company URL for domain-first account staging.
@@ -36,19 +40,17 @@ Use:
 
 1. Interpret the audience prompt:
    - Extract required traits, examples/lookalikes, geography, exclusions, minimum quality bar, and requested count.
-   - If no count is provided, aim for 10 strong candidates before importing.
-- Map target fit to API categories: `aircraft`, `automotive`, `yacht`, or `yacht_club`. Use `yacht_club` for private sailing/yachting clubs; use `yacht` only for yacht brokers, dealers, and sellers.
+   - If no count is provided, use the default candidate count in `industries.md`.
+   - Use the category name or identifier given for the relevant industry in `industries.md`. Keep it consistent across records rather than inventing variations.
 2. Build search strategy:
-   - For lookalikes, identify shared traits first: brands sold, customer type, region, price point, brokerage/dealer model, sales motion, and gifting relevance.
-   - Use several query families instead of one broad search. Examples: `"Porsche dealer" "sales" "LinkedIn company"`, `"aircraft sales" "brokerage" "team"`, `"yacht brokerage" "sailboat sales" "LinkedIn"`, brand dealer locators, association directories, and regional searches.
-   - For sailboat or yacht company discovery, check the YBAA CPYB Certified Yacht Brokers directory at `https://members.ybaa.org/cpyb-certified-yacht-brokers/FindStartsWith?term=%23%21`. Treat it as a name source: broker entries often expose brokerage/company names even when no company link is available. Google those names and verify each company through official websites, authoritative directories, or public LinkedIn company pages before adding it as a candidate.
-   - Prefer official company websites, manufacturer/dealer locators, industry associations, reputable directories, and public LinkedIn company pages. Use directories to discover candidates, then verify on company-controlled or authoritative sources.
+   - For lookalikes, identify shared traits first: offering, customer type, geography, price point, sales motion, and relevance to the configured value proposition.
+   - Use the discovery sources and query suggestions described for the selected industry, plus any general source guidance, to build several query families instead of relying on one broad search.
+   - Treat directories as name sources unless they are authoritative for the field being verified. Verify candidates through company-controlled or authoritative sources before import.
 3. Qualify candidates:
-   - Require evidence that the company sells aircraft, cars, Porsche/luxury automobiles, sailboats, yachts, or the user-specified high-value category.
-   - Prefer companies with visible sales teams, brokers, brand ambassadors, client advisors, or dealership staff that `$prospect-account` could later target.
-   - Reject service-only, parts-only, rental-only, defunct, acquired/merged, or ambiguous businesses unless the user explicitly asked for them.
-   - Treat local dealership/location records separately from parent brands when the local entity has its own domain or LinkedIn page.
-   - For yacht brokers, set `priority` before import: use `high` for mainstream/high-volume sailboat dealers or brokers with production sailboat, sailing catamaran, active used sailboat, or brand evidence such as Catalina, J/Boats, Beneteau, Jeanneau, Dufour, Hanse, Lagoon, or comparable non-superyacht sail brands. Use `low` for primarily luxury-yacht or superyacht brokers whose sail evidence is limited to sailing superyachts, custom megayachts, crewed sailing-yacht charters, or occasional large-yacht listings. Use `medium` for powerboat, motor-yacht, general boat, mixed yacht, or ambiguous yacht broker evidence when the high or low rule is not clearly proven.
+   - Apply the global `qualification` rules and the selected account segment's `qualification` rules.
+   - Prefer accounts with visible people matching the personas associated with that industry so `$prospect-company` has useful contacts to pursue.
+   - Apply the selected industry's priority guidance; use the documented default only when no more specific supported rule applies.
+   - Treat local or subsidiary records separately from parent brands when the local entity has its own domain or public identity.
    - Mark uncertain matches as `needs_review`; do not import them.
 4. Prepare `candidates.json`:
    - Keep one object per company.
@@ -59,19 +61,19 @@ Use:
 {
   "companies": [
     {
-      "name": "Example Porsche",
-      "domain": "exampleporsche.com",
-      "linkedin_company_url": "https://www.linkedin.com/company/example-porsche",
-      "website_url": "https://www.exampleporsche.com",
-      "category": "automotive",
+      "name": "Example Company",
+      "domain": "example.com",
+      "linkedin_company_url": "https://www.linkedin.com/company/example-company",
+      "website_url": "https://www.example.com",
+      "category": "<industry category name or identifier>",
       "priority": "high",
-      "industry": "Porsche dealership",
+      "industry": "Configured target industry",
       "location": "City, ST",
-      "description": "Porsche dealership with client-facing sales advisors.",
+      "description": "Company matching a configured account segment with a visible client-facing team.",
       "discovery": {
-        "why_fit": "Sells high-value vehicles through a sales team that could gift custom client art.",
+        "why_fit": "Matches the configured qualification and priority rules.",
         "source_urls": [
-          "https://www.exampleporsche.com"
+          "https://www.example.com"
         ],
         "confidence": "high"
       }

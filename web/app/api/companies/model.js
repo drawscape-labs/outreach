@@ -13,11 +13,10 @@ import {
 import { PERSON_STATUS_BUCKETS } from "@/app/api/people/schema";
 import {
   COMPANY_API_MESSAGES,
-  COMPANY_CATEGORIES,
+  COMPANY_DEFAULT_PRIORITY,
   COMPANY_FIELD_ALIASES,
   COMPANY_FIELDS,
   COMPANY_FILTER_PARAMS,
-  COMPANY_PRIORITIES,
   COMPANY_REVALIDATION_PATHS
 } from "./schema";
 
@@ -190,16 +189,13 @@ const companyTextFields = [
     nullAsUndefinedOnCreate: true
   },
   {
-    allowedValues: COMPANY_CATEGORIES,
     column: COMPANY_FIELDS.category,
-    invalidMessage: COMPANY_API_MESSAGES.invalidCategory,
     label: "category",
     names: COMPANY_FIELD_ALIASES.category,
     normalize: normalizeLowercaseText,
     nullAsUndefinedOnCreate: true
   },
   {
-    allowedValues: COMPANY_PRIORITIES,
     column: COMPANY_FIELDS.priority,
     invalidMessage: COMPANY_API_MESSAGES.invalidPriority,
     label: "priority",
@@ -265,11 +261,17 @@ const companyNumberFields = [
 ];
 
 function companyData(payload, { partial = false } = {}) {
-  return buildModelData(payload, {
+  const data = buildModelData(payload, {
     emptyPatchMessage: COMPANY_API_MESSAGES.emptyPatch,
     fields: [...companyTextFields, ...companyNumberFields],
     partial
   });
+
+  if (!partial && data.priority === undefined) {
+    data.priority = COMPANY_DEFAULT_PRIORITY;
+  }
+
+  return data;
 }
 
 export function companyJson(company) {
@@ -389,10 +391,6 @@ export function listCompanies(searchParams) {
   }
 
   if (priority) {
-    if (!COMPANY_PRIORITIES.includes(priority)) {
-      throw new ApiError(COMPANY_API_MESSAGES.invalidPriority);
-    }
-
     where.priority = priority;
   }
 
@@ -471,41 +469,15 @@ function companyTableOrderBy(sort) {
     ];
   }
 
+  if (sort?.sort === "priority") {
+    return [
+      { priority: sort.direction },
+      { name: "asc" },
+      { id: "asc" }
+    ];
+  }
+
   return [{ name: "asc" }, { id: "asc" }];
-}
-
-function priorityRank(priority) {
-  const rank = COMPANY_PRIORITIES.indexOf(priority);
-
-  return rank === -1 ? COMPANY_PRIORITIES.length : rank;
-}
-
-// Priority is a string column, so rank ordering can't happen in the query:
-// fetch the filtered ids (name-ordered so ties stay stable), rank-sort, then
-// hydrate only the requested page.
-async function priorityOrderedCompanyPage(where, direction, skip, take) {
-  const rows = await prisma.company.findMany({
-    where,
-    orderBy: [{ name: "asc" }, { id: "asc" }],
-    select: { id: true, priority: true }
-  });
-  const ids = rows
-    .sort((first, second) => {
-      const comparison = priorityRank(first.priority) - priorityRank(second.priority);
-
-      return direction === "desc" ? comparison : -comparison;
-    })
-    .slice(skip, skip + take)
-    .map((row) => row.id);
-  const companies = await prisma.company.findMany({
-    where: { id: { in: ids } },
-    select: companyListSelect
-  });
-  const companiesById = new Map(
-    companies.map((company) => [company.id, company])
-  );
-
-  return ids.map((id) => companiesById.get(id));
 }
 
 export async function listCompanyTablePage(
@@ -518,15 +490,13 @@ export async function listCompanyTablePage(
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
   const currentPage = Math.min(page, totalPages);
   const skip = (currentPage - 1) * pageSize;
-  const companies = sort?.sort === "priority"
-    ? await priorityOrderedCompanyPage(where, sort.direction, skip, pageSize)
-    : await prisma.company.findMany({
-        where,
-        orderBy: companyTableOrderBy(sort),
-        skip,
-        take: pageSize,
-        select: companyListSelect
-      });
+  const companies = await prisma.company.findMany({
+    where,
+    orderBy: companyTableOrderBy(sort),
+    skip,
+    take: pageSize,
+    select: companyListSelect
+  });
 
   return {
     companies: companies.map(companyTableRow),
@@ -559,6 +529,34 @@ export async function listCompanyIndustries() {
         .filter(Boolean)
     )
   ).sort((first, second) => first.localeCompare(second));
+}
+
+async function listDistinctCompanyValues(field) {
+  const companies = await prisma.company.findMany({
+    orderBy: [
+      { [field]: "asc" },
+      { id: "asc" }
+    ],
+    select: {
+      [field]: true
+    }
+  });
+
+  return Array.from(
+    new Set(
+      companies
+        .map((company) => String(company[field] || "").trim())
+        .filter(Boolean)
+    )
+  ).sort((first, second) => first.localeCompare(second));
+}
+
+export function listCompanyCategories() {
+  return listDistinctCompanyValues(COMPANY_FIELDS.category);
+}
+
+export function listCompanyPriorities() {
+  return listDistinctCompanyValues(COMPANY_FIELDS.priority);
 }
 
 export async function listCompanyOptions() {

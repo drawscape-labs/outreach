@@ -2,15 +2,18 @@
   "name": "drawscape-outreach-web",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev --port 4200",
     "build": "next build",
     "lint": "eslint .",
     "start": "next start",
-    "db:generate": "prisma generate --schema prisma/schema.prisma",
-    "db:migrate": "prisma migrate dev --schema prisma/schema.prisma",
-    "db:migrate:deploy": "prisma migrate deploy --schema prisma/schema.prisma",
-    "db:migrate:status": "prisma migrate status --schema prisma/schema.prisma"
+    "db:generate": "node ../scripts/run-prisma.js generate",
+    "db:migrate": "node ../scripts/run-prisma.js migrate dev",
+    "db:migrate:deploy": "node ../scripts/run-prisma.js migrate deploy",
+    "db:migrate:status": "node ../scripts/run-prisma.js migrate status"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",

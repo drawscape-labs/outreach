@@ -1,118 +1,116 @@
-# Drawscape Outreach
+# Outreach
 
-Prospecting workspace for finding companies and people to reach out to.
+A local-first B2B prospecting workspace for researching target accounts, finding the right contacts, tracking outreach status, and optionally syncing with external research and sequencing tools.
 
-## Core Identifiers
+The included strategy is configured for Drawscape, which creates custom artwork that dealers, brokers, and clubs can give to clients or members. Fork owners can replace that strategy without changing application code.
 
-- Company records use `domain` as the primary key.
-- Company LinkedIn pages live in `linkedin_company_url`.
-- Company `category` values are currently `aircraft`, `automotive`, or `yacht`.
-- Company `priority` values are `high`, `medium`, or `low`; new records default to `medium`.
-- Company `description` values should be a single sentence suitable for display.
-- Person records use generated `id` values as the primary key.
-- Person `profile_key` values are unique identity keys, usually LinkedIn path keys like `in/lewis-nisbet-097071137`; website-confirmed email-only identities use `email/name@example.com`.
-- Full person LinkedIn URLs live separately in `linkedin_profile_url` when available.
-- Person `quickmail_lead_id` stores the QuickMail lead id after a successful sync.
-- Person `status` values are `New`, `Contacted`, `Replied`, or `Converted`; the source enum lives in `web/app/api/people/schema.js`, and `web/lib/statuses.js` re-exports it for shared UI imports.
-- Person `qualified` is a boolean stored as `0` or `1`.
-- Position records map people to companies with `person_id` and `company_id`.
-- Position `is_current` is a boolean role-tenure flag, not a person status.
+## Requirements
 
-## Database
+- Node.js 20.9 or newer
+- npm
+- Git
 
-The local SQLite database lives at `data/outreach.sqlite`. Prisma schema and
-checked-in migrations live in `web/prisma/`.
+Codex CLI, Hunter, and QuickMail are optional. The core web app and SQLite database work without them.
 
-Migration history is intentionally forward-only. The first Prisma migration
-creates the legacy `schema_migrations` table so existing databases can be
-baselined consistently, the next migration drops it, and later migrations add
-Prisma-era direct-write guards such as SQLite triggers and expression indexes
-that Prisma schema syntax cannot represent.
+## Install from a fresh clone
 
 ```bash
+git clone https://github.com/drawscape-labs/outreach.git
+cd outreach
+npm --prefix web ci
+cp .env.example .env
 npm run db:init
+npm run dev
 ```
 
-Create and apply a development migration after editing `web/prisma/schema.prisma`:
+Open [http://127.0.0.1:4200](http://127.0.0.1:4200). The main routes are `/companies`, `/people`, and `/campaigns`.
 
-```bash
-npm run db:migrate
+`npm run db:init` generates Prisma Client, creates `data/outreach.sqlite` when it does not exist, and applies every checked-in migration. The database file is ignored by Git, so each clone starts with its own empty data store.
+
+## Initialize it for your company
+
+The repository includes a guided Codex setup skill. Open the cloned repository in Codex and enter:
+
+```text
+$setup
 ```
 
-Apply checked-in migrations without creating new ones:
+The skill interviews you about your company, offering, value proposition, target industries, buyer personas, title rules, qualification and priority rules, discovery sources, and optional integrations. It then previews the replacement before updating the bundled Drawscape strategy and repository identity.
 
-```bash
-npm run db:migrate:deploy
+If the clone includes sample prospect data, the skill will ask before resetting it and will make an ignored local backup first. API keys are never written to tracked files; add any requested credentials to the root `.env` after setup.
+
+You can run `$setup` again later to reinitialize the repository for a different company.
+
+## Environment
+
+The repository-root `.env` is the only environment file used by the project. Start from `.env.example`:
+
+```dotenv
+DATABASE_URL="file:./data/outreach.sqlite"
+
+# Optional application label
+# OUTREACH_APP_NAME="Outreach"
+
+# Optional integrations
+# HUNTER_API_KEY=
+# QUICKMAIL_API_KEY=
+# QUICKMAIL_WORKSPACE_ID=
 ```
 
-Check migration status:
+Never commit `.env`, API keys, prospect exports, or a populated SQLite database.
+
+## Customize the outreach strategy
+
+[`industries.md`](./industries.md) and [`personas.md`](./personas.md) are the single source of truth for:
+
+- Organization name, offering, and value proposition
+- Account segments and their qualification and priority rules
+- Contact personas and their target, review, and excluded titles
+- Suggested discovery sources and search queries
+
+Account segments describe the organizations you want to reach, such as aircraft dealers or yacht clubs. Contact personas describe the people inside those organizations, such as brokers, sales managers, or event directors. Keep these concepts separate when adapting the configuration.
+
+To reuse the project for another market, describe the strategy, qualification rules, priorities, and discovery approach in `industries.md`, then describe the relevant people and role titles in `personas.md`. The files are guidance for Codex skills, not application configuration, so they can use whatever Markdown structure is clearest.
+
+The web app does not read or validate these files. Company category and priority are ordinary database strings, and filter choices are derived from values already stored in company records. Changing the strategy therefore requires no application restart, code edit, or database migration.
+
+## Commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the development server on port 4200 |
+| `npm run build` | Create a production build |
+| `npm start` | Run the production build on port 4200 |
+| `npm run db:init` | Create the local database if needed and apply migrations |
+| `npm run db:migrate` | Create and apply a development migration after editing the Prisma schema |
+| `npm run db:migrate:deploy` | Apply checked-in migrations only |
+| `npm run db:migrate:status` | Show migration status |
+| `npm run db:generate` | Regenerate Prisma Client |
+| `npm --prefix web run lint` | Run ESLint |
+
+Production setup:
 
 ```bash
-npm run db:migrate:status
-```
-
-Regenerate Prisma Client after schema changes:
-
-```bash
-npm run db:generate
-```
-
-## Run
-
-```bash
+npm run build
 npm start
 ```
 
-## Web App
+## Optional integrations
 
-The Next.js app lives in `web/`.
+- **Codex:** install and sign in to Codex CLI, then run the app from the same local user account. Repository skills under `.codex/skills/` provide account discovery, company enrichment, contact prospecting, and email research workflows.
+- **Hunter:** set `HUNTER_API_KEY` in the root `.env` to enable the Hunter-backed skill scripts.
+- **QuickMail:** set `QUICKMAIL_API_KEY` and, when useful, `QUICKMAIL_WORKSPACE_ID` in the root `.env` to enable campaign and reply synchronization.
 
-```bash
-npm run web:dev
-```
+Codex actions use the authenticated CLI installed for the user running the server. Install and sign in using the [official CLI instructions](https://learn.chatgpt.com/docs/codex/cli). Run artifacts live in `.codex/tmp/`. The current launcher bypasses approvals and sandboxing, so treat these actions as privileged local automation.
 
-Then open `http://127.0.0.1:4200`.
+## Security
 
-Routes:
+This project is intended for trusted, local use. It has no authentication or multi-user authorization, and its optional Codex endpoint can launch local agent processes. Do not expose the development or production server to the public internet without adding authentication, authorization, request hardening, and a safer job runner.
 
-- `/companies`
-- `/companies/:id`
-- `/people`
-- `/people/:id`
-- `/contacted`
-- `/replied`
-- `/converted`
+Prospect data and provider credentials may be sensitive. Keep `.env`, `data/*.sqlite`, `.codex/tmp/`, exports, and backups out of version control. Before publishing a fork, inspect the full Git history as well as the current tree for previously committed secrets or personal data.
 
-Styling uses Tailwind CSS through `web/postcss.config.mjs` and the global import in `web/app/styles.css`.
+## Project structure
 
-## QuickMail API
+The Next.js app and API live in `web/app/`, shared UI in `web/components/`, and the database schema and migrations in `web/prisma/`. Companies are identified by domain; people by a unique profile key. Positions link people to companies, and campaigns cache QuickMail metadata. Person statuses are New, Contacted, Replied, or Converted.
 
-Set `QUICKMAIL_API_KEY` in `.env`. `QUICKMAIL_WORKSPACE_ID` is optional when
-the request body includes `workspaceId`.
-
-Browser-side QuickMail requests go through local endpoints under
-`/api/quickmail/*`; the server-only QuickMail library supplies the QuickMail API
-key and external API calls.
-
-List campaigns:
-
-```bash
-curl http://127.0.0.1:4200/api/quickmail/campaigns
-```
-
-Add a lead to a campaign:
-
-```bash
-curl -X POST http://127.0.0.1:4200/api/quickmail/campaigns/cmp_123/leads \
-  -H "Content-Type: application/json" \
-  -d '{"workspaceId":"wrk_123","personId":1}'
-```
-
-The body must include exactly one of:
-
-- `leadId`: an existing QuickMail lead id.
-- `personId`: a local person id; the endpoint reuses an exact QuickMail lead match or creates one first.
-- `lead`: a QuickMail lead object with at least `email`; exact email or LinkedIn matches are reused.
-
-Use `"markContacted": true` with `personId` to update the local person status
-after QuickMail accepts the campaign add.
+Edit [industries.md](./industries.md) and [personas.md](./personas.md) to change how the bundled skills choose and qualify prospects. Keeping category names consistent is useful for clean filtering, but the application does not impose an allowlist.

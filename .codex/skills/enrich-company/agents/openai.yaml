@@ -1,4 +1,4 @@
 interface:
   display_name: "Enrich Company"
   short_description: "Build sourced company records with headcount and priority"
-  default_prompt: "Use $enrich-company to turn this company input into a complete sourced company record with employee headcount and Drawscape priority, then create or update it through the Drawscape web app API when asked."
+  default_prompt: "Use $enrich-company with industries.md and personas.md to turn this input into a complete sourced company record, then create or update it through the web app API when asked."

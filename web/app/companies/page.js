@@ -31,14 +31,11 @@ import {
 } from "@/lib/search-params";
 import { CompanyFilters } from "./components/company-filters";
 import {
+  listCompanyCategories,
   listCompanyIndustries,
+  listCompanyPriorities,
   listCompanyTablePage
 } from "@/app/api/companies/model";
-import {
-  COMPANY_CATEGORIES,
-  COMPANY_CATEGORY_LABELS,
-  COMPANY_PRIORITIES
-} from "@/app/api/companies/schema";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -99,10 +96,6 @@ function formatHeadcount(company) {
   }
 
   return company.employeeCountRange || "";
-}
-
-function formatCategory(category) {
-  return COMPANY_CATEGORY_LABELS[category] || category;
 }
 
 function getSort(searchParams) {
@@ -240,8 +233,8 @@ function CreatedHeader({ filters, sort }) {
 function PriorityHeader({ filters, sort }) {
   const isSorted = sort.sort === "priority";
   const nextDirection = isSorted && sort.direction === "desc"
-    ? "lowest first"
-    : "highest first";
+    ? "ascending"
+    : "descending";
 
   return (
     <Link
@@ -341,16 +334,21 @@ function CompaniesPagination({
 export default async function CompaniesPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const sort = getSort(resolvedSearchParams);
+  const [categories, priorities, industries] = await Promise.all([
+    listCompanyCategories(),
+    listCompanyPriorities(),
+    listCompanyIndustries()
+  ]);
   const options = {
-    categories: COMPANY_CATEGORIES.map((category) => ({
-      label: formatCategory(category),
+    categories: categories.map((category) => ({
+      label: category,
       value: category
     })),
-    priorities: COMPANY_PRIORITIES.map((priority) => ({
+    priorities: priorities.map((priority) => ({
       label: formatPriorityLevel(priority),
       value: priority
     })),
-    industries: await listCompanyIndustries()
+    industries
   };
   const filters = getFilters(resolvedSearchParams, options);
   const {
@@ -451,7 +449,7 @@ export default async function CompaniesPage({ searchParams }) {
                         <dl className="font-normal lg:hidden">
                           <dt className="sr-only">Category</dt>
                           <dd className="mt-1 truncate text-gray-400 dark:text-zinc-500">
-                            {company.category ? formatCategory(company.category) : "Category missing"}
+                            {company.category || "Category missing"}
                           </dd>
                           <dt className="sr-only">Priority</dt>
                           <dd className="mt-2">
@@ -479,7 +477,7 @@ export default async function CompaniesPage({ searchParams }) {
                         <PeoplePills company={company} />
                       </TableCell>
                       <TableCell className="hidden text-zinc-500 dark:text-zinc-400 lg:table-cell">
-                        {company.category ? formatCategory(company.category) : <EmptyValue />}
+                        {company.category || <EmptyValue />}
                       </TableCell>
                       <TableCell className="hidden text-zinc-500 dark:text-zinc-400 lg:table-cell">
                         <PriorityLevel priority={company.priority} />

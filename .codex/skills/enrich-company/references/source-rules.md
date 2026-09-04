@@ -84,11 +84,8 @@ Stable fields still need evidence, but may be accepted from older sources:
 - Do not infer revenue, employee count/headcount, or funding from company size language such as "fast-growing."
 - Record inferred values with `medium` or `low` confidence unless backed by direct evidence.
 
-## Yacht Broker Priority Evidence
+## Account Fit And Priority Evidence
 
-- Verify yacht broker priority from current company-owned pages, listing inventory, brand/dealer pages, or authoritative directories.
-- Treat mainstream/high-volume sailboat dealer or brokerage evidence as support for `high`: production sailboats, sailing catamarans, active used sailboat listings, or brands such as Catalina, J/Boats, Beneteau, Jeanneau, Dufour, Hanse, Lagoon, and comparable non-superyacht sail brands.
-- Do not treat "sailing yacht" language by itself as `high`. Large sailing superyachts, custom megayachts, racing superyachts, and crewed sailing-yacht charters are lower fit than popular-volume sailboat dealers.
-- Treat primarily luxury-yacht or superyacht brokerages as `low` when their sail evidence is limited to sailing superyachts, custom megayachts, crewed charters, or occasional large-yacht listings.
-- Treat powerboat, motor yacht, outboard/inboard boat, or general boat sales as `medium` unless separate evidence supports the mainstream sailboat `high` rule or the luxury/superyacht `low` rule.
-- If the available source language is generic, such as only "yacht brokerage" or "luxury yachts," keep priority `medium` and list priority as a review note when producing an enriched record.
+- Read `industries.md` and use the selected industry's qualification and priority rules.
+- Verify priority using the source types relevant to the configured rule, favoring current company-owned evidence and authoritative directories.
+- Do not upgrade priority from generic market language alone. If the evidence does not prove a segment-specific high or low rule, use the configured default and note the ambiguity.

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { codexApi } from "@/lib/api";
-import { OUTREACH_WORKSPACE_NAME } from "@/lib/outreach-config";
 
 function valueLine(label, value) {
   if (value === null || value === undefined || String(value).trim() === "") {
@@ -13,10 +12,10 @@ function valueLine(label, value) {
   return `${label}: ${String(value).trim()}`;
 }
 
-function buildEnrichCompanyInput(company) {
+function buildEnrichCompanyInput(company, workspaceName) {
   return [
-    `Enrich this existing ${OUTREACH_WORKSPACE_NAME} company and save the updated company record through the web app API at http://localhost:4200.`,
-    "Read outreach.config.json before assigning an account segment or priority.",
+    `Enrich this existing ${workspaceName} company and save the updated company record through the web app API at http://localhost:4200.`,
+    "Read industries.md and personas.md before assigning an industry or priority.",
     "Create a run directory under .codex/tmp/enrich-company/ and keep normalized input, source notes, enriched JSON, dry-run output, apply output, and logs there.",
     "Update the existing row by company ID, domain, or LinkedIn URL. Do not create a duplicate company.",
     "Set companies.date_enriched to today's ISO date when the update succeeds, then read back the row and report the changed fields.",
@@ -39,7 +38,7 @@ function buildEnrichCompanyInput(company) {
   ].filter(Boolean).join("\n");
 }
 
-function buildProspectInput({ company, people }) {
+function buildProspectInput({ company, people, workspaceName }) {
   const peopleLines = people
     .map((person) => {
       const name = person.personName || person.name;
@@ -50,11 +49,11 @@ function buildProspectInput({ company, people }) {
     .filter(Boolean);
 
   return [
-    `Prospect this existing ${OUTREACH_WORKSPACE_NAME} company and save importable results through the web app API at http://localhost:4200.`,
-    "Read outreach.config.json and use the contact personas associated with the company's account segment. User-requested titles take precedence over configured defaults.",
-    "This web-app action is explicit approval to import/upsert the company, people, positions, and verified emails that pass prospect-account validation through the API.",
-    "Create a run directory under .codex/tmp/prospect-account/ with relevant subfolders and keep the prospect JSON, research notes, validation output, duplicate-check output, upsert output, and logs there.",
-    "Validate the prospect JSON, check duplicates through the API, then run `node .codex/skills/prospect-account/scripts/upsert-prospects.js <artifact> --api-base http://localhost:4200 --apply`.",
+    `Prospect this existing ${workspaceName} company and save importable results through the web app API at http://localhost:4200.`,
+    "Read industries.md and personas.md and use the personas associated with the company's industry. User-requested titles take precedence over configured defaults.",
+    "This web-app action is explicit approval to import/upsert the company, people, positions, and verified emails that pass prospect-company validation through the API.",
+    "Create a run directory under .codex/tmp/prospect-company/ with relevant subfolders and keep the prospect JSON, research notes, validation output, duplicate-check output, upsert output, and logs there.",
+    "Validate the prospect JSON, check duplicates through the API, then run `node .codex/skills/prospect-company/scripts/upsert-prospects.js <artifact> --api-base http://localhost:4200 --apply`.",
     "Do not write generated files to data/. Do not access SQLite directly. If the API is unreachable or import is blocked, leave the database unchanged and report the failure.",
     "Do not create duplicate companies or people. If a duplicate or identity conflict is ambiguous, skip that record, do not write it, and report the conflict.",
     "After import, read back the linked people for this company through the API and report inserted, updated, skipped, and conflicted records.",
@@ -105,17 +104,17 @@ const CODEX_ACTIONS = [
     key: "enrich",
     label: "Enrich Company",
     skill: "enrich-company",
-    buildInput: ({ company }) => buildEnrichCompanyInput(company)
+    buildInput: ({ company, workspaceName }) => buildEnrichCompanyInput(company, workspaceName)
   },
   {
     key: "prospect",
     label: "Prospect & Save",
-    skill: "prospect-account",
+    skill: "prospect-company",
     buildInput: buildProspectInput
   }
 ];
 
-export function CompanyActions({ company, people = [], launchStatus }) {
+export function CompanyActions({ company, people = [], launchStatus, workspaceName }) {
   const [launchState, setLaunchState] = useState(() => initialLaunchState(launchStatus));
   const isLaunching = launchState.status === "launching";
 
@@ -131,7 +130,7 @@ export function CompanyActions({ company, people = [], launchStatus }) {
     try {
       const payload = await codexApi.launch({
         skill: action.skill,
-        input: action.buildInput({ company, people })
+        input: action.buildInput({ company, people, workspaceName })
       });
 
       setLaunchState({
@@ -152,7 +151,7 @@ export function CompanyActions({ company, people = [], launchStatus }) {
     <div className="flex flex-col items-start gap-2 sm:items-end">
       <div className="flex flex-wrap items-center gap-2 sm:justify-end">
         {CODEX_ACTIONS.map((action) => {
-          const input = action.buildInput({ company, people });
+          const input = action.buildInput({ company, people, workspaceName });
           const isCurrentAction = launchState.actionKey === action.key;
 
           return (

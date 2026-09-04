@@ -23,7 +23,7 @@ function main() {
   const args = parseArgs(process.argv.slice(2));
   const label = args.label || args.name || args.domain || args._.join(" ");
   const runName = `${timestampSlug()}-${safeSlug(label)}-${process.pid}`;
-  const runDir = path.join(".codex", "tmp", "prospect-account", runName);
+  const runDir = path.join(".codex", "tmp", "prospect-company", runName);
   const folders = {
     inputs: path.join(runDir, "inputs"),
     outputs: path.join(runDir, "outputs"),

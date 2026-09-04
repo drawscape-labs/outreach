@@ -104,39 +104,11 @@ function firstArrayValue(value) {
 }
 
 function categoryFrom(value) {
-  const candidates = Array.isArray(value) ? value : [value];
-  for (const candidate of candidates.filter(Boolean)) {
-    const normalized = String(candidate).trim().toLowerCase();
-    if (normalized === "aircraft" || normalized === "aviation") return "aircraft";
-    if (
-      normalized === "automotive" ||
-      normalized === "auto" ||
-      normalized === "car" ||
-      normalized === "cars" ||
-      normalized.includes("dealership")
-    ) {
-      return "automotive";
-    }
-    if (
-      normalized === "yacht_club" ||
-      normalized === "yacht club" ||
-      normalized.includes("yacht club")
-    ) {
-      return "yacht_club";
-    }
-    if (
-      normalized === "yacht" ||
-      normalized === "yachts" ||
-      normalized === "boat" ||
-      normalized === "boats" ||
-      normalized.includes("sailboat") ||
-      normalized.includes("sailing yacht") ||
-      normalized.includes("yacht brokerage")
-    ) {
-      return "yacht";
-    }
-  }
-  return null;
+  const candidate = Array.isArray(value)
+    ? value.find((item) => item !== null && item !== undefined && String(item).trim())
+    : value;
+
+  return candidate ? String(candidate).trim().toLowerCase() : null;
 }
 
 function normalizePriority(value) {
@@ -191,7 +163,13 @@ function normalizeCompany(input) {
     linkedin_company_url: linkedinCompanyUrl,
     website_url: websiteUrl,
     description: normalizeWhitespace(firstValue(company.description, identity.description)),
-    category: normalizeWhitespace(firstValue(company.category, categoryFrom(classification.categories), categoryFrom(industry))),
+    category: categoryFrom([
+      company.category,
+      ...(Array.isArray(classification.categories)
+        ? classification.categories
+        : [classification.categories]),
+      industry
+    ]),
     priority: normalizePriority(firstValue(company.priority, input.priority, classification.priority, metadata.priority)),
     industry,
     location: normalizeWhitespace(locationText),
@@ -207,12 +185,6 @@ function validateCompany(company) {
   const errors = [];
   if (!company.name) errors.push("name is required");
   if (!company.domain) errors.push("domain is required");
-  if (company.category && !["aircraft", "automotive", "yacht", "yacht_club"].includes(company.category)) {
-    errors.push("category must be aircraft, automotive, yacht, or yacht_club");
-  }
-  if (company.priority && !["high", "medium", "low"].includes(company.priority)) {
-    errors.push("priority must be high, medium, or low");
-  }
   return errors;
 }
 

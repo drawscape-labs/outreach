@@ -1,11 +1,11 @@
 ---
 name: find-person-email
-description: Find and verify work email addresses for existing Drawscape Outreach people through the web app API. Use when the user asks to find a person's email address, fill a missing people.email field, verify or update a business email, research a public contact email for a database person, or prepare a confidence/evidence report before QuickMail outreach.
+description: Find and verify work email addresses for existing outreach people through the web app API. Use when the user asks to find a person's email address, fill a missing people.email field, verify or update a business email, research a public contact email for a database person, or prepare a confidence/evidence report before outreach.
 ---
 
 # Find Person Email
 
-Find a public, professional email address for a person already tracked in Drawscape Outreach.
+Find a public, professional email address for a person already tracked in the outreach workspace.
 
 ## Defaults
 

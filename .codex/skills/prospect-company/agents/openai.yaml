@@ -1,0 +1,4 @@
+interface:
+  display_name: "Prospect Company"
+  short_description: "Research companies, contacts, and emails"
+  default_prompt: "Use $prospect-company with industries.md and personas.md to research a target company, find contacts matching its configured personas, validate and import verified prospects through the web app API, and kick off email lookup after imports."

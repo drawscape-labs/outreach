@@ -238,7 +238,7 @@ export function PeopleFilters({ filters, options }) {
           id="people-filter-position"
           name="position"
           onChange={(event) => updatePosition(event.target.value)}
-          placeholder="Sailing dir, GM, broker..."
+          placeholder="Title, department, or role..."
           type="search"
           value={positionQuery}
         />

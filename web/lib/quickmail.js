@@ -4,10 +4,15 @@ import "server-only";
 
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const QUICKMAIL_GRAPHQL_ENDPOINT = "https://api.quickmail.com/v2/graphql";
 
 let localEnvCache;
+const REPO_ENV_PATH = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../../.env"
+);
 
 const QUICKMAIL_OPERATION_NAMES = {
   getLead: "GetQuickmailLead",
@@ -184,10 +189,7 @@ function readLocalEnv() {
 
   localEnvCache = {};
 
-  for (const envPath of [
-    path.join(process.cwd(), ".env"),
-    path.join(process.cwd(), "..", ".env")
-  ]) {
+  for (const envPath of [REPO_ENV_PATH]) {
     if (!fs.existsSync(envPath)) {
       continue;
     }

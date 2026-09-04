@@ -1,18 +1,18 @@
 ---
-name: prospect-account
-description: Research and import Drawscape Outreach prospect records from a company name, domain, LinkedIn company URL, and desired sales titles. Use when the user wants to find account contacts, discover sales reps or brokers, find public LinkedIn profile URLs and direct work emails, dedupe through the web app API, upsert companies, people, and positions, or kick off email lookup after prospect imports.
+name: prospect-company
+description: Research and import prospect records for the industries and personas in industries.md and personas.md. Use when the user wants to find account contacts, public professional profiles and work emails, dedupe through the web app API, or upsert companies, people, and positions.
 ---
 
-# Prospect Account
+# Prospect Company
 
-Research one target account, find likely sales contacts, dedupe through the Drawscape Outreach web app API, and import verified prospects.
+Research one target account, find contacts matching the configured buyer personas, dedupe through the outreach web app API, and import verified prospects.
 
 ## Default Behavior
 
 - Default to importing verified prospects through the web app API after validation and duplicate checks. Use dry-run only when the user explicitly asks to review without writing, or when unresolved conflicts/ambiguous matches require review.
 - Interface with the database through the web app API. Do not access the SQLite database directly from this skill; add or extend an API endpoint first if a needed database operation is missing.
 - If the API is unreachable from the current Codex run, stop before import and report the API connectivity failure. Do not fall back to Prisma, `sqlite3`, or direct SQLite writes.
-- Prefer target accounts that sell aircraft, cars, sailboats, yachts, or related high-value vehicles where custom Drawscape art could be gifted to clients.
+- Read the repository-root `industries.md` and `personas.md` before selecting or ranking contacts. Use the industry's associated personas and the stated value proposition. User-requested titles take precedence over configured defaults.
 - Treat the provided domain and LinkedIn company URL as identity hints; verify them before importing.
 - Never use company name alone as a database uniqueness key.
 - Do not scrape logged-in LinkedIn pages, bypass access controls, automate LinkedIn sessions, or collect data from paywalled/member-only pages. Record LinkedIn profile URLs found through public web search or public pages, but mark inaccessible LinkedIn details as unavailable.
@@ -27,43 +27,42 @@ Research one target account, find likely sales contacts, dedupe through the Draw
 
 Before a full prospecting run, read the relevant references:
 
+- The repository-root `industries.md` and `personas.md` for industries, personas, and title rankings.
 - `references/output-schema.md` for the prospect JSON shape expected by scripts.
-- `references/database-schema.md` for Drawscape Outreach table mappings.
+- `references/database-schema.md` for the app's table mappings.
 - `references/dedupe-rules.md` for duplicate and conflict handling.
 - `references/source-rules.md` for source priority, evidence, confidence, and LinkedIn boundaries.
-- `references/title-taxonomy.md` when expanding or ranking target titles.
 
 ## Working Directory
 
-- Save all generated prospecting files under `.codex/tmp/prospect-account/`.
-- Start each run by creating a per-account run directory: `node .codex/skills/prospect-account/scripts/create-run-dir.js --label "<company or domain>"`.
+- Save all generated prospecting files under `.codex/tmp/prospect-company/`.
+- Start each run by creating a per-company run directory: `node .codex/skills/prospect-company/scripts/create-run-dir.js --label "<company or domain>"`.
 - Use the returned folders and paths for intermediate input, research notes, the prospect JSON artifact, validation output, duplicate-check output, and upsert output.
 - Do not write prospect artifacts, run logs, scratch files, exports, or intermediate JSON to `data/`, `/private/tmp`, or a root-level `tmp/` directory.
-- If the user provides a final artifact path, also keep a working copy and command outputs in the `.codex/tmp/prospect-account/` run directory.
+- If the user provides a final artifact path, also keep a working copy and command outputs in the `.codex/tmp/prospect-company/` run directory.
 
 ## Workflow
 
 1. Create the run directory:
-   - Run `node .codex/skills/prospect-account/scripts/create-run-dir.js --label "<company or domain>"`.
+   - Run `node .codex/skills/prospect-company/scripts/create-run-dir.js --label "<company or domain>"`.
    - Save normalized input to the returned `paths.input` when the input is structured or reused by scripts.
    - Save research notes, inspected URLs, and any non-final scratch data to the returned `paths.research_notes`.
 2. Normalize input:
    - Canonicalize the domain, website URL, LinkedIn company URL, and target titles.
-   - Run `node .codex/skills/prospect-account/scripts/canonicalize-input.js <input.json>` when useful.
+   - Run `node .codex/skills/prospect-company/scripts/canonicalize-input.js <input.json>` when useful.
 3. Check the existing database:
    - Look for companies by normalized `domain` first and canonical `linkedin_company_url` second.
    - Look for people by `profile_key`, `linkedin_profile_url`, then email when available.
 4. Research the account:
-   - Start with the company website: homepage, About, Team, Staff, Broker, Sales, Locations, Contact, News, press, and structured metadata.
-   - For car dealerships, explicitly check About Us / Meet Our Team / Staff pages. Dealer sites often list department-grouped staff cards with names, titles, direct/personal phone numbers, and `Email Me` links; inspect visible text and link targets/source for `mailto:`, `/cdn-cgi/l/email-protection`, or similar encoded email patterns.
-   - For car dealerships, prioritize Sales, Brand Ambassador, General Manager, Sales Manager, and Guest Experience people.
-   - For sailboat and yacht companies, explicitly check Brokers, Brokerage, Yacht Sales, Sailboat Sales, New Yachts, Pre-Owned Yachts, Used Yachts, Team, Staff, Locations, and Contact pages. Treat broker/brokerage, sales, business development, manager, director, VP, and vice president as high-priority title keywords.
+   - Resolve the account to an industry described in `industries.md`, then identify the relevant personas and title lists in `personas.md`.
+   - Start with the company website and inspect the team, staff, leadership, location, contact, news, press, and other pages suggested by the selected segment's discovery configuration.
+   - Prioritize titles described as targets, review titles marked for manual judgment, and normally skip titles described as excluded.
    - For each candidate, search the same company-controlled pages for a public work email and inspect visible text, `mailto:` links, contact buttons, vCards, PDFs, and page source for directly associated email addresses.
    - Use current web search for public corroboration and candidate profile discovery.
    - Use LinkedIn only as a public identity hint. Do not attempt authenticated scraping.
    - Search public web results for the candidate's canonical LinkedIn profile URL using their name, company, title, city, and domain. Store only public canonical `/in/` or `/pub/` URLs that are identity-aligned.
 5. Find candidate people:
-   - Match requested titles exactly first, then use title-taxonomy synonyms.
+   - Match user-requested titles exactly first, then use the configured contact personas for expansion and ranking.
    - Prefer current sales/client-facing roles over operations, marketing, service, or former employees.
    - Require a stable person identity before import: use a canonical LinkedIn profile URL when available, otherwise use a website-confirmed public work email and allow the scripts to derive `profile_key` as `email/<normalized-email>`.
    - Prefer records that have both a LinkedIn profile URL and exact public work email. Do not skip otherwise good candidates solely because one of those fields is unavailable.
@@ -78,11 +77,11 @@ Before a full prospecting run, read the relevant references:
    - Save it to the returned `paths.prospect` unless the user explicitly provided another path.
    - Include field-level evidence in the artifact, but do not store source URLs in `notes` because the current schema does not track evidence.
 8. Validate and dedupe:
-   - Run `node .codex/skills/prospect-account/scripts/validate-prospect-json.js <prospect.json>` and save the output to the returned `paths.validation`.
-   - Run `node .codex/skills/prospect-account/scripts/check-duplicates.js <prospect.json> --api-base http://localhost:4200` and save the output to the returned `paths.duplicates`.
+   - Run `node .codex/skills/prospect-company/scripts/validate-prospect-json.js <prospect.json>` and save the output to the returned `paths.validation`.
+   - Run `node .codex/skills/prospect-company/scripts/check-duplicates.js <prospect.json> --api-base http://localhost:4200` and save the output to the returned `paths.duplicates`.
 9. Import by default:
    - Use the app API for writes so model validation runs. Ensure the web app is reachable at `http://localhost:4200`; start it with `npm run dev -- --port 4200` if needed.
-   - Run `node .codex/skills/prospect-account/scripts/upsert-prospects.js <prospect.json> --api-base http://localhost:4200 --apply` and save the output to the returned `paths.upsert_result`.
+   - Run `node .codex/skills/prospect-company/scripts/upsert-prospects.js <prospect.json> --api-base http://localhost:4200 --apply` and save the output to the returned `paths.upsert_result`.
    - The importer uses the API for duplicate planning and writes via `GET/POST/PATCH /api/companies`, `GET/POST/PATCH /api/people`, and `GET/POST /api/positions`.
    - Report inserted, updated, skipped, conflicted records, and the returned `affected_people` list.
    - If duplicate checks report conflicts, multiple matches, or `needs_review` identities, do not import the affected records; report the review items instead.
@@ -92,7 +91,7 @@ Before a full prospecting run, read the relevant references:
    - Skip people whose `email_status` is `present` unless the user asked to verify existing emails.
    - Read and use `$find-person-email` before researching or verifying emails.
    - Prefer a subagent when multi-agent tools are available. Spawn one focused email-research agent for the import batch, passing the exact person ids and this instruction:
-     `Use $find-person-email for these Drawscape Outreach people: PERSON_IDS. Find public work emails only. Use the web app API for person lookup and updates. Default to research-only; do not update the database unless the original user request explicitly approved saving emails. Return status, email if directly found, confidence, evidence URLs, and exact update commands when a save is appropriate.`
+     `Use $find-person-email for these outreach people: PERSON_IDS. Find public work emails only. Use the web app API for person lookup and updates. Default to research-only; do not update the database unless the original user request explicitly approved saving emails. Return status, email if directly found, confidence, evidence URLs, and exact update commands when a save is appropriate.`
    - If subagents are unavailable or the batch is tiny, run the same `$find-person-email` workflow inline.
    - Save emails only when the original request explicitly included email updates or the user approves the email results. Never save pattern-only guesses.
 
@@ -106,4 +105,4 @@ For normal conversation, return:
 4. Post-import email lookup status for imported people when an import ran.
 5. The exact next command only when useful for dry-run review, conflict resolution, retrying an import, or saving found emails.
 
-For artifacts, create machine-readable JSON under the per-run directory in `.codex/tmp/prospect-account/`. Keep all intermediate files and logs in that run directory. Do not create or write generated files to `data/`, `/private/tmp`, or a root-level `tmp/` directory. Keep evidence and confidence outside persisted app records unless the schema is extended.
+For artifacts, create machine-readable JSON under the per-run directory in `.codex/tmp/prospect-company/`. Keep all intermediate files and logs in that run directory. Do not create or write generated files to `data/`, `/private/tmp`, or a root-level `tmp/` directory. Keep evidence and confidence outside persisted app records unless the schema is extended.

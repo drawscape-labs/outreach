@@ -25,7 +25,7 @@ const CODEX_SKILLS = new Map([
     }
   ],
   [
-    "prospect-account",
+    "prospect-company",
     {
       sandbox: NO_SANDBOX_MODE,
       model: "gpt-5.5",
@@ -209,7 +209,7 @@ export async function POST(request) {
     return errorResponse(
       request,
       redirectTo,
-      `Unsupported Codex skill: ${skill || "(empty)"}. Use enrich-company or prospect-account.`,
+      `Unsupported Codex skill: ${skill || "(empty)"}. Use enrich-company or prospect-company.`,
       400
     );
   }

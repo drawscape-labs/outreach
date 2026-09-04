@@ -10,7 +10,7 @@ Prospect imports must write through the web app API so route/model validation ru
 - `POST /api/people` and `PATCH /api/people/:id`
 - `POST /api/positions` for new role rows
 
-Use `node .codex/skills/prospect-account/scripts/upsert-prospects.js <prospect.json> --api-base http://localhost:4200 --apply`. The script uses API reads for duplicate planning, then performs all creates/updates through the API. Start the app with `npm run dev -- --port 4200` when `http://localhost:4200` is unavailable.
+Use `node .codex/skills/prospect-company/scripts/upsert-prospects.js <prospect.json> --api-base http://localhost:4200 --apply`. The script uses API reads for duplicate planning, then performs all creates/updates through the API. Start the app with `npm run dev -- --port 4200` when `http://localhost:4200` is unavailable.
 
 ## companies
 
@@ -18,7 +18,6 @@ Required fields:
 
 - `name`
 - `domain`
-- `linkedin_company_url`
 
 Useful optional fields:
 
@@ -35,13 +34,13 @@ Useful optional fields:
 Uniqueness:
 
 - `domain` is unique and is the logical company key.
-- `linkedin_company_url` is unique and is a secondary exact identity key.
+- `linkedin_company_url` is optional, unique when present, and is a secondary exact identity key.
 
 Rules:
 
 - Normalize `domain` to lowercase host without `www.`.
 - Normalize `linkedin_company_url` to `https://www.linkedin.com/company/<slug>`.
-- Use `category` values `aircraft`, `automotive`, or `yacht`.
+- Use the consistent category name or identifier described in the repository-root `industries.md` for `category`.
 - Use a single-sentence display description.
 - Use `employee_count` only for exact total employee counts and `employee_count_range` when only a range is available.
 - Use `date_enriched` as a nullable text date/timestamp for when company enrichment data was last gathered.

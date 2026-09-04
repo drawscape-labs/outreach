@@ -1,8 +1,7 @@
 import { classNames } from "./class-names";
 import { EmptyValue } from "./empty-value";
 import { Badge } from "./ui/badge";
-
-export const PRIORITY_LEVELS = {
+const PRIORITY_LEVELS = {
   high: {
     color: "green",
     dot: "fill-green-500 dark:fill-green-400",

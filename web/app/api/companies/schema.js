@@ -1,8 +1,3 @@
-import {
-  OUTREACH_ACCOUNT_SEGMENTS,
-  OUTREACH_PRIORITY_LEVELS
-} from "@/lib/outreach-config";
-
 export const COMPANY_FIELDS = {
   id: "id",
   name: "name",
@@ -45,20 +40,7 @@ export const COMPANY_REQUIRED_CREATE_FIELDS = [
   COMPANY_FIELDS.domain
 ];
 
-export const COMPANY_CATEGORIES = OUTREACH_ACCOUNT_SEGMENTS.map(
-  (segment) => segment.id
-);
-export const COMPANY_PRIORITIES = OUTREACH_PRIORITY_LEVELS.map(
-  (priority) => priority.id
-);
-
-export const COMPANY_CATEGORY_LABELS = Object.fromEntries(
-  OUTREACH_ACCOUNT_SEGMENTS.map((segment) => [segment.id, segment.label])
-);
-
-export const COMPANY_PRIORITY_LABELS = Object.fromEntries(
-  OUTREACH_PRIORITY_LEVELS.map((priority) => [priority.id, priority.label])
-);
+export const COMPANY_DEFAULT_PRIORITY = "medium";
 
 export const COMPANY_FILTER_PARAMS = {
   category: ["category"],
@@ -71,10 +53,9 @@ export const COMPANY_FILTER_PARAMS = {
 
 export const COMPANY_API_MESSAGES = {
   emptyPatch: "Provide at least one company field.",
-  invalidCategory: `category must be one of: ${COMPANY_CATEGORIES.join(", ")}.`,
   invalidDomain: "domain must be a valid domain or URL.",
   invalidLinkedinCompanyUrl: "linkedinCompanyUrl must be a valid LinkedIn company URL.",
-  invalidPriority: `priority must be one of: ${COMPANY_PRIORITIES.join(", ")}.`,
+  invalidPriority: "priority must be a non-empty string.",
   invalidWebsiteUrl: "websiteUrl must be a valid URL.",
   notFound: "Company not found."
 };

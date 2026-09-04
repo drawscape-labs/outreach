@@ -2,10 +2,15 @@
 // Keep connection lifecycle code here; model-specific queries belong in app/api/*/model.js.
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { PrismaClient } from "@prisma/client";
 
 let localEnvLoaded = false;
+const REPO_ENV_PATH = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../../.env"
+);
 
 function parseEnvValue(value) {
   const trimmed = value.trim();
@@ -42,10 +47,7 @@ function loadLocalEnv() {
 
   localEnvLoaded = true;
 
-  for (const envPath of [
-    path.join(process.cwd(), ".env"),
-    path.join(process.cwd(), "..", ".env")
-  ]) {
+  for (const envPath of [REPO_ENV_PATH]) {
     if (!fs.existsSync(envPath)) {
       continue;
     }

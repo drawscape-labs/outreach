@@ -3,10 +3,10 @@ import Script from "next/script";
 import { Link } from "@/components";
 import { QueryProvider } from "@/components/query-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { OUTREACH_WORKSPACE_NAME } from "@/lib/outreach-config";
+const appName = process.env.OUTREACH_APP_NAME?.trim() || "Outreach";
 
 export const metadata = {
-  title: OUTREACH_WORKSPACE_NAME,
+  title: appName,
   description: "Prospecting database for companies and people",
   icons: {
     icon: "/icon.png"
@@ -16,7 +16,8 @@ export const metadata = {
 const navigation = [
   { name: "Companies", href: "/companies" },
   { name: "People", href: "/people" },
-  { name: "Campaigns", href: "/campaigns" }
+  { name: "Campaigns", href: "/campaigns" },
+  { name: "Skills", href: "/skills" }
 ];
 
 const themeScript = `
@@ -46,10 +47,10 @@ export default function RootLayout({ children }) {
             <div className="flex h-16 items-center justify-between gap-x-4">
               <Link className="flex min-w-0 shrink-0 items-center gap-x-3" href="/">
                 <span className="grid size-9 place-items-center rounded-md bg-teal-700 text-sm font-semibold text-white shadow-sm dark:bg-teal-500 dark:text-zinc-950">
-                  {OUTREACH_WORKSPACE_NAME.charAt(0).toUpperCase()}
+                  {appName.charAt(0).toUpperCase()}
                 </span>
                 <span className="truncate text-sm font-semibold text-gray-900 dark:text-white sm:text-base">
-                  {OUTREACH_WORKSPACE_NAME}
+                  {appName}
                 </span>
               </Link>
               <ThemeToggle className="flex sm:hidden" />

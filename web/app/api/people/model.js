@@ -11,11 +11,6 @@ import {
   readPositiveInteger
 } from "@/app/api/lib/model-helpers";
 import {
-  COMPANY_API_MESSAGES,
-  COMPANY_CATEGORIES,
-  COMPANY_PRIORITIES
-} from "@/app/api/companies/schema";
-import {
   PERSON_API_MESSAGES,
   PERSON_EMAIL_FILTER_VALUES,
   PERSON_FIELD_ALIASES,
@@ -624,10 +619,6 @@ function peopleWhere(searchParams, { currentPositionsOnly = false } = {}) {
   const companyFilter = {};
 
   if (companyCategory) {
-    if (!COMPANY_CATEGORIES.includes(companyCategory)) {
-      throw new ApiError(COMPANY_API_MESSAGES.invalidCategory);
-    }
-
     companyFilter.category = companyCategory;
   }
 
@@ -636,10 +627,6 @@ function peopleWhere(searchParams, { currentPositionsOnly = false } = {}) {
   }
 
   if (companyPriority) {
-    if (!COMPANY_PRIORITIES.includes(companyPriority)) {
-      throw new ApiError(COMPANY_API_MESSAGES.invalidPriority);
-    }
-
     companyFilter.priority = companyPriority;
   }
 

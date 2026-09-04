@@ -1,15 +1,18 @@
 {
   "name": "drawscape-outreach",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "npm --prefix web run dev --",
     "build": "npm --prefix web run build",
     "start": "npm --prefix web run start -- -p 4200",
-    "db:init": "mkdir -p data && npm --prefix web run db:migrate:deploy",
-    "db:migrate": "npm --prefix web run db:migrate",
-    "db:migrate:deploy": "npm --prefix web run db:migrate:deploy",
-    "db:migrate:status": "npm --prefix web run db:migrate:status",
-    "db:generate": "npm --prefix web run db:generate",
+    "db:init": "node scripts/run-prisma.js generate && node scripts/run-prisma.js migrate deploy",
+    "db:migrate": "node scripts/run-prisma.js migrate dev",
+    "db:migrate:deploy": "node scripts/run-prisma.js migrate deploy",
+    "db:migrate:status": "node scripts/run-prisma.js migrate status",
+    "db:generate": "node scripts/run-prisma.js generate",
     "web:dev": "npm --prefix web run dev"
   },
   "author": "",
