@@ -12,6 +12,19 @@ Assume the user is already working in Claude, Claude Code, Codex, or another age
 
 Use simple language and ask a few related questions at a time. Reuse answers already given. Complete routine installation steps within the user's request; ask about choices that affect their company, integrations, existing data, or system setup. On repeat runs, inspect what already works and resume from the missing step.
 
+## Sequence and waiting rules
+
+Run setup in two phases:
+
+1. **Install and verify the base app.** Finish the audit, prerequisite checks, dependency installation, environment setup, database initialization, build, and server checks before asking company or strategy questions. Leave optional integrations until the interview establishes which ones the user wants.
+2. **Interview and configure.** Once base checks are complete, briefly report their results, then ask the first company questions. Collect answers, preview the configuration, apply it after acceptance, and verify the result.
+
+Whenever you ask the user a question or request an action, stop all task work and wait for their response. This includes installation choices, port conflicts, credentials, interview questions, and confirmation of the proposed configuration. Do not run tools, edit files, start new commands, or continue independent work while an answer is pending. Finish any active one-time installation/check command before asking. An already-running app server may remain running.
+
+Use a blocking question tool if available, or end the response with the question. Do not use asynchronous questions that let work continue. No response is not approval or a default selection. Resume only after receiving the answer, and resolve that answer before moving on.
+
+Ask during phase one only when installation cannot safely proceed without an answer. For example, finish checks that do not depend on the port choice before asking about an occupied port; once the question is asked, stop. Never ask company questions early to collect answers while installation runs.
+
 ## Start with an audit
 
 Read `README.md`, `docs/industries.md`, `docs/personas.md`, `package.json`, `web/package.json`, `.env.example`, and `AGENTS.md`. Search tracked files for the current organization name, domain, repository slug, package prefix, and organization-specific environment variable names. Separate:
@@ -40,9 +53,21 @@ If Git metadata is absent because the user downloaded an archive, use filesystem
 - Run `npm run db:init` to generate Prisma Client and apply checked-in migrations, then `npm run db:migrate:status`. Use these commands instead of creating a migration during setup. No separate SQLite server is needed.
 - Confirm the app can read the same database after starting it. A successful migration command alone does not prove the runtime configuration is correct. Also verify the configured application label in the browser; do not claim an environment setting works merely because it was written to `.env`.
 
+## Verify the base app before the interview
+
+Run `npm --prefix web run lint` and `npm run build`. Resolve installation failures before proceeding.
+
+Start `npm run dev` using the interface's supported persistent process mechanism. Check port 4200 first; reuse a healthy instance of this repository or report a conflict instead of stopping an unrelated process. If a port decision needs user input, ask and wait. If using another port, account for the repository's port-4200 assumptions in skill/API workflows before claiming they work.
+
+Check `/companies`, `/people`, `/skills`, and database reads through `/api/companies` and `/api/people`. Empty lists are valid on a fresh install. Verify page navigation and a filter in the browser when available. Keep the server running and give its reachable URL. If browser checks or local access are unavailable, state exactly what was checked and what remains unverified. Report application defects rather than masking them with undocumented local settings or broad code changes.
+
+Do not begin the interview while a required installation check is failing or an installation question is unanswered. Once ready, say briefly that the base app is installed, note any unverified checks, and ask only the first group of company questions. Stop and wait.
+
 ## Interview the user
 
 Ask a few related questions at a time and retain earlier answers. Offer reasonable drafts when the user gives broad descriptions. Collect enough information to define:
+
+Wait for each group's answers before asking the next group or doing more work. Do not configure integrations or edit company settings between unanswered questions.
 
 1. **Organization**
    - Company name, website, workspace name, and preferred repository/package slug.
@@ -87,7 +112,7 @@ Read the relevant integration skill before using it. Missing optional integratio
 
 ## Preview and apply
 
-Before editing, show a compact summary of the proposed organization, industries, personas, priority model, optional integrations, and database action. Resolve missing relationships or contradictory title rules.
+Before editing company settings, show a compact summary of the proposed organization, industries, personas, priority model, optional integrations, and database action. Resolve missing relationships or contradictory title rules. Ask the user to confirm the summary, then stop and wait. This preview applies to company configuration, not the routine base installation already completed.
 
 After the user accepts the summary:
 
@@ -101,16 +126,14 @@ If the user requests a database reset, resolve the exact active database path an
 
 ## Validate and hand off
 
-Run:
+After applying configuration, rerun lint and build if files affecting those checks changed:
 
 ```bash
 npm --prefix web run lint
 npm run build
 ```
 
-Start `npm run dev` using the interface's supported persistent process mechanism. Check port 4200 first; reuse a healthy instance of this repository or report a conflict instead of stopping an unrelated process. Keep the server running for the user and give its reachable URL. If using another port, account for the repository's port-4200 assumptions in skill/API workflows before claiming they work.
-
-Check `/companies`, `/people`, `/skills`, and database reads through `/api/companies` and `/api/people`. Empty lists are valid on a fresh install. Verify page navigation and a filter in the browser when available. If browser checks or local access are unavailable, state exactly what was checked and what remains unverified. Report application defects rather than masking them with undocumented local settings or broad code changes.
+Reuse the server verified in phase one. Restart if needed for changed settings and check the affected pages and configured application label. Avoid repeating unchanged installation steps.
 
 Offer a first task: “Use the discover-companies skill to find and save five companies matching my industries.” Run it only if the user wants that research and saving step, and read that skill first. Do not imply setup has already populated the database.
 
