@@ -20,7 +20,7 @@ Account segments classify companies. Contact personas classify the people to fin
 ## Agent skills
 
 - `.agents/skills/` is the canonical skill directory.
-- `.codex/skills` and `.claude/skills` are compatibility links to the canonical directory. Do not create duplicate skill copies in those directories.
+- `.codex/skills` is a compatibility link for Codex. Claude reads the canonical directory through `CLAUDE.md`. Do not create duplicate skill copies.
 - Keep skill instructions agent-neutral. Put agent-specific invocation syntax in the README or the relevant interface.
 - Resolve bundled scripts and references relative to each skill's `SKILL.md`.
 - Store generated skill artifacts under `.agent-runs/`, which is ignored by Git.

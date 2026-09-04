@@ -40,7 +40,7 @@ The database is stored at `data/outreach.sqlite` and is not committed to Git.
 Open the repository in an agent tool and start the setup skill:
 
 - Codex: [`$setup`](./.codex/skills/setup/SKILL.md)
-- Claude Code: `/setup`
+- Claude Code: “Use the setup skill”
 - Other tools: “Use the setup skill”
 
 The skill asks about your company, offer, target industries, buyer personas, title rules, and integrations. It shows a summary before replacing the included Drawscape settings.
@@ -70,7 +70,7 @@ Never commit `.env` or API keys.
 
 ## Agent skills
 
-Skills are stored in `.agents/skills/`. `.codex/skills` and `.claude/skills` link to the same directory.
+Skills are stored in `.agents/skills/`. `.codex/skills` links to that directory. `CLAUDE.md` tells Claude Code where to find the same skills.
 
 - **Codex CLI** is required only for background jobs started by the **Enrich Company** and **Prospect & Save** buttons. Install it using the [official Codex CLI instructions](https://learn.chatgpt.com/docs/codex/cli).
 - **Hunter** is optional. Add `HUNTER_API_KEY` to `.env` to improve work-email discovery and verification.
